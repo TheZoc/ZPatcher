@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Spec">
+      <UniqueIdentifier>{3e4ebd80-8b3a-4833-bbdf-1b1a8c5df207}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\LzmaLibExports.c">
+      <Filter>Spec</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Alloc.c" />
+    <ClCompile Include="source\LzFind.c" />
+    <ClCompile Include="source\LzFindMt.c" />
+    <ClCompile Include="source\LzmaDec.c" />
+    <ClCompile Include="source\LzmaEnc.c" />
+    <ClCompile Include="source\LzmaLib.c" />
+    <ClCompile Include="source\Threads.c" />
+    <ClCompile Include="source\Lzma2Dec.c" />
+    <ClCompile Include="source\Lzma2Enc.c" />
+    <ClCompile Include="source\MtCoder.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\7zTypes.h" />
+    <ClInclude Include="source\Alloc.h" />
+    <ClInclude Include="source\IStream.h" />
+    <ClInclude Include="source\LzFind.h" />
+    <ClInclude Include="source\LzFindMt.h" />
+    <ClInclude Include="source\LzHash.h" />
+    <ClInclude Include="source\LzmaDec.h" />
+    <ClInclude Include="source\LzmaEnc.h" />
+    <ClInclude Include="source\LzmaLib.h" />
+    <ClInclude Include="source\Threads.h" />
+    <ClInclude Include="source\Lzma2Dec.h" />
+    <ClInclude Include="source\Lzma2Enc.h" />
+    <ClInclude Include="source\MtCoder.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="source\resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="source\LzmaLib.def">
+      <Filter>Spec</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>
