@@ -14,6 +14,7 @@
 #include "Lzma2Enc.h"
 #include "Lzma2Encoder.h"
 #include "LzmaInterfaces.h"
+#include "CreatePatch.h"
 
 CLzma2EncHandle ZPatcher::InitLzma2Encoder()
 {
@@ -45,15 +46,16 @@ void ZPatcher::WritePatchFileHeader(FILE* dest, Byte &Lzma2Properties)
 	fwrite(header, 1, 9, dest);
 }
 
-void ZPatcher::WriteFileInfo(FILE* dest, const std::wstring& fileName)
+void ZPatcher::WriteFileInfo(FILE* dest, const Byte& operation, const std::string& fileName)
 {
 	unsigned long fileNameLen = static_cast<unsigned long>(fileName.length());
 
+	fwrite(&operation, sizeof(Byte), 1, dest);
 	fwrite(&fileNameLen, sizeof(unsigned long), 1, dest);
-	fwrite(fileName.c_str(), sizeof(wchar_t), fileNameLen, dest);
+	fwrite(fileName.c_str(), sizeof(char), fileNameLen, dest);
 }
 
-void ZPatcher::FileCompress(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest)
+void ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest)
 {
 	_fseeki64(source, 0LL, SEEK_END);
 	__int64 srcFileSize = _ftelli64(source);
@@ -67,3 +69,15 @@ void ZPatcher::FileCompress(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest)
 	assert(res == SZ_OK);
 }
 
+void ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourceFileName, FILE* dest)
+{
+	FILE* sourceFile;
+	errno_t err = 0;
+
+	err = fopen_s(&sourceFile, sourceFileName.c_str(), "rb");
+	assert(err == 0);
+
+	WriteCompressedFile(hLzma2Enc, sourceFile, dest);
+
+	fclose(sourceFile);
+}

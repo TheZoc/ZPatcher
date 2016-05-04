@@ -165,8 +165,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CreatePatch.h" />
     <ClInclude Include="dirent.h" />
-    <ClInclude Include="FileUtil.h" />
+    <ClInclude Include="FileUtils.h" />
     <ClInclude Include="Lzma2Decoder.h" />
     <ClInclude Include="Lzma2Encoder.h" />
     <ClInclude Include="LzmaInterfaces.h" />
@@ -180,6 +181,7 @@
     <ClCompile Include="Lzma2Decoder.cpp" />
     <ClCompile Include="Lzma2Encoder.cpp" />
     <ClCompile Include="LzmaInterfaces.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

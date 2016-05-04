@@ -24,7 +24,7 @@ namespace ZPatcher
 
 	bool ReadPatchFileHeader(FILE* source, Byte &Lzma2Properties);
 
-	void GetFileinfo(FILE* source, std::wstring& fileName);
+	void GetFileinfo(FILE* source, std::string& fileName);
 	void FileDecompress(CLzma2Dec* decoder, FILE* source, FILE* dest);
 }
 

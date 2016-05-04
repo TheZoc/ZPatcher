@@ -23,9 +23,11 @@ namespace ZPatcher
 	void DestroyLzma2EncHandle(CLzma2EncHandle hLzma2Enc);
 
 	void WritePatchFileHeader(FILE* dest, Byte &Lzma2Properties);
-	void WriteFileInfo(FILE* dest, const std::wstring& fileName);
 
-	void FileCompress(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest);
+	void WriteFileInfo(FILE* dest, const Byte& operation, const std::string& fileName);
+
+	void WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest);
+	void WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourceFileName, FILE* dest);
 }
 
 #endif // _LZMA2ENCODER_H_
