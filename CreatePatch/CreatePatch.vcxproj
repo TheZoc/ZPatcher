@@ -165,11 +165,18 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Lzma2Decoder.h" />
+    <ClInclude Include="Lzma2Encoder.h" />
+    <ClInclude Include="LzmaInterfaces.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="ZPatcherCurrentVersion.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CreatePatch.cpp" />
+    <ClCompile Include="Lzma2Decoder.cpp" />
+    <ClCompile Include="Lzma2Encoder.cpp" />
+    <ClCompile Include="LzmaInterfaces.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
