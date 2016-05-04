@@ -2,11 +2,6 @@
 //
 
 #include "stdafx.h"
-#include "7zTypes.h"
-#include "LzmaLib.h"
-#include "Lzma2Enc.h"
-#include "Lzma2Dec.h"
-
 #include "Lzma2Encoder.h"
 #include "Lzma2Decoder.h"
 
