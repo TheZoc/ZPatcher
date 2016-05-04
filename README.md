@@ -10,5 +10,5 @@ It uses:
 - [Dirent interface for Windows][2]
 
 
-[1] http://www.7-zip.org/sdk.html
-[2] https://github.com/tronkko/dirent
+[1]: http://www.7-zip.org/sdk.html
+[2]: https://github.com/tronkko/dirent
