@@ -15,7 +15,7 @@
 
 namespace ZPatcher
 {
-	static const Byte ZPatcher_Version = 1;
+	static const unsigned char ZPatcher_Version = 1;
 }
 
 

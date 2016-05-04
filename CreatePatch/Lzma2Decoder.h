@@ -15,6 +15,7 @@
 #define _LZMA2DECODER_H_
 
 #include "ZPatcherCurrentVersion.h"
+#include "Lzma2Dec.h"
 
 namespace ZPatcher
 {
