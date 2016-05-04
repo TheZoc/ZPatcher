@@ -4,81 +4,48 @@
 #include "stdafx.h"
 #include "Lzma2Encoder.h"
 #include "Lzma2Decoder.h"
+#include "FileUtil.h"
 
-//////////////////////////////////////////////////////////////////////////
-// Main function 
-
-int main()
+int main(int argc, char* argv[])
 {
 	using namespace ZPatcher;
 
-	FILE* sourceFile;
-	FILE* destFile;
-
-	errno_t err = 0;
-
-	wchar_t sourceName[] = _T("a.jpg");
-	wchar_t compressedName[] = _T("test.zoc");
-	wchar_t destName[] = _T("b.jpg");
-
-	// 	wchar_t sourceName[] = _T("a.txt");
-	// 	wchar_t compressedName[] = _T("txt.zoc");
-	// 	wchar_t destName[] = _T("b.txt");
-
-	err = _wfopen_s(&sourceFile, sourceName, _T("rb"));
-	assert(err == 0);
-	err = _wfopen_s(&destFile, compressedName, _T("wb"));
-	assert(err == 0);
-
-	CLzma2EncHandle hLzma2Enc = InitLzma2Encoder();
-
+	if (argc < 4)
 	{
-		// This makes props a local variable
-		Byte props = Lzma2Enc_WriteProperties(hLzma2Enc);
-		WritePatchFileHeader(destFile, props);
+		fprintf(stderr, "CreatePatch.exe <old version directory> <new version directory> <output patch file>\n");
+		exit(EXIT_SUCCESS);
 	}
 
-	WriteFileInfo(destFile, destName);
-	FileCompress(hLzma2Enc, sourceFile, destFile);
-	DestroyLzma2EncHandle(hLzma2Enc);
+	// Store our targets
+	std::string oldDirectory = argv[1];
+	std::string newDirectory = argv[2];
+	std::string outputFilename = argv[3];
 
-	fclose(sourceFile);
-	fclose(destFile);
+	// Make sure all directories are represented in the same format
+	NormalizeFileName(oldDirectory);
+	NormalizeFileName(newDirectory);
+	NormalizeFileName(outputFilename);
 
-	fprintf(stderr, "\nFile compression completed.\n");
+	PatchFileList_t* patchFileList = GetDifferences(oldDirectory, newDirectory);
 
-	//////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
-
-	err = _wfopen_s(&sourceFile, compressedName, _T("rb"));
-	assert(err == 0);
-	err = _wfopen_s(&destFile, destName, _T("wb"));
-	assert(err == 0);
-
-	Byte props;
-	if (!ReadPatchFileHeader(sourceFile, props))
+	fprintf(stderr, "\nRemoved files:\n");
+	for (std::vector<std::string>::iterator itr = patchFileList->RemovedFileList.begin(); itr < patchFileList->RemovedFileList.end(); ++itr)
 	{
-		fprintf(stderr, "\nFile decompression failed - Invalid header.\n");
-		system("pause");
-		return 1;
+		fprintf(stderr, "%s\n", itr->c_str());
 	}
 
-	CLzma2Dec* decoder = InitLzma2Decoder(props);
+	fprintf(stderr, "\nModified files:\n");
+	for (std::vector<std::string>::iterator itr = patchFileList->ModifiedFileList.begin(); itr < patchFileList->ModifiedFileList.end(); ++itr)
+	{
+		fprintf(stderr, "%s\n", itr->c_str());
+	}
 
-	std::wstring outFileName;
-	GetFileinfo(sourceFile, outFileName);
+	fprintf(stderr, "\nAdded files:\n");
+	for (std::vector<std::string>::iterator itr = patchFileList->AddedFileList.begin(); itr < patchFileList->AddedFileList.end(); ++itr)
+	{
+		fprintf(stderr, "%s\n", itr->c_str());
+	}
 
-	fprintf(stderr, "\nDecompressing file %ls.\n", outFileName.c_str());
+	exit(EXIT_SUCCESS);
 
-	FileDecompress(decoder, sourceFile, destFile);
-
-	fclose(sourceFile);
-	fclose(destFile);
-
-	fprintf(stderr, "\nFile decompression completed.\n");
-
-	system("pause");
-
-	return 0;
 }

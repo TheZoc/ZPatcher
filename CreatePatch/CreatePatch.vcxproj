@@ -165,6 +165,8 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dirent.h" />
+    <ClInclude Include="FileUtil.h" />
     <ClInclude Include="Lzma2Decoder.h" />
     <ClInclude Include="Lzma2Encoder.h" />
     <ClInclude Include="LzmaInterfaces.h" />
@@ -174,6 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CreatePatch.cpp" />
+    <ClCompile Include="FileUtils.cpp" />
     <ClCompile Include="Lzma2Decoder.cpp" />
     <ClCompile Include="Lzma2Encoder.cpp" />
     <ClCompile Include="LzmaInterfaces.cpp" />
