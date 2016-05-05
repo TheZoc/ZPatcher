@@ -1,0 +1,23 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+*.c			text diff=cpp
+*.cpp		text diff=cpp
+*.h			text diff=cpp
+*.sln		text eol=crlf
+*.cs		text diff=csharp
+*.ico		binary
+*.html		text diff=html
+
+
+# Standard to msysgit
+*.doc		diff=astextplain
+*.DOC		diff=astextplain
+*.docx		diff=astextplain
+*.DOCX		diff=astextplain
+*.dot		diff=astextplain
+*.DOT		diff=astextplain
+*.pdf		diff=astextplain
+*.PDF		diff=astextplain
+*.rtf		diff=astextplain
+*.RTF		diff=astextplain
