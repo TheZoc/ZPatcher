@@ -19,12 +19,19 @@
 
 namespace ZPatcher
 {
+	// Initializes the LZMA2 Decoder and return its handle
 	CLzma2Dec* InitLzma2Decoder(const Byte &props);
+
+	// Destroys the LZMA2 Decoder handle
 	void FreeLzma2Decoder(CLzma2Dec* decoder);
 
+	// Read the patch file header, returns if it's valid or not and assign the Lzma2 Properties byte to Lzma2Properties param
 	bool ReadPatchFileHeader(FILE* source, Byte &Lzma2Properties);
 
-	void GetFileinfo(FILE* source, std::string& fileName);
+	// Read the modified file information inside the patch file. Return the modified file name and the operation
+	void GetFileinfo(FILE* patchFile, std::string& fileName, Byte& operation);
+
+	// Decompress the file data stored in the patch file (only call this in the correct operations!)
 	void FileDecompress(CLzma2Dec* decoder, FILE* source, FILE* dest);
 }
 

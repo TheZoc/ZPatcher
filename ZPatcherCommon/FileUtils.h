@@ -39,7 +39,6 @@ namespace ZPatcher
 
 	// Backup the supplied filename to BackupSuffix folder
 	bool BackupFile(const std::string& fileName, const std::string& suffix);
-	
 }
 
 #endif // _FILEUTILS_H_

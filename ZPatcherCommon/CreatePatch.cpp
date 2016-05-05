@@ -159,12 +159,12 @@ void ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 	DestroyLzma2EncHandle(hLzma2Enc);
 }
 
-void ZPatcher::CreatePatchFile(std::string& pathFileName, std::string& newVersionPath, PatchFileList_t* patchFileList)
+void ZPatcher::CreatePatchFile(std::string& patchFileName, std::string& newVersionPath, PatchFileList_t* patchFileList)
 {
 	FILE* patchFile;
 	errno_t err = 0;
 
-	err = fopen_s(&patchFile, pathFileName.c_str(), "wb");
+	err = fopen_s(&patchFile, patchFileName.c_str(), "wb");
 	assert(err == 0);
 
 	CreatePatchFile(patchFile, newVersionPath, patchFileList);

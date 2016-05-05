@@ -61,27 +61,16 @@ bool ZPatcher::ReadPatchFileHeader(FILE* source, Byte &Lzma2Properties)
 	return true;
 }
 
-void ZPatcher::GetFileinfo(FILE* source, std::string& fileName)
+void ZPatcher::GetFileinfo(FILE* patchFile, std::string& fileName, Byte& operation)
 {
-	//////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
-	// Discover how to handle this byte! ;)
-	// Added here to replicate the Encoder functionality
-	//////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
-	Byte operation;
-	fread(&operation, sizeof(Byte), 1, source);
+	fread(&operation, sizeof(Byte), 1, patchFile);
 
 	unsigned long fileNameLen;
-	fread(&fileNameLen, sizeof(unsigned long), 1, source);
+	fread(&fileNameLen, sizeof(unsigned long), 1, patchFile);
 
 	fileName.clear();
-	fileName.resize(fileNameLen + 1, _T('\0'));
-	fread(&fileName[0], sizeof(char), fileNameLen, source);
-
-	// TODO: Add file operation here
+	fileName.resize(fileNameLen + 1, '\0');
+	fread(&fileName[0], sizeof(char), fileNameLen, patchFile);
 }
 
 void ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* source, FILE* dest)
