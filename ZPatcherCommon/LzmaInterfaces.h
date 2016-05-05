@@ -62,7 +62,7 @@ namespace ZPatcher
 
 	SRes OnProgress(void *p, UInt64 inSize, UInt64 outSize);
 
-	void PrintProgressBar(const int Percentage, UInt64 CurrentDownload);
+	void PrintProgressBar(const float Percentage, UInt64 CurrentDownload);
 
 }
 

@@ -34,6 +34,7 @@ void ZPatcher::PrintPatchApplyingProgressBar(float Percentage)
 		else fprintf(stdout, " ");
 	}
 	fprintf(stdout, "] %0.2f %%     ", Percentage);
+	fflush(stdout);
 }
 
 bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, std::string previousVersionNumber)

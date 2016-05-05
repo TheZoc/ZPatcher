@@ -37,7 +37,7 @@ namespace ZPatcher
 	/**
 	 * Print the progress bar used when comparing directories
 	 */
-	void PrintFileCompareProgressBar(float Percentage);
+	void PrintCreatePatchProgressBar(const float& Percentage, const size_t& leftAmount, const size_t& rightAmount);
 
 	/**
 	 * Creates the patch file with all the changes listed in patchFileList.

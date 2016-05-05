@@ -50,7 +50,7 @@ SRes ZPatcher::OnProgress(void *p, UInt64 inSize, UInt64 outSize)
 {
 	ICompressProgressPlus* progress = reinterpret_cast<ICompressProgressPlus*>(p);
 
-	PrintProgressBar((int)(((float)inSize / (float)progress->TotalSize)*100.0f), outSize);
+	PrintProgressBar((((float)inSize / (float)progress->TotalSize)*100.0f), outSize);
 
 	return SZ_OK;
 	/* Returns: result. (result != SZ_OK) means break.
@@ -58,8 +58,25 @@ SRes ZPatcher::OnProgress(void *p, UInt64 inSize, UInt64 outSize)
 }
 
 
-void ZPatcher::PrintProgressBar(const int Percentage, UInt64 CurrentFileSize)
+void ZPatcher::PrintProgressBar(const float Percentage, UInt64 CurrentFileSize)
 {
+	const int progressMaxSize = 10;
+
+	int num = fprintf(stdout, " %0.2f %%", Percentage);
+
+	if (num < progressMaxSize)
+		while (num < progressMaxSize)
+		{
+			fprintf(stdout, " ");
+			++num;
+		}
+
+	for (int i = 0; i < progressMaxSize; ++i)
+		fprintf(stdout, "\b");
+
+	fflush(stdout);
+	/*
+
 	int barWidth = 80;
 
 	fprintf(stderr, "\xd[");
@@ -85,7 +102,10 @@ void ZPatcher::PrintProgressBar(const int Percentage, UInt64 CurrentFileSize)
 	{
 		fprintf(stderr, "%llu B   ", CurrentFileSize);
 	}
+	*/
+
 
 	// 	if (Percentage == 100)
 	// 		fprintf(stderr, "\n");
+
 }
