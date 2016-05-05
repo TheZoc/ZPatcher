@@ -15,17 +15,18 @@
 #include "CreatePatch.h"
 #include "FileUtils.h"
 #include "Lzma2Encoder.h"
-
+#include <algorithm>
+#include <assert.h>
 
 ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std::string& newVersion)
 {
 	PatchFileList_t* patchFileList = new PatchFileList_t();
 
 	std::vector<std::string> oldVersionFileList;
-	GetFilesInDirectory(oldVersion, "", oldVersionFileList);
+	GetFilesInDirectory(oldVersionFileList, oldVersion);
 
 	std::vector<std::string> newVersionFileList;
-	GetFilesInDirectory(newVersion, "", newVersionFileList);
+	GetFilesInDirectory(newVersionFileList, newVersion);
 
 	// Sort them now to avoid worries later. (Easier to find added/deleted files)
 	std::sort(oldVersionFileList.begin(), oldVersionFileList.end());

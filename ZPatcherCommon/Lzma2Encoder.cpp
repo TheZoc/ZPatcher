@@ -15,6 +15,7 @@
 #include "Lzma2Encoder.h"
 #include "LzmaInterfaces.h"
 #include "CreatePatch.h"
+#include <assert.h>
 
 CLzma2EncHandle ZPatcher::InitLzma2Encoder()
 {

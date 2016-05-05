@@ -14,13 +14,13 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="ZPatcherCommon">
-      <UniqueIdentifier>{02a2748a-0d32-4e5f-abd6-7e768f6ec7d3}</UniqueIdentifier>
+      <UniqueIdentifier>{dcf8b5e3-8352-46e3-83f4-4354fe22f789}</UniqueIdentifier>
     </Filter>
     <Filter Include="ZPatcherCommon\Header Files">
-      <UniqueIdentifier>{73f69eac-030e-40e5-b4a3-78f0275e0c34}</UniqueIdentifier>
+      <UniqueIdentifier>{996145bc-0e2e-4586-a56d-1dd1d9be6888}</UniqueIdentifier>
     </Filter>
     <Filter Include="ZPatcherCommon\Source Files">
-      <UniqueIdentifier>{83831669-00fd-4f44-b13a-b23e87bb8d0e}</UniqueIdentifier>
+      <UniqueIdentifier>{ac92fb9f-e836-4809-ae37-db4bcf37f815}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

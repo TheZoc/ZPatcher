@@ -47,7 +47,7 @@ int main()
 {
 std::vector<std::string> fileList;
 
-ZPatcher::GetFilesInDirectory(".", "", fileList);
+ZPatcher::GetFilesInDirectory(fileList, ".");
 
 for (std::vector<std::string>::iterator itr = fileList.begin(); itr < fileList.end(); ++itr)
 {

@@ -14,6 +14,7 @@
 #include "Lzma2Dec.h"
 #include "Lzma2Decoder.h"
 #include "LzmaInterfaces.h"
+#include <assert.h>
 
 CLzma2Dec* ZPatcher::InitLzma2Decoder(const Byte &props)
 {

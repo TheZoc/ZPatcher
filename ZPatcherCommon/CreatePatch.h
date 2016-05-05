@@ -13,6 +13,8 @@
 #ifndef _CREATEPATCH_H_
 #define _CREATEPATCH_H_
 
+#include <vector>
+
 namespace ZPatcher
 {
 	class PatchFileList_t
