@@ -17,6 +17,7 @@
 #include "Lzma2Encoder.h"
 #include <algorithm>
 #include <assert.h>
+#include "LogSystem.h"
 
 ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std::string& newVersion)
 {
@@ -35,7 +36,7 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std
 	unsigned int oldFileIndex = 0;
 	unsigned int newFileIndex = 0;
 
-	fprintf(stdout, "Detecting file differences...\n");
+	fprintf(stdout, "Detecting file differences between folders...\n");
 
 	while (oldFileIndex < oldVersionFileList.size() && newFileIndex < newVersionFileList.size())
 	{
@@ -137,12 +138,16 @@ void ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 	{
 		PrintCreatePatchProgressBar(((float)++i / (float)totalFiles) * 100.0f, i, totalFiles);
 
+		Log(LOG, "[del] %s", ritr->c_str());
+
 		WriteFileInfo(patchFile, Patch_File_Delete, ritr->c_str());
 	}
 
 	for (std::vector<std::string>::iterator itr = patchFileList->AddedFileList.begin(); itr < patchFileList->AddedFileList.end(); ++itr)
 	{
 		PrintCreatePatchProgressBar(((float)++i / (float)totalFiles) * 100.0f, i, totalFiles);
+
+		Log(LOG, "[add] %s", itr->c_str());
 
 		size_t fileNameLength = itr->length();
 		if (fileNameLength > 0 && (*itr)[fileNameLength - 1] != '/')
@@ -161,6 +166,8 @@ void ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 	for (std::vector<std::string>::iterator itr = patchFileList->ModifiedFileList.begin(); itr < patchFileList->ModifiedFileList.end(); ++itr)
 	{
 		PrintCreatePatchProgressBar(((float)++i / (float)totalFiles) * 100.0f, i, totalFiles);
+
+		Log(LOG, "[mod] %s", itr->c_str());
 
 		WriteFileInfo(patchFile, Patch_File_AddReplace, itr->c_str());
 		std::string localPath = newVersionPath + "/" + *itr;

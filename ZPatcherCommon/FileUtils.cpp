@@ -221,13 +221,16 @@ void ZPatcher::CreateDirectoryTree(const std::string& directory)
 
 }
 
-bool ZPatcher::BackupFile(const std::string& fileName, const std::string& suffix)
+bool ZPatcher::BackupFile(const std::string& baseDirectory, const std::string& fileName, const std::string& suffix)
 {
 	// Create the backup directory structure
-	std::string backupFileName = "backup" + suffix + "/" + fileName;
-	CreateDirectoryTree(backupFileName);
+	std::string fullFilename = baseDirectory + "/" + fileName;
+	std::string fullBackupFileName = baseDirectory + "/backup-" + suffix + "/" + fileName;
+// 	size_t lastSlash = fullBackupFileName.find_last_of("\\/");
+// 	fullBackupFileName.insert(lastSlash, "/backup-" + suffix);
+	CreateDirectoryTree(fullBackupFileName);
 
-	return CopyOneFile(fileName, backupFileName);
+	return CopyOneFile(fullFilename, fullBackupFileName);
 }
 
 bool ZPatcher::CopyOneFile(const std::string& source, const std::string& target)
@@ -236,7 +239,7 @@ bool ZPatcher::CopyOneFile(const std::string& source, const std::string& target)
 	FILE* targetFile;
 	errno_t err = 0;
 
-	Log(LOG, "Copying file %s to %s", source, target);
+	Log(LOG, "Copying file %s to %s", source.c_str(), target.c_str());
 
 	// Open source and target file
 	err = fopen_s(&sourceFile, source.c_str(), "rb");
@@ -286,7 +289,7 @@ bool ZPatcher::CopyOneFile(const std::string& source, const std::string& target)
 
 bool ZPatcher::RemoveFile(const std::string& fileName)
 {
-	Log(LOG, "Deleting file %s", fileName);
+	Log(LOG, "Deleting file: %s", fileName.c_str());
 
 	_set_errno(0);
 	int result = remove(fileName.c_str());
@@ -298,7 +301,7 @@ bool ZPatcher::RemoveFile(const std::string& fileName)
 		const size_t buffer_size = 1024;
 		char buffer[buffer_size];
 		strerror_s(buffer, buffer_size, result);
-		Log(LOG_FATAL, "Error deleting file:", buffer);
+		Log(LOG_FATAL, "Error deleting file: %s", buffer);
 		return false;
 	}
 
@@ -307,7 +310,7 @@ bool ZPatcher::RemoveFile(const std::string& fileName)
 
 bool ZPatcher::RemoveOneDirectory(const std::string& directory)
 {
-	Log(LOG, "Removing directory %s", directory);
+	Log(LOG, "Removing directory %s", directory.c_str());
 
 	_set_errno(0);
 	int result = _rmdir(directory.c_str());

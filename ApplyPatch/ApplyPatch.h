@@ -26,17 +26,17 @@ namespace ZPatcher
 	/**
 	* Apply the patch file to the target path
 	*/
-	bool ApplyPatchFile(FILE* patchFile, const std::string& targetPath, std::string previousVersionNumber = "");
+	bool ApplyPatchFile(FILE* patchFile, const std::string& targetPath, std::string previousVersionNumber);
 
 	/**
 	* Apply the patch file to the target path, given the patch name
 	*/
-	bool ApplyPatchFile(const std::string& patchFileName, const std::string& targetPath, std::string previousVersionNumber = "");
+	bool ApplyPatchFile(const std::string& patchFileName, const std::string& targetPath, std::string previousVersionNumber);
 
 	/**
 	* Restore the target backup list
 	*/
-	bool RestoreBackup(std::vector<std::string>& backupFileList, std::string previousVersionNumber = "");
+	bool RestoreBackup(std::vector<std::string>& backupFileList, const std::string& baseDirectory, std::string previousVersionNumber);
 
 }
 

@@ -28,11 +28,15 @@ void ZPatcher::InitLogSystem(const std::string& location)
 	std::string logFile = location + "/Logs/ZPatcher-";
 	logFile += BuildHumanTimeStamp();
 	logFile += ".log";
+
+	NormalizeFileName(logFile);
 	CreateDirectoryTree(logFile);
 
 	errno_t err = 0;
 	err = fopen_s(&g_LogSystem, logFile.c_str(), "wb");
 	assert(err == 0);
+
+	Log(LOG, "Initializing log system");
 }
 
 std::string ZPatcher::BuildHumanTimeStamp()
@@ -43,19 +47,26 @@ std::string ZPatcher::BuildHumanTimeStamp()
 	tm timeinfo;
 	localtime_s(&timeinfo, &tt);
 
-	std::string humanTimestamp;
-	humanTimestamp = (timeinfo.tm_year + 1900);
+	std::string humanTimestamp ;
+	
+	char buffer[16];
+	sprintf_s(buffer, 16, "%02d", timeinfo.tm_year + 1900);
+	humanTimestamp += buffer;
 	humanTimestamp += "-";
-	humanTimestamp += (timeinfo.tm_mon + 1);
+	sprintf_s(buffer, 16, "%02d", timeinfo.tm_mon + 1);
+	humanTimestamp += buffer;
 	humanTimestamp += "-";
-	humanTimestamp += (timeinfo.tm_mday);
+	sprintf_s(buffer, 16, "%02d", timeinfo.tm_mday);
+	humanTimestamp += buffer;
 	humanTimestamp += "-";
-	humanTimestamp += (timeinfo.tm_hour);
+	sprintf_s(buffer, 16, "%02d", timeinfo.tm_hour);
+	humanTimestamp += buffer;
 	humanTimestamp += "-";
-	humanTimestamp += (timeinfo.tm_min);
+	sprintf_s(buffer, 16, "%02d", timeinfo.tm_min);
+	humanTimestamp += buffer;
 	humanTimestamp += "-";
-	humanTimestamp += (timeinfo.tm_sec);
-
+	sprintf_s(buffer, 16, "%02d", timeinfo.tm_sec);
+	humanTimestamp += buffer;
 	return humanTimestamp;
 }
 
@@ -88,7 +99,7 @@ void ZPatcher::Log(LogLevel level, const char* format, ...)
 		break;
 	}
 	fprintf_s(g_LogSystem, "> ");
-	fprintf_s(g_LogSystem, format, args);
+	vfprintf_s(g_LogSystem, format, args);
 	fprintf_s(g_LogSystem, "\n");
 }
 

@@ -71,7 +71,7 @@ void ZPatcher::GetFileinfo(FILE* patchFile, std::string& fileName, Byte& operati
 	fread(&fileNameLen, sizeof(unsigned long), 1, patchFile);
 
 	fileName.clear();
-	fileName.resize(fileNameLen + 1, '\0');
+	fileName.resize(fileNameLen, '\0');
 	fread(&fileName[0], sizeof(char), fileNameLen, patchFile);
 }
 

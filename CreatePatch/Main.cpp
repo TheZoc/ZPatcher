@@ -6,6 +6,7 @@
 #include "Lzma2Decoder.h"
 #include "FileUtils.h"
 #include "CreatePatch.h"
+#include "LogSystem.h"
 
 int main(int argc, char* argv[])
 {
@@ -16,6 +17,8 @@ int main(int argc, char* argv[])
 		fprintf(stderr, "CreatePatch.exe <old version directory> <new version directory> <output patch file>\n");
 		exit(EXIT_SUCCESS);
 	}
+
+	InitLogSystem(".");
 
 	// Store our targets
 	std::string oldDirectory = argv[1];
@@ -30,6 +33,8 @@ int main(int argc, char* argv[])
 	PatchFileList_t* patchFileList = GetDifferences(oldDirectory, newDirectory);
 
 	CreatePatchFile(outputFilename, newDirectory, patchFileList);
+
+	DestroyLogSystem();
 
 	system("pause");
 

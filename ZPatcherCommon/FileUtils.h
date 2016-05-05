@@ -38,7 +38,7 @@ namespace ZPatcher
 	void CreateDirectoryTree(const std::string& directory);
 
 	// Backup the supplied file to BackupSuffix folder
-	bool BackupFile(const std::string& fileName, const std::string& suffix);
+	bool BackupFile(const std::string& baseDirectory, const std::string& fileName, const std::string& suffix);
 
 	// Copy one file from source to target. Directory structure must already exist.
 	bool CopyOneFile(const std::string& source, const std::string& target);
