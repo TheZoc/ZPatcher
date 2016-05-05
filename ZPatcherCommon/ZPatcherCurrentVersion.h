@@ -20,10 +20,11 @@ namespace ZPatcher
 
 	enum PatchOperation
 	{
-		Patch_File_Delete = 1,			// Delete an existing file (Removed on the new version)
-		Patch_File_AddReplace = 2,		// Add or Replace a file with the one contained in the patch (File Added or Replaced in the new version)
-		Patch_Dir_Add = 3,				// Add a Directory that is new in the new version
-		Patch_MAX = Patch_Dir_Add,
+		Patch_File_Delete		= 1,	// Delete an existing file (Removed on the new version)
+		Patch_File_Add			= 2,	// Add a file contained in the patch
+		Patch_File_Replace		= 3,	// Replace a file with the one contained in the patch
+		Patch_Dir_Add			= 4,	// Add a Directory that is new in the new version
+		Patch_MAX				= Patch_Dir_Add,
 	};
 }
 

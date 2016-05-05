@@ -36,7 +36,7 @@ namespace ZPatcher
 	/**
 	* Restore the target backup list
 	*/
-	bool RestoreBackup(std::vector<std::string>& backupFileList, const std::string& baseDirectory, std::string previousVersionNumber);
+	bool RestoreBackup(std::vector<std::string>& backupFileList, std::vector<std::string>& addedFileList, const std::string& baseDirectory, std::string previousVersionNumber);
 
 }
 

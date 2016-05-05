@@ -26,8 +26,6 @@ CLzma2Dec* ZPatcher::InitLzma2Decoder(const Byte &props)
 	SRes res = Lzma2Dec_Allocate(dec, props, &LzmaSzAlloc);
 	assert(res == SZ_OK);
 
-	Lzma2Dec_Init(dec);
-
 	return dec;
 }
 
@@ -67,12 +65,18 @@ void ZPatcher::GetFileinfo(FILE* patchFile, std::string& fileName, Byte& operati
 {
 	fread(&operation, sizeof(Byte), 1, patchFile);
 
+	long long int currentPos1 = _ftelli64(patchFile);
+
 	unsigned long fileNameLen;
 	fread(&fileNameLen, sizeof(unsigned long), 1, patchFile);
+
+	long long int currentPos2 = _ftelli64(patchFile);
 
 	fileName.clear();
 	fileName.resize(fileNameLen, '\0');
 	fread(&fileName[0], sizeof(char), fileNameLen, patchFile);
+
+	long long int currentPos3 = _ftelli64(patchFile);
 }
 
 bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, FILE* destFile)
@@ -87,7 +91,8 @@ bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, FILE* destFi
 	SizeT destLen = buffer_size;
 	__int64 sourceFilePos = _ftelli64(sourceFile);
 
-	int loop = 0;
+	// We must reinitialize every time we want a decode a new file.
+	Lzma2Dec_Init(decoder);
 
 	while (true)
 	{
@@ -98,12 +103,12 @@ bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, FILE* destFi
 
 		fwrite(destBuffer, 1, destLen, destFile);
 
-		if (res == SZ_OK && status == LZMA_STATUS_FINISHED_WITH_MARK)
-			break;
-
 		sourceFilePos += sourceLen;
 		res = _fseeki64(sourceFile, sourceFilePos, SEEK_SET);
 		assert(res == 0);
+
+		if (res == SZ_OK && status == LZMA_STATUS_FINISHED_WITH_MARK)
+			break;
 	}
 
 	return true;
@@ -114,6 +119,7 @@ bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, const std::s
 	FILE* destFile;
 	errno_t err = 0;
 
+	_set_errno(0);
 	err = fopen_s(&destFile, destFileName.c_str(), "wb");
 	if (err != 0)
 	{
@@ -124,8 +130,11 @@ bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, const std::s
 		return false;
 	}
 
+	Log(LOG, "Writing File: %s", destFileName.c_str());
+
 	bool success = FileDecompress(decoder, sourceFile, destFile);
-	fclose(sourceFile);
+
+	fclose(destFile);
 
 	return success;
 }

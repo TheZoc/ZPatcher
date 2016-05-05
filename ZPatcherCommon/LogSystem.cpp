@@ -101,6 +101,7 @@ void ZPatcher::Log(LogLevel level, const char* format, ...)
 	fprintf_s(g_LogSystem, "> ");
 	vfprintf_s(g_LogSystem, format, args);
 	fprintf_s(g_LogSystem, "\n");
+	fflush(g_LogSystem);
 }
 
 void ZPatcher::DestroyLogSystem()

@@ -152,7 +152,7 @@ void ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 		size_t fileNameLength = itr->length();
 		if (fileNameLength > 0 && (*itr)[fileNameLength - 1] != '/')
 		{
-			WriteFileInfo(patchFile, Patch_File_AddReplace, itr->c_str());
+			WriteFileInfo(patchFile, Patch_File_Add, itr->c_str());
 			std::string localPath = newVersionPath + "/" + *itr;
 			WriteCompressedFile(hLzma2Enc, localPath, patchFile);
 		}
@@ -169,7 +169,7 @@ void ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 
 		Log(LOG, "[mod] %s", itr->c_str());
 
-		WriteFileInfo(patchFile, Patch_File_AddReplace, itr->c_str());
+		WriteFileInfo(patchFile, Patch_File_Replace, itr->c_str());
 		std::string localPath = newVersionPath + "/" + *itr;
 		WriteCompressedFile(hLzma2Enc, localPath, patchFile);
 	}
