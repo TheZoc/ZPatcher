@@ -14,13 +14,13 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="ZPatcherCommon">
-      <UniqueIdentifier>{dcf8b5e3-8352-46e3-83f4-4354fe22f789}</UniqueIdentifier>
+      <UniqueIdentifier>{d0872a66-0805-49c5-96be-9911cf134b03}</UniqueIdentifier>
     </Filter>
     <Filter Include="ZPatcherCommon\Header Files">
-      <UniqueIdentifier>{996145bc-0e2e-4586-a56d-1dd1d9be6888}</UniqueIdentifier>
+      <UniqueIdentifier>{84f8c3fd-dfca-4019-96b3-b25c2ce8b380}</UniqueIdentifier>
     </Filter>
     <Filter Include="ZPatcherCommon\Source Files">
-      <UniqueIdentifier>{ac92fb9f-e836-4809-ae37-db4bcf37f815}</UniqueIdentifier>
+      <UniqueIdentifier>{38ab9adf-a504-46d8-beb0-cc84ce675d7c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,15 +48,18 @@
     <ClInclude Include="..\ZPatcherCommon\ZPatcherCurrentVersion.h">
       <Filter>ZPatcherCommon\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CreatePatch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\ZPatcherCommon\LogSystem.h">
       <Filter>ZPatcherCommon\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplyPatch.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplyPatch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
@@ -73,9 +76,6 @@
     </ClCompile>
     <ClCompile Include="..\ZPatcherCommon\LzmaInterfaces.cpp">
       <Filter>ZPatcherCommon\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CreatePatch.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\ZPatcherCommon\LogSystem.cpp">
       <Filter>ZPatcherCommon\Source Files</Filter>

@@ -37,8 +37,18 @@ namespace ZPatcher
 	// Create the supplied directory tree. It may or may not contain a file at the end - It will create directories up to until the last / found. It will ignore silently if any directory in the tree already exists.
 	void CreateDirectoryTree(const std::string& directory);
 
-	// Backup the supplied filename to BackupSuffix folder
+	// Backup the supplied file to BackupSuffix folder
 	bool BackupFile(const std::string& fileName, const std::string& suffix);
+
+	// Copy one file from source to target. Directory structure must already exist.
+	bool CopyOneFile(const std::string& source, const std::string& target);
+
+	// Delete/Remove the supplied file
+	bool RemoveFile(const std::string& fileName);
+
+	// Delete/Remove the supplied directory. It must be empty.
+	bool RemoveOneDirectory(const std::string& directory);
+
 }
 
 #endif // _FILEUTILS_H_

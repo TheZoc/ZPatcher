@@ -59,7 +59,7 @@ std::string ZPatcher::BuildHumanTimeStamp()
 	return humanTimestamp;
 }
 
-void ZPatcher::Log(const char* format, ...)
+void ZPatcher::Log(LogLevel level, const char* format, ...)
 {
 	if (g_LogSystem == nullptr)
 		return;
@@ -67,7 +67,27 @@ void ZPatcher::Log(const char* format, ...)
 	va_list args;
 	va_start(args, format);
 
-	fprintf_s(g_LogSystem, "%s > ", BuildHumanTimeStamp().c_str());
+	fprintf_s(g_LogSystem, "[%s] ", BuildHumanTimeStamp().c_str());
+
+	switch (level)
+	{
+	case LOG:
+		fprintf_s(g_LogSystem, "[Log] ");
+		break;
+	case LOG_WARNING:
+		fprintf_s(g_LogSystem, "[Warning] ");
+		break;
+	case LOG_ERROR:
+		fprintf_s(g_LogSystem, "[ERROR] ");
+		break;
+	case LOG_FATAL:
+		fprintf_s(g_LogSystem, "[FATAL] ");
+		break;
+	default:
+		fprintf_s(g_LogSystem, "[???] ");
+		break;
+	}
+	fprintf_s(g_LogSystem, "> ");
 	fprintf_s(g_LogSystem, format, args);
 	fprintf_s(g_LogSystem, "\n");
 }

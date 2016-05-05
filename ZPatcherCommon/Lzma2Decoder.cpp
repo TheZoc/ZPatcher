@@ -11,10 +11,12 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include <assert.h>
 #include "Lzma2Dec.h"
 #include "Lzma2Decoder.h"
 #include "LzmaInterfaces.h"
-#include <assert.h>
+#include "LogSystem.h"
+
 
 CLzma2Dec* ZPatcher::InitLzma2Decoder(const Byte &props)
 {
@@ -29,7 +31,7 @@ CLzma2Dec* ZPatcher::InitLzma2Decoder(const Byte &props)
 	return dec;
 }
 
-void ZPatcher::FreeLzma2Decoder(CLzma2Dec* decoder)
+void ZPatcher::DestroyLzma2Decoder(CLzma2Dec* decoder)
 {
 	Lzma2Dec_Free(decoder, &LzmaSzAlloc);
 }
@@ -73,7 +75,7 @@ void ZPatcher::GetFileinfo(FILE* patchFile, std::string& fileName, Byte& operati
 	fread(&fileName[0], sizeof(char), fileNameLen, patchFile);
 }
 
-void ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* source, FILE* dest)
+bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, FILE* destFile)
 {
 	ELzmaStatus status;
 
@@ -83,24 +85,47 @@ void ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* source, FILE* dest)
 	Byte destBuffer[buffer_size];
 	SizeT sourceLen = 0;
 	SizeT destLen = buffer_size;
-	__int64 sourceFilePos = _ftelli64(source);
+	__int64 sourceFilePos = _ftelli64(sourceFile);
 
 	int loop = 0;
 
 	while (true)
 	{
-		sourceLen = fread(sourceBuffer, 1, buffer_size, source);
+		sourceLen = fread(sourceBuffer, 1, buffer_size, sourceFile);
 
 		SRes res = Lzma2Dec_DecodeToBuf(decoder, destBuffer, &destLen, sourceBuffer, &sourceLen, LZMA_FINISH_ANY, &status);
 		assert(res == SZ_OK);
 
-		fwrite(destBuffer, 1, destLen, dest);
+		fwrite(destBuffer, 1, destLen, destFile);
 
 		if (res == SZ_OK && status == LZMA_STATUS_FINISHED_WITH_MARK)
 			break;
 
 		sourceFilePos += sourceLen;
-		res = _fseeki64(source, sourceFilePos, SEEK_SET);
+		res = _fseeki64(sourceFile, sourceFilePos, SEEK_SET);
 		assert(res == 0);
 	}
+
+	return true;
+}
+
+bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, const std::string& destFileName)
+{
+	FILE* destFile;
+	errno_t err = 0;
+
+	err = fopen_s(&destFile, destFileName.c_str(), "wb");
+	if (err != 0)
+	{
+		const size_t buffer_size = 1024;
+		char buffer[buffer_size];
+		strerror_s(buffer, buffer_size, err);
+		Log(LOG_FATAL, "Error opening file \"%s\" to write updated data: %s", destFileName.c_str(), buffer);
+		return false;
+	}
+
+	bool success = FileDecompress(decoder, sourceFile, destFile);
+	fclose(sourceFile);
+
+	return success;
 }

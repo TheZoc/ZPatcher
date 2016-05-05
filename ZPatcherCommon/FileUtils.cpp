@@ -11,8 +11,9 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include "FileUtils.h"
 #include <assert.h>
+#include "FileUtils.h"
+#include "LogSystem.h"
 
 #ifdef _WIN32
 	#include "dirent.h"
@@ -226,44 +227,101 @@ bool ZPatcher::BackupFile(const std::string& fileName, const std::string& suffix
 	std::string backupFileName = "backup" + suffix + "/" + fileName;
 	CreateDirectoryTree(backupFileName);
 
-	// Copy the file
-	FILE* originalFile;
-	FILE* backupFile;
+	return CopyOneFile(fileName, backupFileName);
+}
+
+bool ZPatcher::CopyOneFile(const std::string& source, const std::string& target)
+{
+	FILE* sourceFile;
+	FILE* targetFile;
 	errno_t err = 0;
 
-	err = fopen_s(&originalFile, fileName.c_str(), "rb");
-	assert(err == 0);
+	Log(LOG, "Copying file %s to %s", source, target);
+
+	// Open source and target file
+	err = fopen_s(&sourceFile, source.c_str(), "rb");
 	if (err != 0)
 	{
+		const size_t buffer_size = 1024;
+		char buffer[buffer_size];
+		strerror_s(buffer, buffer_size, err);
+		Log(LOG_FATAL, "Error opening file \"%s\" to read for copy: %s", source.c_str(), buffer);
 		return false;
 	}
 
-	err = fopen_s(&backupFile, backupFileName.c_str(), "wb");
-	assert(err == 0);
+	err = fopen_s(&targetFile, target.c_str(), "wb");
 	if (err != 0)
 	{
-		fclose(originalFile);
+		const size_t buffer_size = 1024;
+		char buffer[buffer_size];
+		strerror_s(buffer, buffer_size, err);
+		Log(LOG_FATAL, "Error opening file \"%s\" to write for copy: %s", target.c_str(), buffer);
+		fclose(sourceFile);
 		return false;
 	}
 
+	// Do the actual copy
 	const unsigned long long buffer_size = 1 << 16;
 	unsigned char readBuffer[buffer_size];
 	size_t bytesRead;
 
-	while (0 < (bytesRead = fread(readBuffer, 1, buffer_size, originalFile)))
+	while (0 < (bytesRead = fread(readBuffer, 1, buffer_size, sourceFile)))
 	{
-		size_t bytesWritten = fwrite(readBuffer, 1, bytesRead, backupFile);
+		size_t bytesWritten = fwrite(readBuffer, 1, bytesRead, targetFile);
 
 		if (bytesWritten != bytesRead)
 		{
-			fclose(originalFile);
-			fclose(backupFile);
+			fclose(sourceFile);
+			fclose(targetFile);
 			return false;
 		}
 	}
 
-	fclose(originalFile);
-	fclose(backupFile);
+	// Close the files
+	fclose(sourceFile);
+	fclose(targetFile);
+
+	return true;
+}
+
+bool ZPatcher::RemoveFile(const std::string& fileName)
+{
+	Log(LOG, "Deleting file %s", fileName);
+
+	_set_errno(0);
+	int result = remove(fileName.c_str());
+
+	if (result != 0)
+	{
+		_get_errno(&result);
+
+		const size_t buffer_size = 1024;
+		char buffer[buffer_size];
+		strerror_s(buffer, buffer_size, result);
+		Log(LOG_FATAL, "Error deleting file:", buffer);
+		return false;
+	}
+
+	return true;
+}
+
+bool ZPatcher::RemoveOneDirectory(const std::string& directory)
+{
+	Log(LOG, "Removing directory %s", directory);
+
+	_set_errno(0);
+	int result = _rmdir(directory.c_str());
+
+	if (result != 0)
+	{
+		_get_errno(&result);
+
+		const size_t buffer_size = 1024;
+		char buffer[buffer_size];
+		strerror_s(buffer, buffer_size, result);
+		Log(LOG_FATAL, "Error removing directory:", buffer);
+		return false;
+	}
 
 	return true;
 }

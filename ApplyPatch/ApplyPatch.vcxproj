@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7B2587E3-02F9-4777-B70E-9016BEB741C2}</ProjectGuid>
+    <ProjectGuid>{9DD0592D-6DDC-4434-AF28-3A65E61FC97A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>CreatePatch</RootNamespace>
+    <RootNamespace>ApplyPatch</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -169,7 +169,7 @@
     <ClInclude Include="..\ZPatcherCommon\Lzma2Encoder.h" />
     <ClInclude Include="..\ZPatcherCommon\LzmaInterfaces.h" />
     <ClInclude Include="..\ZPatcherCommon\ZPatcherCurrentVersion.h" />
-    <ClInclude Include="CreatePatch.h" />
+    <ClInclude Include="ApplyPatch.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -179,7 +179,7 @@
     <ClCompile Include="..\ZPatcherCommon\Lzma2Decoder.cpp" />
     <ClCompile Include="..\ZPatcherCommon\Lzma2Encoder.cpp" />
     <ClCompile Include="..\ZPatcherCommon\LzmaInterfaces.cpp" />
-    <ClCompile Include="CreatePatch.cpp" />
+    <ClCompile Include="ApplyPatch.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

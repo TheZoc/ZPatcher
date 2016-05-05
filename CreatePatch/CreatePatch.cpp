@@ -127,10 +127,10 @@ void ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 	Byte props = Lzma2Enc_WriteProperties(hLzma2Enc);
 	WritePatchFileHeader(patchFile, props);
 
-	// Process the file list. We start with the removed files - Why not? :)
-	for (std::vector<std::string>::iterator itr = patchFileList->RemovedFileList.begin(); itr < patchFileList->RemovedFileList.end(); ++itr)
+	// Process the removed file list in reverse order - Directories should be the last thing being deleted.
+	for (std::vector<std::string>::reverse_iterator ritr = patchFileList->RemovedFileList.rbegin(); ritr != patchFileList->RemovedFileList.rend(); ++ritr)
 	{
-		WriteFileInfo(patchFile, Patch_File_Delete, itr->c_str());
+		WriteFileInfo(patchFile, Patch_File_Delete, ritr->c_str());
 	}
 
 	for (std::vector<std::string>::iterator itr = patchFileList->AddedFileList.begin(); itr < patchFileList->AddedFileList.end(); ++itr)

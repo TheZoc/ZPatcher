@@ -12,6 +12,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CreatePatch", "CreatePatch\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{0B1FB26F-3CC9-4639-9208-F8C28D158F04}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ApplyPatch", "ApplyPatch\ApplyPatch.vcxproj", "{9DD0592D-6DDC-4434-AF28-3A65E61FC97A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C72F7F04-8109-485F-88D4-CB5653CB7DDD} = {C72F7F04-8109-485F-88D4-CB5653CB7DDD}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -36,6 +41,14 @@ Global
 		{7B2587E3-02F9-4777-B70E-9016BEB741C2}.Release|x64.Build.0 = Release|x64
 		{7B2587E3-02F9-4777-B70E-9016BEB741C2}.Release|x86.ActiveCfg = Release|Win32
 		{7B2587E3-02F9-4777-B70E-9016BEB741C2}.Release|x86.Build.0 = Release|Win32
+		{9DD0592D-6DDC-4434-AF28-3A65E61FC97A}.Debug|x64.ActiveCfg = Debug|x64
+		{9DD0592D-6DDC-4434-AF28-3A65E61FC97A}.Debug|x64.Build.0 = Debug|x64
+		{9DD0592D-6DDC-4434-AF28-3A65E61FC97A}.Debug|x86.ActiveCfg = Debug|Win32
+		{9DD0592D-6DDC-4434-AF28-3A65E61FC97A}.Debug|x86.Build.0 = Debug|Win32
+		{9DD0592D-6DDC-4434-AF28-3A65E61FC97A}.Release|x64.ActiveCfg = Release|x64
+		{9DD0592D-6DDC-4434-AF28-3A65E61FC97A}.Release|x64.Build.0 = Release|x64
+		{9DD0592D-6DDC-4434-AF28-3A65E61FC97A}.Release|x86.ActiveCfg = Release|Win32
+		{9DD0592D-6DDC-4434-AF28-3A65E61FC97A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
