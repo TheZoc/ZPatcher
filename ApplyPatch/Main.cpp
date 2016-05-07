@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 	std::string patchFileName = argv[1];
 	std::string targetDirectory = argv[2];
 
-	InitLogSystem(targetDirectory);
+	InitLogSystem("./");
 	Log(LOG, "Patch file: %s", patchFileName.c_str());
 	Log(LOG, "Directory to be upgraded: %s", targetDirectory.c_str());
 

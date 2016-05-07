@@ -6,7 +6,9 @@ It uses LZMA2 Compression, provided via [LZMA SDK 15.14][1].
 
 It also uses a [Dirent interface for Windows][2].
 
-## CreatePatch
+## Applications
+
+### CreatePatch
 
 Usage:
 ```CreatePatch.exe <old version directory> <new version directory> <output patch file>```
@@ -14,7 +16,7 @@ Usage:
 This utility compare two folders, find the differences between them and creates a "zpatch" file with this information.
 Currently, it doesn't store any hash of the files changed nor deltas.
 
-## ApplyPatch
+### ApplyPatch
 
 Usage:
 ```ApplyPatch.exe <Patch file> <Directory to be patched>```
@@ -27,6 +29,10 @@ If the patch applying process fails, it reverts all the changes processed until 
 
 Currently, there is no hash check of the files being updated.
 
+## Logging
+
+There is a very simple (and extremely verbose, for now), log system in the patcher.
+It will create a Logs/ folder on it's base directory and output all the operations (including failures) to it.
 
 ## Final Considerations
 

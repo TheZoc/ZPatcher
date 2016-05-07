@@ -208,6 +208,8 @@ void ZPatcher::CreateDirectoryTree(const std::string& directory)
 
 	const char* slash = strpbrk(directory.c_str(), "\\/");
 
+	Log(LOG, "Creating directory tree: %s", slash);
+
 	while (slash != NULL)
 	{
 
@@ -228,8 +230,10 @@ bool ZPatcher::BackupFile(const std::string& baseDirectory, const std::string& f
 	std::string fullBackupFileName = baseDirectory + "/backup-" + suffix + "/" + fileName;
 // 	size_t lastSlash = fullBackupFileName.find_last_of("\\/");
 // 	fullBackupFileName.insert(lastSlash, "/backup-" + suffix);
-	CreateDirectoryTree(fullBackupFileName);
 
+	Log(LOG, "Backing up file %s to %s (There should be a Create Directory Tree, Copy and Delete below)", fullFilename.c_str(), fullBackupFileName.c_str());
+
+	CreateDirectoryTree(fullBackupFileName);
 	return CopyOneFile(fullFilename, fullBackupFileName);
 }
 
@@ -322,7 +326,7 @@ bool ZPatcher::RemoveOneDirectory(const std::string& directory)
 		const size_t buffer_size = 1024;
 		char buffer[buffer_size];
 		strerror_s(buffer, buffer_size, result);
-		Log(LOG_FATAL, "Error removing directory:", buffer);
+		Log(LOG_FATAL, "Error removing directory: %s", result, buffer);
 		return false;
 	}
 

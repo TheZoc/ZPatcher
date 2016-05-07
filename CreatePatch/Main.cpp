@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 		exit(EXIT_SUCCESS);
 	}
 
-	InitLogSystem(".");
+	InitLogSystem("./");
 
 	// Store our targets
 	std::string oldDirectory = argv[1];

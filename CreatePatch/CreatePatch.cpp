@@ -174,6 +174,9 @@ void ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 		WriteCompressedFile(hLzma2Enc, localPath, patchFile);
 	}
 
+	PrintCreatePatchProgressBar(((float)++i / (float)totalFiles) * 100.0f, i, totalFiles);
+	fprintf(stdout, "\n");
+
 	DestroyLzma2EncHandle(hLzma2Enc);
 }
 

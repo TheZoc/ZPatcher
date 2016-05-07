@@ -82,7 +82,7 @@ bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, st
 			// Check if we are dealing with a directory
 			if (outputFile.length() > 0 && outputFile.back() == '/')
 			{
-				success = success && RemoveOneDirectory(normalizedTargetPath + "/" + outputFile);
+				success = success && RemoveOneDirectory(normalizedTargetPath + outputFile);
 			}
 			else
 			{
@@ -90,7 +90,7 @@ bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, st
 				if (!success)
 					break;
 				backupFileList.push_back(outputFile);
-				success = success && RemoveFile(normalizedTargetPath + "/" + outputFile);
+				success = success && RemoveFile(normalizedTargetPath + outputFile);
 			}
 			break;
 		case Patch_File_Replace:
@@ -98,17 +98,17 @@ bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, st
 			if (!success)
 				break;
 			backupFileList.push_back(outputFile);
-			success = success && RemoveFile(normalizedTargetPath + "/" + outputFile);
-			success = success && FileDecompress(decoder, patchFile, normalizedTargetPath + "/" + outputFile);
+			success = success && RemoveFile(normalizedTargetPath + outputFile);
+			success = success && FileDecompress(decoder, patchFile, normalizedTargetPath + outputFile);
 			break;
 		case Patch_File_Add:
-			CreateDirectoryTree(normalizedTargetPath + "/" + outputFile);
-			success = success && FileDecompress(decoder, patchFile, normalizedTargetPath + "/" + outputFile);
+			CreateDirectoryTree(normalizedTargetPath + outputFile);
+			success = success && FileDecompress(decoder, patchFile, normalizedTargetPath + outputFile);
 			if (success)
 				addedFileList.push_back(outputFile);
 			break;
 		case Patch_Dir_Add:
-			CreateDirectoryTree(outputFile);
+			CreateDirectoryTree(normalizedTargetPath + outputFile);
 			break;
 		default:
 			Log(LOG_FATAL, "Undefined operation (%d) requested for file %s", static_cast<int>(operation), outputFile.c_str());
