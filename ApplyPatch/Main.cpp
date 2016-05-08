@@ -10,9 +10,12 @@ int main(int argc, char* argv[])
 {
 	using namespace ZPatcher;
 
+	fprintf(stderr, "\nApplyPatch : ZPatcher [%d] v1.0 beta : %s\n", _INTEGRAL_MAX_BITS, __DATE__);
+	fprintf(stderr, "Copyright (c) 2016 Felipe \"Zoc\" Silveira : http://www.github.com/TheZoc/ZPatcher\n\n");
+
 	if (argc < 3)
 	{
-		fprintf(stderr, "ApplyPatch.exe <Patch file> <Directory to be patched>\n");
+		fprintf(stderr, "Usage: ApplyPatch.exe <Patch file> <Directory to be patched>\n");
 		exit(EXIT_SUCCESS);
 	}
 
@@ -28,7 +31,7 @@ int main(int argc, char* argv[])
 
 	DestroyLogSystem();
 
-	system("pause");
+//	system("pause");
 
 	if (success)
 		exit(EXIT_SUCCESS);

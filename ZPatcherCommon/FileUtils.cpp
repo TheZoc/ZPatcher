@@ -78,7 +78,7 @@ bool ZPatcher::GetFilesInDirectory(std::vector<std::string>& fileList, const std
 	return true;
 }
 
-bool ZPatcher::AreFilesIdentical(FILE* file1, FILE* file2)
+bool ZPatcher::AreFilesIdentical(FILE* file1, FILE* file2, bool &result)
 {
 	// Compare their size, first
 	_fseeki64(file1, 0, SEEK_END);
@@ -90,7 +90,10 @@ bool ZPatcher::AreFilesIdentical(FILE* file1, FILE* file2)
 	rewind(file2);
 
 	if (file1size != file2size)
-		return false;
+	{
+		result = false;
+		return true;
+	}
 
 	// If their size are equal, compare them byte by byte
 	bool identical = true;
@@ -107,32 +110,52 @@ bool ZPatcher::AreFilesIdentical(FILE* file1, FILE* file2)
 		assert(file1Len == file2Len);
 
 		if (memcmp(file1Buffer, file2Buffer, file1Len) != 0)
-			return false;
+		{
+			result = false;
+			return true;
+		}
 
 		file1size -= file1Len;
 	}
 
+	result = true;
 	return true;
 }
 
-bool ZPatcher::AreFilesIdentical(const std::string& file1, const std::string& file2)
+bool ZPatcher::AreFilesIdentical(const std::string& file1, const std::string& file2, bool &result)
 {
 	errno_t err;
 	FILE* f1;
 	FILE* f2;
 
 	err = fopen_s(&f1, file1.c_str(), "rb");
-	assert(err == 0);
+	if (err != 0)
+	{
+		const size_t buffer_size = 1024;
+		char buffer[buffer_size];
+		strerror_s(buffer, buffer_size, err);
+		Log(LOG_FATAL, "Error opening file \"%s\" to reading for data comparison: %s", file1.c_str(), buffer);
+		result = false;
+		return false;
+	}
 
 	err = fopen_s(&f2, file2.c_str(), "rb");
-	assert(err == 0);
+	if (err != 0)
+	{
+		const size_t buffer_size = 1024;
+		char buffer[buffer_size];
+		strerror_s(buffer, buffer_size, err);
+		Log(LOG_FATAL, "Error opening file \"%s\" to reading for data comparison: %s", file2.c_str(), buffer);
+		result = false;
+		return false;
+	}
 
-	bool result = AreFilesIdentical(f1, f2);
+	bool success = AreFilesIdentical(f1, f2, result);
 
 	fclose(f1);
 	fclose(f2);
 
-	return result;
+	return success;
 }
 
 void ZPatcher::NormalizeFileName(std::string& fileName)

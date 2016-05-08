@@ -53,7 +53,13 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std
 			if (fileNameLength > 0 && oldFileName[fileNameLength - 1] != '/')
 			{
 				// Check if the files have the same contents
-				if (!AreFilesIdentical(oldVersion + "/" + oldFileName, newVersion + "/" + newFileName))
+				bool identical;
+				bool success = AreFilesIdentical(oldVersion + "/" + oldFileName, newVersion + "/" + newFileName, identical);
+
+				assert(success == true); // TODO: Handle this.
+				fprintf(stdout, "\n\nError comparing files! Patch file might be inconsistent! Check the logs for details.\n\n");
+
+				if (success && !identical)
 				{
 					patchFileList->ModifiedFileList.push_back(oldFileName);
 				}
@@ -119,12 +125,14 @@ void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const size_t
 	fflush(stdout);
 }
 
-void ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, PatchFileList_t* patchFileList)
+bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, PatchFileList_t* patchFileList)
 {
 	// Initialize our custom LZMA2 Encoder
 	CLzma2EncHandle hLzma2Enc = InitLzma2Encoder();
 
 	fprintf(stdout, "Writing patch data...\n");
+
+	Log(LOG, "Writing patch data");
 
 	// Write the file header, including our custom LZMA2 props
 	Byte props = Lzma2Enc_WriteProperties(hLzma2Enc);
@@ -177,19 +185,32 @@ void ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 	PrintCreatePatchProgressBar(((float)++i / (float)totalFiles) * 100.0f, i, totalFiles);
 	fprintf(stdout, "\n");
 
+	Log(LOG, "Patch data writing process completed");
+
 	DestroyLzma2EncHandle(hLzma2Enc);
+
+	return true;
 }
 
-void ZPatcher::CreatePatchFile(std::string& patchFileName, std::string& newVersionPath, PatchFileList_t* patchFileList)
+bool ZPatcher::CreatePatchFile(std::string& patchFileName, std::string& newVersionPath, PatchFileList_t* patchFileList)
 {
 	FILE* patchFile;
 	errno_t err = 0;
 
 	err = fopen_s(&patchFile, patchFileName.c_str(), "wb");
-	assert(err == 0);
+	if (err != 0)
+	{
+		const size_t buffer_size = 1024;
+		char buffer[buffer_size];
+		strerror_s(buffer, buffer_size, err);
+		Log(LOG_FATAL, "Error opening file \"%s\" to write patch data: %s", patchFileName.c_str(), buffer);
+		return false;
+	}
 
-	CreatePatchFile(patchFile, newVersionPath, patchFileList);
+	bool result = CreatePatchFile(patchFile, newVersionPath, patchFileList);
 
 	fclose(patchFile);
+
+	return result;
 }
 

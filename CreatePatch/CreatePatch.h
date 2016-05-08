@@ -45,12 +45,12 @@ namespace ZPatcher
 	 * newVersionPath is the directory that contains the updated files
 	 * patchFileList is a PatchFileList_t filled by GetDifferences() with the changes between directories
 	 */
-	void CreatePatchFile(FILE* patchFile, std::string& newVersionPath, PatchFileList_t* patchFileList);
+	bool CreatePatchFile(FILE* patchFile, std::string& newVersionPath, PatchFileList_t* patchFileList);
 
 	/**
 	 * This is a shortcut to CreatePatchFile() that receives the output patch file as a string
 	 */
-	void CreatePatchFile(std::string& patchFileName, std::string& newVersionPath, PatchFileList_t* patchFileList);
+	bool CreatePatchFile(std::string& patchFileName, std::string& newVersionPath, PatchFileList_t* patchFileList);
 }
 
 #endif // _CREATEPATCH_H_

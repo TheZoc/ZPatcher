@@ -12,9 +12,12 @@ int main(int argc, char* argv[])
 {
 	using namespace ZPatcher;
 
+	fprintf(stderr, "\nCreatePatch : ZPatcher [%d] v1.0 beta : %s\n", _INTEGRAL_MAX_BITS, __DATE__);
+	fprintf(stderr, "Copyright (c) 2016 Felipe \"Zoc\" Silveira : http://www.github.com/TheZoc/ZPatcher\n\n");
+
 	if (argc < 4)
 	{
-		fprintf(stderr, "CreatePatch.exe <old version directory> <new version directory> <output patch file>\n");
+		fprintf(stderr, "Usage: CreatePatch.exe <old version directory> <new version directory> <output patch file>\n");
 		exit(EXIT_SUCCESS);
 	}
 
@@ -30,13 +33,17 @@ int main(int argc, char* argv[])
 	NormalizeFileName(newDirectory);
 	NormalizeFileName(outputFilename);
 
+	Log(LOG, "Output patch file: %s", outputFilename);
+	Log(LOG, "Old version directory: %s", oldDirectory);
+	Log(LOG, "New version directory: %s", newDirectory);
+
 	PatchFileList_t* patchFileList = GetDifferences(oldDirectory, newDirectory);
 
 	CreatePatchFile(outputFilename, newDirectory, patchFileList);
 
 	DestroyLogSystem();
 
-	system("pause");
+//	system("pause");
 
 	exit(EXIT_SUCCESS);
 
