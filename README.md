@@ -15,7 +15,7 @@ This project currently uses version [3.1.0][5], but newer versions should work w
 
 For Visual Studio 2015, the files you are looking for are ```wxWidgets-x.y.z-headers.7z``` and either ```wxMSW-x.y.z_vc120_Dev.7z``` or ```wxMSW-x.y.z_vc140_x64_Dev.7z``` where ```x.y.z``` is the version of wxWidgets you are using.
 
-You must extract those files in the ```libs/wxWidgets/``` directory, only having a top level ```include/``` and either ```vc140_x64_dll/``` or ```vc140_dll``` directory.
+You must extract those files in the ```libs/wxWidgets/``` directory, only having a top level ```include/``` and either ```vc140_x64_dll/``` or ```vc140_dll/``` directory.
 
 To illustrate better, for the 64 bits version:
 ```
