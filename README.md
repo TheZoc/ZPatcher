@@ -2,9 +2,29 @@
 
 A suite to Create and Apply patches to application and games.
 
-It uses LZMA2 Compression, provided via [LZMA SDK 15.14][1].
+ZPatcher uses a few external libraries to aid in it's functions:
 
-It also uses a [Dirent interface for Windows][2].
+- [LZMA SDK 15.14][1] provides the LZMA2 compression algorithm.
+- [wxWidgets] is used to provide Graphical User Interface.
+- [Dirent interface for Windows][3] for directory navigation under Windows
+
+## Compiling
+
+To compile you will need to [get wxWidgets here][4]. This project currently uses version [3.1.0][5], but newer versions should work without problems.
+For Visual Studio 2015, the files you are looking for are ```wxWidgets-x.y.z-headers.7z``` and either ```wxMSW-x.y.z_vc120_Dev.7z``` or ```wxMSW-x.y.z_vc140_x64_Dev.7z``` where ```x.y.z``` is the version of wxWidgets you are using.
+You must extract those files in the ```libs/wxWidgets/``` directory, only having a top level ```include/``` and either ```vc140_x64_dll/``` or ```vc140_dll``` directory.
+
+To illustrate better, for the 64 bits version:
+```
++ libs/
+|---+ wxwidgets/
+    |---- include/
+	|---- vc140_x64_dll/
+```
+
+Open ZPatcher solution file and compile it. Make sure Configuration and Platform are correct!
+
+The executables will be in the ```_Output``` directory.
 
 ## Applications
 
@@ -29,7 +49,7 @@ If the patch applying process fails, it reverts all the changes processed until 
 
 Currently, there is no hash check of the files being updated.
 
-## Logging
+## Patch Logging
 
 There is a very simple (and extremely verbose, for now), log system in the patcher.
 It will create a Logs/ folder on it's base directory and output all the operations (including failures) to it.
@@ -45,4 +65,7 @@ I'm not sure how to properly give credit to libraries used in this project.
 If it's done in a wrong way, I'd certainly appreciate some help on how to format and give credit in an appropriate way. :)
 
 [1]: http://www.7-zip.org/sdk.html
-[2]: https://github.com/tronkko/dirent
+[2]: http://www.wxwidgets.org/
+[3]: https://github.com/tronkko/dirent
+[4]: https://github.com/wxWidgets/wxWidgets/releases
+[5]: https://github.com/wxWidgets/wxWidgets/releases/tag/v3.1.0
