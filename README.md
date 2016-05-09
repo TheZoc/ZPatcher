@@ -5,13 +5,16 @@ A suite to Create and Apply patches to application and games.
 ZPatcher uses a few external libraries to aid in it's functions:
 
 - [LZMA SDK 15.14][1] provides the LZMA2 compression algorithm.
-- [wxWidgets] is used to provide Graphical User Interface.
+- [wxWidgets][2] is used to provide Graphical User Interface.
 - [Dirent interface for Windows][3] for directory navigation under Windows
 
 ## Compiling
 
-To compile you will need to [get wxWidgets here][4]. This project currently uses version [3.1.0][5], but newer versions should work without problems.
+To compile you will need to [get wxWidgets here][4].
+This project currently uses version [3.1.0][5], but newer versions should work without problems.
+
 For Visual Studio 2015, the files you are looking for are ```wxWidgets-x.y.z-headers.7z``` and either ```wxMSW-x.y.z_vc120_Dev.7z``` or ```wxMSW-x.y.z_vc140_x64_Dev.7z``` where ```x.y.z``` is the version of wxWidgets you are using.
+
 You must extract those files in the ```libs/wxWidgets/``` directory, only having a top level ```include/``` and either ```vc140_x64_dll/``` or ```vc140_dll``` directory.
 
 To illustrate better, for the 64 bits version:
@@ -24,7 +27,7 @@ To illustrate better, for the 64 bits version:
 
 Open ZPatcher solution file and compile it. Make sure Configuration and Platform are correct!
 
-The executables will be in the ```_Output``` directory.
+The executables will be in the ```_Output/``` directory.
 
 ## Applications
 
