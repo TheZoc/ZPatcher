@@ -125,7 +125,7 @@ void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const size_t
 	fflush(stdout);
 }
 
-bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, PatchFileList_t* patchFileList)
+bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction)
 {
 	// Initialize our custom LZMA2 Encoder
 	CLzma2EncHandle hLzma2Enc = InitLzma2Encoder();
@@ -144,7 +144,9 @@ bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 	// Process the removed file list in reverse order - Directories should be the last thing being deleted.
 	for (std::vector<std::string>::reverse_iterator ritr = patchFileList->RemovedFileList.rbegin(); ritr != patchFileList->RemovedFileList.rend(); ++ritr)
 	{
-		PrintCreatePatchProgressBar(((float)++i / (float)totalFiles) * 100.0f, i, totalFiles);
+		// Update our progress bar
+		float progress = ((float)++i / (float)totalFiles) * 100.0f;
+		progressFunction(progress, i, totalFiles);
 
 		Log(LOG, "[del] %s", ritr->c_str());
 
@@ -153,7 +155,9 @@ bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 
 	for (std::vector<std::string>::iterator itr = patchFileList->AddedFileList.begin(); itr < patchFileList->AddedFileList.end(); ++itr)
 	{
-		PrintCreatePatchProgressBar(((float)++i / (float)totalFiles) * 100.0f, i, totalFiles);
+		// Update our progress bar
+		float progress = ((float)++i / (float)totalFiles) * 100.0f;
+		progressFunction(progress, i, totalFiles);
 
 		Log(LOG, "[add] %s", itr->c_str());
 
@@ -173,7 +177,9 @@ bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 	// Right now, we replace both the modified files and the added files
 	for (std::vector<std::string>::iterator itr = patchFileList->ModifiedFileList.begin(); itr < patchFileList->ModifiedFileList.end(); ++itr)
 	{
-		PrintCreatePatchProgressBar(((float)++i / (float)totalFiles) * 100.0f, i, totalFiles);
+		// Update our progress bar
+		float progress = ((float)++i / (float)totalFiles) * 100.0f;
+		progressFunction(progress, i, totalFiles);
 
 		Log(LOG, "[mod] %s", itr->c_str());
 
@@ -182,8 +188,15 @@ bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 		WriteCompressedFile(hLzma2Enc, localPath, patchFile);
 	}
 
-	PrintCreatePatchProgressBar(((float)++i / (float)totalFiles) * 100.0f, i, totalFiles);
-	fprintf(stdout, "\n");
+	// Update our progress bar
+	float progress = ((float)++i / (float)totalFiles) * 100.0f;
+	progressFunction(progress, i, totalFiles);
+
+	// Hacky hack if we are using our own provided function ;)
+	if (progressFunction == &PrintCreatePatchProgressBar)
+	{
+		fprintf(stdout, "\n");
+	}
 
 	Log(LOG, "Patch data writing process completed");
 
@@ -192,7 +205,7 @@ bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 	return true;
 }
 
-bool ZPatcher::CreatePatchFile(std::string& patchFileName, std::string& newVersionPath, PatchFileList_t* patchFileList)
+bool ZPatcher::CreatePatchFile(std::string& patchFileName, std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction)
 {
 	FILE* patchFile;
 	errno_t err = 0;
@@ -207,7 +220,7 @@ bool ZPatcher::CreatePatchFile(std::string& patchFileName, std::string& newVersi
 		return false;
 	}
 
-	bool result = CreatePatchFile(patchFile, newVersionPath, patchFileList);
+	bool result = CreatePatchFile(patchFile, newVersionPath, patchFileList, progressFunction);
 
 	fclose(patchFile);
 

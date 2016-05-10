@@ -158,6 +158,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ApplyPatch.h" />
+    <ClInclude Include="CreatePatch.h" />
     <ClInclude Include="dirent.h" />
     <ClInclude Include="FileUtils.h" />
     <ClInclude Include="LogSystem.h" />
@@ -169,6 +171,8 @@
     <ClInclude Include="ZPatcherCurrentVersion.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ApplyPatch.cpp" />
+    <ClCompile Include="CreatePatch.cpp" />
     <ClCompile Include="FileUtils.cpp" />
     <ClCompile Include="LogSystem.cpp" />
     <ClCompile Include="Lzma2Decoder.cpp" />
