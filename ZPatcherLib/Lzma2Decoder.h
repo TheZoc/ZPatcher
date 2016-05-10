@@ -16,6 +16,8 @@
 
 #include "ZPatcherCurrentVersion.h"
 #include "Lzma2Dec.h"
+#include <stdio.h>
+#include <string>
 
 namespace ZPatcher
 {

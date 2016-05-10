@@ -71,23 +71,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)\_Output\$(ProjectName)\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\_Intermediate\$(ProjectName)\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)\_Intermediate\$(PlatformTarget)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)\_Output\$(ProjectName)\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\_Intermediate\$(ProjectName)\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)\_Intermediate\$(PlatformTarget)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)\_Output\$(ProjectName)\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\_Intermediate\$(ProjectName)\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)\_Intermediate\$(PlatformTarget)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)\_Output\$(ProjectName)\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\_Intermediate\$(ProjectName)\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)\_Intermediate\$(PlatformTarget)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -96,13 +96,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\libs\LzmaLib\Source;../ZPatcherCommon;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\_Output\LzmaLib\$(PlatformTarget)\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LzmaLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\LzmaLib\;$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\ZPatcherLib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -112,13 +112,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\libs\LzmaLib\Source;../ZPatcherCommon;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\_Output\LzmaLib\$(PlatformTarget)\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LzmaLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\LzmaLib\;$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\ZPatcherLib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -130,15 +130,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\libs\LzmaLib\Source;../ZPatcherCommon;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\_Output\LzmaLib\$(PlatformTarget)\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LzmaLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\LzmaLib\;$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\ZPatcherLib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -150,35 +150,23 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\libs\LzmaLib\Source;../ZPatcherCommon;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\_Output\LzmaLib\$(PlatformTarget)\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LzmaLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\LzmaLib\;$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\ZPatcherLib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\ZPatcherCommon\dirent.h" />
-    <ClInclude Include="..\ZPatcherCommon\FileUtils.h" />
-    <ClInclude Include="..\ZPatcherCommon\LogSystem.h" />
-    <ClInclude Include="..\ZPatcherCommon\Lzma2Decoder.h" />
-    <ClInclude Include="..\ZPatcherCommon\Lzma2Encoder.h" />
-    <ClInclude Include="..\ZPatcherCommon\LzmaInterfaces.h" />
-    <ClInclude Include="..\ZPatcherCommon\ZPatcherCurrentVersion.h" />
     <ClInclude Include="CreatePatch.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\ZPatcherCommon\FileUtils.cpp" />
-    <ClCompile Include="..\ZPatcherCommon\LogSystem.cpp" />
-    <ClCompile Include="..\ZPatcherCommon\Lzma2Decoder.cpp" />
-    <ClCompile Include="..\ZPatcherCommon\Lzma2Encoder.cpp" />
-    <ClCompile Include="..\ZPatcherCommon\LzmaInterfaces.cpp" />
     <ClCompile Include="CreatePatch.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="stdafx.cpp">

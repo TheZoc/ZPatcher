@@ -10,12 +10,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CreatePatch", "CreatePatch\
 		{C72F7F04-8109-485F-88D4-CB5653CB7DDD} = {C72F7F04-8109-485F-88D4-CB5653CB7DDD}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{0B1FB26F-3CC9-4639-9208-F8C28D158F04}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External Libraries", "External Libraries", "{0B1FB26F-3CC9-4639-9208-F8C28D158F04}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ApplyPatch", "ApplyPatch\ApplyPatch.vcxproj", "{9DD0592D-6DDC-4434-AF28-3A65E61FC97A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C72F7F04-8109-485F-88D4-CB5653CB7DDD} = {C72F7F04-8109-485F-88D4-CB5653CB7DDD}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VisualCreatePatch", "VisualCreatePatch\VisualCreatePatch.vcxproj", "{33851E19-677D-4BCC-85ED-CBAFC6974B23}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZPatcherLib", "ZPatcherLib\ZPatcherLib.vcxproj", "{A6C9C679-5FC1-4238-8FEB-1C3394B1DE69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +53,22 @@ Global
 		{9DD0592D-6DDC-4434-AF28-3A65E61FC97A}.Release|x64.Build.0 = Release|x64
 		{9DD0592D-6DDC-4434-AF28-3A65E61FC97A}.Release|x86.ActiveCfg = Release|Win32
 		{9DD0592D-6DDC-4434-AF28-3A65E61FC97A}.Release|x86.Build.0 = Release|Win32
+		{33851E19-677D-4BCC-85ED-CBAFC6974B23}.Debug|x64.ActiveCfg = Debug|x64
+		{33851E19-677D-4BCC-85ED-CBAFC6974B23}.Debug|x64.Build.0 = Debug|x64
+		{33851E19-677D-4BCC-85ED-CBAFC6974B23}.Debug|x86.ActiveCfg = Debug|Win32
+		{33851E19-677D-4BCC-85ED-CBAFC6974B23}.Debug|x86.Build.0 = Debug|Win32
+		{33851E19-677D-4BCC-85ED-CBAFC6974B23}.Release|x64.ActiveCfg = Release|x64
+		{33851E19-677D-4BCC-85ED-CBAFC6974B23}.Release|x64.Build.0 = Release|x64
+		{33851E19-677D-4BCC-85ED-CBAFC6974B23}.Release|x86.ActiveCfg = Release|Win32
+		{33851E19-677D-4BCC-85ED-CBAFC6974B23}.Release|x86.Build.0 = Release|Win32
+		{A6C9C679-5FC1-4238-8FEB-1C3394B1DE69}.Debug|x64.ActiveCfg = Debug|x64
+		{A6C9C679-5FC1-4238-8FEB-1C3394B1DE69}.Debug|x64.Build.0 = Debug|x64
+		{A6C9C679-5FC1-4238-8FEB-1C3394B1DE69}.Debug|x86.ActiveCfg = Debug|Win32
+		{A6C9C679-5FC1-4238-8FEB-1C3394B1DE69}.Debug|x86.Build.0 = Debug|Win32
+		{A6C9C679-5FC1-4238-8FEB-1C3394B1DE69}.Release|x64.ActiveCfg = Release|x64
+		{A6C9C679-5FC1-4238-8FEB-1C3394B1DE69}.Release|x64.Build.0 = Release|x64
+		{A6C9C679-5FC1-4238-8FEB-1C3394B1DE69}.Release|x86.ActiveCfg = Release|Win32
+		{A6C9C679-5FC1-4238-8FEB-1C3394B1DE69}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

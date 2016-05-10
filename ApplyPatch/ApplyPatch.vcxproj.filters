@@ -13,15 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="ZPatcherCommon">
-      <UniqueIdentifier>{d0872a66-0805-49c5-96be-9911cf134b03}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ZPatcherCommon\Header Files">
-      <UniqueIdentifier>{84f8c3fd-dfca-4019-96b3-b25c2ce8b380}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ZPatcherCommon\Source Files">
-      <UniqueIdentifier>{38ab9adf-a504-46d8-beb0-cc84ce675d7c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -29,27 +20,6 @@
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ZPatcherCommon\dirent.h">
-      <Filter>ZPatcherCommon\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ZPatcherCommon\FileUtils.h">
-      <Filter>ZPatcherCommon\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ZPatcherCommon\Lzma2Decoder.h">
-      <Filter>ZPatcherCommon\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ZPatcherCommon\Lzma2Encoder.h">
-      <Filter>ZPatcherCommon\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ZPatcherCommon\LzmaInterfaces.h">
-      <Filter>ZPatcherCommon\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ZPatcherCommon\ZPatcherCurrentVersion.h">
-      <Filter>ZPatcherCommon\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ZPatcherCommon\LogSystem.h">
-      <Filter>ZPatcherCommon\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ApplyPatch.h">
       <Filter>Header Files</Filter>
@@ -64,21 +34,6 @@
     </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ZPatcherCommon\FileUtils.cpp">
-      <Filter>ZPatcherCommon\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ZPatcherCommon\Lzma2Decoder.cpp">
-      <Filter>ZPatcherCommon\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ZPatcherCommon\Lzma2Encoder.cpp">
-      <Filter>ZPatcherCommon\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ZPatcherCommon\LzmaInterfaces.cpp">
-      <Filter>ZPatcherCommon\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ZPatcherCommon\LogSystem.cpp">
-      <Filter>ZPatcherCommon\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

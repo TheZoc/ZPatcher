@@ -13,19 +13,20 @@ ZPatcher uses a few external libraries to aid in it's functions:
 To compile you will need to [get wxWidgets here][4].
 This project currently uses version [3.1.0][5], but newer versions should work without problems.
 
-For Visual Studio 2015, the files you are looking for are ```wxWidgets-x.y.z-headers.7z``` and either ```wxMSW-x.y.z_vc120_Dev.7z``` or ```wxMSW-x.y.z_vc140_x64_Dev.7z``` where ```x.y.z``` is the version of wxWidgets you are using.
+Download the source code, compile wxWidgets and copy both ```include/``` and ```lib/``` directory to ```libs/wxWidgets/```.
 
-You must extract those files in the ```libs/wxWidgets/``` directory, only having a top level ```include/``` and either ```vc140_x64_dll/``` or ```vc140_dll/``` directory.
-
-To illustrate better, for the 64 bits version:
+To illustrate better, this will be the directory structore for the 64 bits version:
 ```
 + libs/
-|---+ wxwidgets/
+|---+ wxWidgets/
     |---- include/
-	|---- vc140_x64_dll/
+	+---+ lib/
+	    |---- vc140_x64_lib/
 ```
 
-Open ZPatcher solution file and compile it. Make sure Configuration and Platform are correct!
+Currently, wxWidgets does not provide statically linked libraries in precompiled format, thus, you will need to compile them yourself.
+
+After the required dependencies are in place, open ZPatcher solution file and compile it. Make sure Configuration and Platform are correct!
 
 The executables will be in the ```_Output/``` directory.
 
