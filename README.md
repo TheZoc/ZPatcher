@@ -5,28 +5,11 @@ A suite to Create and Apply patches to application and games.
 ZPatcher uses a few external libraries to aid in it's functions:
 
 - [LZMA SDK 15.14][1] provides the LZMA2 compression algorithm.
-- [wxWidgets][2] is used to provide Graphical User Interface.
 - [Dirent interface for Windows][3] for directory navigation under Windows
 
 ## Compiling
 
-To compile you will need to [get wxWidgets here][4].
-This project currently uses version [3.1.0][5], but newer versions should work without problems.
-
-Download the source code, compile wxWidgets and copy both ```include/``` and ```lib/``` directory to ```libs/wxWidgets/```.
-
-To illustrate better, this will be the directory structore for the 64 bits version:
-```
-+ libs/
-|---+ wxWidgets/
-    |---- include/
-	+---+ lib/
-	    |---- vc140_x64_lib/
-```
-
-Currently, wxWidgets does not provide statically linked libraries in precompiled format, thus, you will need to compile them yourself.
-
-After the required dependencies are in place, open ZPatcher solution file and compile it. Make sure Configuration and Platform are correct!
+Just open ZPatcher solution file and compile it. Make sure Configuration and Platform are correct!
 
 The executables will be in the ```_Output/``` directory.
 
@@ -69,7 +52,4 @@ I'm not sure how to properly give credit to libraries used in this project.
 If it's done in a wrong way, I'd certainly appreciate some help on how to format and give credit in an appropriate way. :)
 
 [1]: http://www.7-zip.org/sdk.html
-[2]: http://www.wxwidgets.org/
 [3]: https://github.com/tronkko/dirent
-[4]: https://github.com/wxWidgets/wxWidgets/releases
-[5]: https://github.com/wxWidgets/wxWidgets/releases/tag/v3.1.0
