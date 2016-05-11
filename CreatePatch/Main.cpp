@@ -33,9 +33,9 @@ int main(int argc, char* argv[])
 	NormalizeFileName(newDirectory);
 	NormalizeFileName(outputFilename);
 
-	Log(LOG, "Output patch file: %s", outputFilename);
-	Log(LOG, "Old version directory: %s", oldDirectory);
-	Log(LOG, "New version directory: %s", newDirectory);
+	Log(LOG, "Output patch file: %s", outputFilename.c_str());
+	Log(LOG, "Old version directory: %s", oldDirectory.c_str());
+	Log(LOG, "New version directory: %s", newDirectory.c_str());
 
 	PatchFileList_t* patchFileList = GetDifferences(oldDirectory, newDirectory);
 

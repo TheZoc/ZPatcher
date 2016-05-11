@@ -57,7 +57,11 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std
 				bool success = AreFilesIdentical(oldVersion + "/" + oldFileName, newVersion + "/" + newFileName, identical);
 
 				assert(success == true); // TODO: Handle this.
-				fprintf(stdout, "\n\nError comparing files! Patch file might be inconsistent! Check the logs for details.\n\n");
+
+				if (success != true)
+				{
+					fprintf(stdout, "\n\nError comparing files! Patch file might be inconsistent! Check the logs for details.\n\n");
+				}
 
 				if (success && !identical)
 				{
@@ -98,7 +102,7 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std
 		float progress = (newFileIndex + newFileIndex) * 100.0f / (newVersionFileList.size() + newVersionFileList.size());
 		PrintCreatePatchProgressBar(progress, oldFileIndex + newFileIndex, oldVersionFileList.size() + newVersionFileList.size());
 
-		patchFileList->RemovedFileList.push_back(newVersionFileList[newFileIndex]);
+		patchFileList->AddedFileList.push_back(newVersionFileList[newFileIndex]);
 		newFileIndex++;
 	}
 
@@ -189,7 +193,7 @@ bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 	}
 
 	// Update our progress bar
-	float progress = ((float)++i / (float)totalFiles) * 100.0f;
+	float progress = ((float)i / (float)totalFiles) * 100.0f;
 	progressFunction(progress, i, totalFiles);
 
 	// Hacky hack if we are using our own provided function ;)
