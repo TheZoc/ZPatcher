@@ -13,13 +13,24 @@
 #include <string>
 #include <vector>
 #include <limits.h>
+#include <io.h>
 
+#ifdef  _WIN32
+	#include <direct.h>
+#else
+	#include <unistd.h>
+#endif
+
+#include "ApplyPatch.h"
 #include "ZUpdater.h"
 #include "DownloadFileWriter.h"
+#include "LogSystem.h"
 
 #include "TinyXML2.h"
 #include "curl/curl.h"
 #include "md5.h"
+
+
 
 namespace ZUpdater
 {
@@ -28,39 +39,8 @@ namespace ZUpdater
 	unsigned long long				g_BestPathFileSize	= 0;
 	unsigned long long				g_LatestVersion		= 0;
 
-	std::string MD5File(std::string fileName)
-	{
-		FILE* targetFile;
-		errno_t err;
 
-		// Open source and target file
-		err = fopen_s(&targetFile, fileName.c_str(), "rb");
-		if (err != 0)
-		{
-			const size_t buffer_size = 1024;
-			char buffer[buffer_size];
-			strerror_s(buffer, buffer_size, err);
-			fprintf(stderr, "Error opening %s: %s\n", fileName.c_str(), buffer);
-			return 0;
-		}
-
-		const unsigned long long buffer_size = 1 << 16;
-		unsigned char readBuffer[buffer_size];
-		size_t bytesRead;
-
-		MD5 fileMD5;
-
-		while (bytesRead = fread(readBuffer, 1, buffer_size, targetFile))
-			fileMD5.update(readBuffer, static_cast<MD5::size_type>(bytesRead));
-
-		fileMD5.finalize();
-
-		fclose(targetFile);
-
-		return fileMD5.hexdigest();
-	}
-
-	bool GetUpdatePath(const unsigned long long& sourceBuildNumber, const unsigned long long& targetBuildNumber, std::vector<unsigned int>& path, unsigned long long& pathFileSize)
+	bool GetSmallestUpdatePath(const unsigned long long& sourceBuildNumber, const unsigned long long& targetBuildNumber, std::vector<unsigned int>& path, unsigned long long& pathFileSize)
 	{
 		// Our current path is a path from the start to the destination builds.
 		if (sourceBuildNumber == targetBuildNumber)
@@ -85,7 +65,7 @@ namespace ZUpdater
 				unsigned long long testPathFileSize = patch.fileLength;
 
 				// Find the best path recursively
-				if (GetUpdatePath(patch.targetBuildNumber, targetBuildNumber, testPath, testPathFileSize))
+				if (GetSmallestUpdatePath(patch.targetBuildNumber, targetBuildNumber, testPath, testPathFileSize))
 				{
 					// Check if we DO have a path. If we do, check if it's better than the one we currently have.
 					if (bestPath.empty() || testPathFileSize < bestPathFileSize)
@@ -105,7 +85,6 @@ namespace ZUpdater
 		}
 
 		return false;
-
 	}
 
 	bool CheckForUpdates(const std::string& updateURL, const unsigned long long& currentBuildNumber)
@@ -271,7 +250,7 @@ namespace ZUpdater
 
 		g_BestPathFileSize = 0;
 
-		if (!GetUpdatePath(currentBuildNumber, g_LatestVersion, g_BestPatchPath, g_BestPathFileSize))
+		if (!GetSmallestUpdatePath(currentBuildNumber, g_LatestVersion, g_BestPatchPath, g_BestPathFileSize))
 		{
 
 			// There was no path from the build we have to the latest, so check for a
@@ -308,55 +287,121 @@ namespace ZUpdater
 		return true;
 	}
 
-	bool SimpleDownloadFile(const std::string& URL, const std::string& targetPath)
+	unsigned long long GetLatestVersion()
 	{
-		DownloadFileWriter			DFW;
-		int							DFWError = 0;
-		CURLcode					DFWCurlCode = CURLE_OK;
+		// Think about this as a pauper's version of C++ OOP :P
+		return g_LatestVersion;
+	}
 
-		size_t length = URL.find_last_of('/');
+	//////////////////////////////////////////////////////////////////////////
 
-		if (length == std::string::npos)
+
+	//////////////////////////////////////////////////////////////////////////
+
+	bool DownloadAndApplyPatch(std::string targetDirectory, std::string versionFile, unsigned long long currentVersion)
+	{
+		for (unsigned int patchIndex = 0; patchIndex < g_BestPatchPath.size(); ++patchIndex)
 		{
-			fprintf(stderr, "Invalid Update URL.\n");
-			// This is bad! Our URL is malformed (no slashes in it!)
-			return false;
+			const Patch& patch = g_Patches[g_BestPatchPath[patchIndex]];
+
+			std::string updatesDirectory = "updates/";
+
+			// Create the updates directory. No problem if the directory already exists.
+			int err = 0;
+			_set_errno(0);
+			_mkdir(updatesDirectory.c_str());
+			_get_errno(&err);
+			if (err != 0 && err != EEXIST)
+			{
+				fprintf(stderr, "An error occurred while attempting to create the directory structure.\n");
+				system("pause");
+				return false;
+			}
+
+
+			// Split the filename from the URL
+			size_t length = patch.fileURL.find_last_of('/');
+
+			if (length == std::string::npos)
+			{
+				fprintf(stderr, "Invalid Update URL.\n");
+				// This is bad! Our URL is malformed (no slashes in it!)
+				return false;
+			}
+
+			std::string urlBase = std::string(patch.fileURL, 0, length + 1);
+			std::string fileName = std::string(patch.fileURL, length + 1, std::string::npos);
+			std::string localFullPath = (updatesDirectory + fileName);
+
+			bool MD5Matches = false;
+			while (!MD5Matches)
+			{
+				// Check if the target file already exists.
+				err = 0;
+				_set_errno(0);
+				int fileExists = _access(localFullPath.c_str(), 0); // Will return Zero if file exists
+
+				// If the file exists, check if it match the required MD5. If not, re-download the file.
+				bool downloadFile = true;
+				if (fileExists == 0)
+				{
+					fprintf(stdout, "\nChecking if MD5 of the file %s matches the required by the patch...\n", fileName.c_str());
+					std::string fileMD5 = MD5File(localFullPath);
+
+					fprintf(stdout, "Required MD5:\t%s\n", patch.fileMD5.c_str());
+					fprintf(stdout, "File MD5:\t%s\n", fileMD5.c_str());
+
+					if (_stricmp(fileMD5.c_str(), patch.fileMD5.c_str()) == 0)
+					{
+						fprintf(stdout, "Matches!\n");
+						downloadFile = false;
+						MD5Matches = true;
+					}
+					else
+					{
+						fprintf(stdout, "Does not match! :(\n");
+
+						downloadFile = true;
+					}
+				}
+
+				// Should we download the file? :)
+				if (downloadFile)
+				{
+					SimpleDownloadFile(patch.fileURL, updatesDirectory);
+					fprintf(stdout, "\n");
+				}
+			}
+
+			// If we got here, the file is downloaded and the MD5 Matches
+			fprintf(stdout, "\nApplying patch: %s \n", fileName.c_str());
+
+			ZPatcher::InitLogSystem("./");
+			if (ZPatcher::ApplyPatchFile(localFullPath, targetDirectory, currentVersion))
+			{
+				SaveTargetNewVersion(versionFile, patch.targetBuildNumber);
+
+				if (!SaveTargetNewVersion(versionFile, patch.targetBuildNumber))
+				{
+					ZPatcher::DestroyLogSystem();
+					system("pause");
+					return false;
+				}
+
+				currentVersion = patch.targetBuildNumber;
+				ZPatcher::DestroyLogSystem();
+			}
+			else
+			{
+				ZPatcher::DestroyLogSystem();
+				system("pause");
+				return false;
+			}
 		}
-
-		std::string urlBase = std::string(URL, 0, length + 1);
-		std::string fileName = std::string(URL, length + 1, std::string::npos);
-
-		DFWError = DFW.PrepareFileToWrite((targetPath + fileName).c_str());
-		if (DFWError != 0)
-		{
-			fprintf(stderr, "Error preparing to write file: %s.\n", (targetPath + fileName).c_str());
-			return false;		// Zoc (2016-04-26): TODO: Improve this!
-		}
-
-		DFWError = DFW.PrepareCurlHandle();
-		if (DFWError != 0)
-		{
-			fprintf(stderr, "Error preparing cURL handle.\n");
-			return false;		// Zoc (2016-04-26): TODO: Improve this!
-		}
-
-		DFW.SetupTransfer(URL.c_str());
-
-		fprintf(stdout, "Downloading File: %s to %s.\n", fileName.c_str(), targetPath.c_str());
-
-		// Download our file
-		DFWCurlCode = DFW.StartDownload();
-
-		if (DFWCurlCode != CURLE_OK)
-		{
-			fprintf(stderr, "Error downloading update XML file.\n");
-			return false;
-		}
-
-		fprintf(stdout, "\n");
-
 		return true;
 	}
+
+	//////////////////////////////////////////////////////////////////////////
 
 	bool GetTargetCurrentVersion(const std::string& configFile, unsigned long long& version)
 	{
@@ -420,6 +465,103 @@ namespace ZUpdater
 			fprintf(stderr, "Error reading config file %s\n", configFile.c_str());
 			return false;
 		}
+
+		return true;
+	}
+	
+	//////////////////////////////////////////////////////////////////////////
+
+	std::string MD5File(std::string fileName)
+	{
+		FILE* targetFile;
+		errno_t err;
+
+		// Open source and target file
+		err = fopen_s(&targetFile, fileName.c_str(), "rb");
+		if (err != 0)
+		{
+			const size_t buffer_size = 1024;
+			char buffer[buffer_size];
+			strerror_s(buffer, buffer_size, err);
+			fprintf(stderr, "Error opening %s: %s\n", fileName.c_str(), buffer);
+			return 0;
+		}
+
+		const unsigned long long buffer_size = 1 << 16;
+		unsigned char readBuffer[buffer_size];
+		size_t bytesRead;
+
+
+		md5_state_t state;
+		md5_byte_t digest[16];
+		char hex_output[16 * 2 + 1];
+
+		// Read file and generate MD5 hash
+		md5_init(&state);
+
+		while (bytesRead = fread(readBuffer, 1, buffer_size, targetFile)) 
+			md5_append(&state, (const md5_byte_t*)readBuffer, static_cast<int>(bytesRead));
+
+		fclose(targetFile); // Close the file. It won't be needed anymore.
+
+		md5_finish(&state, digest);
+
+		for (int di = 0; di < 16; ++di)
+			snprintf(hex_output + di * 2, 3, "%02x", digest[di]);
+
+
+
+		return hex_output;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+
+	bool SimpleDownloadFile(const std::string& URL, const std::string& targetPath)
+	{
+		DownloadFileWriter			DFW;
+		int							DFWError = 0;
+		CURLcode					DFWCurlCode = CURLE_OK;
+
+		size_t length = URL.find_last_of('/');
+
+		if (length == std::string::npos)
+		{
+			fprintf(stderr, "Invalid Update URL.\n");
+			// This is bad! Our URL is malformed (no slashes in it!)
+			return false;
+		}
+
+		std::string urlBase = std::string(URL, 0, length + 1);
+		std::string fileName = std::string(URL, length + 1, std::string::npos);
+
+		DFWError = DFW.PrepareFileToWrite((targetPath + fileName).c_str());
+		if (DFWError != 0)
+		{
+			fprintf(stderr, "Error preparing to write file: %s.\n", (targetPath + fileName).c_str());
+			return false;		// Zoc (2016-04-26): TODO: Improve this!
+		}
+
+		DFWError = DFW.PrepareCurlHandle();
+		if (DFWError != 0)
+		{
+			fprintf(stderr, "Error preparing cURL handle.\n");
+			return false;		// Zoc (2016-04-26): TODO: Improve this!
+		}
+
+		DFW.SetupTransfer(URL.c_str());
+
+		fprintf(stdout, "Downloading File: %s to %s\n", fileName.c_str(), targetPath.c_str());
+
+		// Download our file
+		DFWCurlCode = DFW.StartDownload();
+
+		if (DFWCurlCode != CURLE_OK)
+		{
+			fprintf(stderr, "Error downloading update XML file.\n");
+			return false;
+		}
+
+		fprintf(stdout, "\n");
 
 		return true;
 	}

@@ -8,7 +8,7 @@ ZPatcher uses a few external libraries to aid in it's functions:
 - [Dirent interface for Windows][3] for directory navigation under Windows
 - [LZMA SDK 15.14][1] provides the LZMA2 compression algorithm.
 - [TinyXML2][2] for XML parsing
-- [MD5][5] implementation by Frank Thilo
+- [MD5][5] implementation by L. Peter Deutsch
 
 CreatePatch and ApplyPatch uses ZPatcherLib, which uses [Dirent][3] and [LZMA SDK][1].
 ZUpdater also uses [libcurl][4] and [TinyXML2][2].
@@ -77,4 +77,4 @@ If it's done in a wrong way, I'd certainly appreciate some help on how to format
 [2]: https://github.com/leethomason/tinyxml2
 [3]: https://github.com/tronkko/dirent
 [4]: https://curl.haxx.se/libcurl/
-[5]: http://www.bzflag.org
+[5]: https://sourceforge.net/projects/libmd5-rfc/files/
