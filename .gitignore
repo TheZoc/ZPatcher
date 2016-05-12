@@ -1,11 +1,3 @@
-# Custom ignored directories
-# (Such as libs that are supposed to be downloaded separately)
-
-# wxWidgets (they're huge to be added here)
-libs/wxWidgets/*
-
-########################################################################
-
 # Program-generated files to be ignored
 
 # User-specific files
@@ -24,6 +16,7 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
+temp/
 
 # Roslyn cache directories
 *.ide/
