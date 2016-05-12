@@ -112,7 +112,7 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std
 	return patchFileList;
 }
 
-void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const size_t& leftAmount, const size_t& rightAmount)
+void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const unsigned long long& leftAmount, const unsigned long long& rightAmount)
 {
 	int barWidth = 80;
 
@@ -125,7 +125,9 @@ void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const size_t
 		else if (i == pos) fprintf(stdout, ">");
 		else fprintf(stdout, " ");
 	}
+
 	fprintf(stdout, "] %0.2f%% %llu/%llu", Percentage, leftAmount, rightAmount);
+
 	fflush(stdout);
 }
 

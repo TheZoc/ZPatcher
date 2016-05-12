@@ -25,7 +25,12 @@ FILE* ZPatcher::g_LogSystem = NULL;
 
 void ZPatcher::InitLogSystem(const std::string& location)
 {
-	std::string logFile = location + "/Logs/ZPatcher-";
+	std::string logFile = location;
+
+	if (logFile.back() != '/') // Check if it has a trailing slash. If it doesn't, add it.
+		logFile += "/";
+
+	logFile += "Logs/ZPatcher-";
 	logFile += BuildHumanTimeStamp();
 	logFile += ".log";
 
@@ -47,7 +52,7 @@ std::string ZPatcher::BuildHumanTimeStamp()
 	tm timeinfo;
 	localtime_s(&timeinfo, &tt);
 
-	std::string humanTimestamp ;
+	std::string humanTimestamp;
 	
 	char buffer[16];
 	sprintf_s(buffer, 16, "%02d", timeinfo.tm_year + 1900);
@@ -67,6 +72,7 @@ std::string ZPatcher::BuildHumanTimeStamp()
 	humanTimestamp += "-";
 	sprintf_s(buffer, 16, "%02d", timeinfo.tm_sec);
 	humanTimestamp += buffer;
+
 	return humanTimestamp;
 }
 
@@ -106,6 +112,9 @@ void ZPatcher::Log(LogLevel level, const char* format, ...)
 
 void ZPatcher::DestroyLogSystem()
 {
-	fclose(g_LogSystem);
+	if (g_LogSystem)
+		fclose(g_LogSystem);
+
+	g_LogSystem = nullptr;
 }
 

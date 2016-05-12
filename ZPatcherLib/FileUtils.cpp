@@ -104,8 +104,8 @@ bool ZPatcher::AreFilesIdentical(FILE* file1, FILE* file2, bool &result)
 		unsigned char file1Buffer[buffer_size];
 		unsigned char file2Buffer[buffer_size];
 
-		unsigned long long file1Len = fread(file1Buffer, 1, buffer_size, file1);
-		unsigned long long file2Len = fread(file2Buffer, 1, buffer_size, file2);
+		size_t file1Len = fread(file1Buffer, 1, buffer_size, file1);
+		size_t file2Len = fread(file2Buffer, 1, buffer_size, file2);
 
 		assert(file1Len == file2Len);
 

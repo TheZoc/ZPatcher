@@ -18,7 +18,7 @@
 namespace ZPatcher
 {
 	/// Our function pointer callback for progress display
-	typedef void(*ProgressCallback)(const float& percentage, const size_t& processedAmount, const size_t& totalToBeProcessed);
+	typedef void(*ProgressCallback)(const float& percentage, const unsigned long long& processedAmount, const unsigned long long& totalToBeProcessed);
 
 	/**
 	* This structure holds the files that were Removed, Modified or Added in the patch to be created.
@@ -40,7 +40,7 @@ namespace ZPatcher
 	/**
 	 * Print the progress bar used when comparing directories
 	 */
-	void PrintCreatePatchProgressBar(const float& Percentage, const size_t& leftAmount, const size_t& rightAmount);
+	void PrintCreatePatchProgressBar(const float& Percentage, const unsigned long long& leftAmount, const unsigned long long& rightAmount);
 
 	/**
 	 * Creates the patch file with all the changes listed in patchFileList.

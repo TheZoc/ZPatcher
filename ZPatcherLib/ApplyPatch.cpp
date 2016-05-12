@@ -13,7 +13,7 @@
 
 #include "stdafx.h"
 #include <stdio.h>
-#include <string.h>
+#include <string>
 #include <assert.h>
 #include "ApplyPatch.h"
 #include "Lzma2Decoder.h"
@@ -37,8 +37,10 @@ void ZPatcher::PrintPatchApplyingProgressBar(float Percentage)
 	fflush(stdout);
 }
 
-bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, std::string previousVersionNumber)
+bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, unsigned long long &previousVersionNumber)
 {
+	std::string prevVersionNumber = std::to_string(previousVersionNumber);
+
 	_fseeki64(patchFile, 0LL, SEEK_END);
 	long long patchFileSize = _ftelli64(patchFile);
 	rewind(patchFile);
@@ -86,7 +88,7 @@ bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, st
 			}
 			else
 			{
-				success = success && BackupFile(normalizedTargetPath, outputFile, previousVersionNumber);
+				success = success && BackupFile(normalizedTargetPath, outputFile, prevVersionNumber);
 				if (!success)
 					break;
 				backupFileList.push_back(outputFile);
@@ -94,7 +96,7 @@ bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, st
 			}
 			break;
 		case Patch_File_Replace:
-			success = success && BackupFile(normalizedTargetPath, outputFile, previousVersionNumber);
+			success = success && BackupFile(normalizedTargetPath, outputFile, prevVersionNumber);
 			if (!success)
 				break;
 			backupFileList.push_back(outputFile);
@@ -122,7 +124,7 @@ bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, st
 	{
 		// Everything went fine, so, let's do a backup cleanup
 		Log(LOG, "Patching successful! Removing backup directory.");
-		std::string backupDirectoryName = normalizedTargetPath + "/" + "backup-" + previousVersionNumber + "/";
+		std::string backupDirectoryName = normalizedTargetPath + "/" + "backup-" + prevVersionNumber + "/";
 		DeleteDirectoryTree(backupDirectoryName);
 		PrintPatchApplyingProgressBar(100.0f);
 	}
@@ -131,7 +133,7 @@ bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, st
 		// Something bad happened. Roll back.
 		bool restoreSucess = true;
 		Log(LOG_FATAL, "Something went wrong with the patch process! Rolling back!");
-		restoreSucess = restoreSucess && RestoreBackup(backupFileList, addedFileList, normalizedTargetPath, previousVersionNumber);
+		restoreSucess = restoreSucess && RestoreBackup(backupFileList, addedFileList, normalizedTargetPath, prevVersionNumber);
 
 		if (!restoreSucess)
 			Log(LOG_FATAL, "At least one file failed to be restored! The application is probably in an inconsistent state!");
@@ -144,7 +146,7 @@ bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, st
 	return success;
 }
 
-bool ZPatcher::ApplyPatchFile(const std::string& patchFileName, const std::string& targetPath, std::string previousVersionNumber)
+bool ZPatcher::ApplyPatchFile(const std::string& patchFileName, const std::string& targetPath, unsigned long long& previousVersionNumber)
 {
 	FILE* patchFile;
 	errno_t err = 0;
