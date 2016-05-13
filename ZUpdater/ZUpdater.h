@@ -16,6 +16,11 @@
 
 #include <vector>
 #include <string>
+
+#ifdef _WIN32
+	#include <windows.h>
+#endif // !_WIN32
+
 // Lets avoid adding an unnecessary header here.
 typedef unsigned long       DWORD;
 
@@ -83,5 +88,16 @@ namespace ZUpdater
 	 */
 	bool SimpleDownloadFile(const std::string& URL, const std::string& targetPath = "./");
 
+
+	//////////////////////////////////////////////////////////////////////////
+	// Windows specific stuff
+
+	/**
+	 * If the updater finds a file with it's own name with an appended 'a' character (e.g. For Zupdater.exe, searches for ZUpdatera.exe),
+	 * it will replace itself with the updated found version and restart the application.
+	 * it will return true if no write error happened.
+	 * Please note, YOU (yes, you!) need to explicitly finish the application after calling this function and it returns updateFound == true
+	 */
+	bool SelfUpdate(bool &updateFound);
 }
 #endif

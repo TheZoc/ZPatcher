@@ -17,6 +17,9 @@
 
 #ifdef  _WIN32
 	#include <direct.h>
+	#include <sstream>
+	#include <windows.h>
+	#include <shellapi.h>
 #else
 	#include <unistd.h>
 #endif
@@ -397,6 +400,19 @@ namespace ZUpdater
 				system("pause");
 				return false;
 			}
+
+			//////////////////////////////////////////////////////////////////////////
+			// HACK! HACK! HACK! HACK! HACK!
+			// TODO: Rewrite this function so that this horrendous hack isn't here!
+
+			bool shouldRestart = false;
+			if (!SelfUpdate(shouldRestart))
+				return false;
+			else
+				if (shouldRestart)
+					exit(EXIT_SUCCESS);
+
+			//////////////////////////////////////////////////////////////////////////
 		}
 		return true;
 	}
@@ -566,4 +582,80 @@ namespace ZUpdater
 		return true;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Windows specific stuff
+	bool SelfUpdate(bool &updateFound)
+	{
+		// Get the ful path to this executable and it's folder name.
+		char updaterFullPath[_MAX_PATH];
+		char updatedSelfExecutableName[_MAX_PATH];
+		char folder[_MAX_PATH];
+		char tempBatchFile[_MAX_PATH];
+		char* pb;
+
+		GetModuleFileNameA(NULL, updaterFullPath, _MAX_PATH);
+
+		// Full path to the temporary batch file
+		strcpy_s(updatedSelfExecutableName, _MAX_PATH, updaterFullPath);
+ 		pb = strrchr(updatedSelfExecutableName, '.');
+ 		strcpy_s(pb, 6, "a.exe");
+
+		// Get the folder name
+		strcpy_s(folder, _MAX_PATH, updaterFullPath);
+ 		pb = strrchr(folder, '\\');
+ 		if (pb != NULL)
+ 			*pb = '\0';
+
+		// Full path to the temporary batch file
+		strcpy_s(tempBatchFile, _MAX_PATH, updaterFullPath);
+ 		pb = strrchr(tempBatchFile, '.');
+ 		strcpy_s(pb, 5, ".bat");
+
+		_set_errno(0);
+		int fileExists = _access(updatedSelfExecutableName, 0); // Will return Zero if file exists
+
+		if (fileExists == 0)
+		{
+			FILE* batchFile;
+			// Open source and target file
+			_set_errno(0);
+			errno_t err = fopen_s(&batchFile, tempBatchFile, "wb");
+			if (err != 0)
+			{
+				const size_t buffer_size = 1024;
+				char buffer[buffer_size];
+				strerror_s(buffer, buffer_size, err);
+				fprintf(stderr, "Error opening self-update file for writing %s: %s\n", tempBatchFile, buffer);
+				return false;
+			}
+
+			std::stringstream stream;
+
+			// Wait until the application has ended and delete it
+			stream << ":Repeat" << std::endl;
+			stream << "del \"" << updaterFullPath << "\"" << std::endl;
+			stream << "if exist \"" << updaterFullPath << "\" goto Repeat" << std::endl;
+
+			// Copy updated executable
+			stream << "copy /b /v /y \"" << updatedSelfExecutableName << "\" \"" << updaterFullPath << "\"" << std::endl;
+
+			// Delete original updated executable (already copied)
+			stream << "del \"" << updatedSelfExecutableName << "\"" << std::endl;
+
+			// Start a new instance of the executable
+			stream << "start \"\" \"" << updaterFullPath << "\"" << std::endl;
+
+			// Delete this batch file.
+			stream << "del \"" << tempBatchFile << "\"" << std::endl;
+
+			fwrite(stream.str().c_str(), 1, strlen(stream.str().c_str()), batchFile);
+
+			fclose(batchFile);
+
+			// Execute the self-destruct batch file and exit the program.
+			ShellExecuteA(NULL, "open", tempBatchFile, NULL, NULL, SW_HIDE);
+		}
+
+		return true;
+	}
 }
