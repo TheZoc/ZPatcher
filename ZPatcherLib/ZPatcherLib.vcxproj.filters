@@ -21,9 +21,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dirent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FileUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
