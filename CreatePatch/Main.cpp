@@ -8,11 +8,29 @@
 #include "CreatePatch.h"
 #include "LogSystem.h"
 
+// Check windows
+#if _WIN32 || _WIN64
+	#if _WIN64
+		#define ENVBITS 64
+	#else
+		#define ENVBITS 32
+	#endif
+#endif
+
+// Check GCC
+#if __GNUC__
+	#if __x86_64__ || __ppc64__
+		#define ENVBITS 64
+	#else
+		#define ENVBITS 32
+	#endif
+#endif
+
 int main(int argc, char* argv[])
 {
 	using namespace ZPatcher;
 
-	fprintf(stderr, "\nCreatePatch : ZPatcher [%d] v1.0 beta : %s\n", _INTEGRAL_MAX_BITS, __DATE__);
+	fprintf(stderr, "\nCreatePatch : ZPatcher [%d] v1.0 beta : %s\n", ENVBITS, __DATE__);
 	fprintf(stderr, "Copyright (c) 2016 Felipe \"Zoc\" Silveira : http://www.github.com/TheZoc/ZPatcher\n\n");
 
 	if (argc < 4)

@@ -14,11 +14,20 @@
 #include "stdafx.h"
 #include <stdio.h>
 #include <string>
-#include <assert.h>
+#include <errno.h>
+#include <stdint.h>
 #include "ApplyPatch.h"
 #include "Lzma2Decoder.h"
 #include "LogSystem.h"
 #include "FileUtils.h"
+
+#ifdef _WIN32
+	#define ftell64 _ftelli64
+	#define fseek64 _fseeki64
+#else
+ 	#define ftell64 ftell
+	#define fseek64 fseek
+#endif
 
 void ZPatcher::PrintPatchApplyingProgressBar(float Percentage)
 {
@@ -41,8 +50,8 @@ bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, un
 {
 	std::string prevVersionNumber = std::to_string(previousVersionNumber);
 
-	_fseeki64(patchFile, 0LL, SEEK_END);
-	long long patchFileSize = _ftelli64(patchFile);
+	fseek64(patchFile, 0LL, SEEK_END);
+	int64_t patchFileSize = ftell64(patchFile);
 	rewind(patchFile);
 
 	std::string normalizedTargetPath = targetPath;
@@ -68,16 +77,15 @@ bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, un
 	std::vector<std::string> addedFileList;
 
 	bool success = true;
-	for(long long int currentPos = _ftelli64(patchFile); success && (currentPos < patchFileSize); currentPos = _ftelli64(patchFile))
+	for(int64_t currentPos = ftell64(patchFile); success && (currentPos < patchFileSize); currentPos = ftell64(patchFile))
 	{
-		float percentage = (float)_ftelli64(patchFile) / (float)patchFileSize * 100.0f;
+		float percentage = (float)ftell64(patchFile) / (float)patchFileSize * 100.0f;
 		PrintPatchApplyingProgressBar(percentage);
 
 		std::string outputFile;
 		unsigned char operation;
 		GetFileinfo(patchFile, outputFile, operation);
 
-		size_t len = outputFile.length();
 		switch (static_cast<PatchOperation>(operation))
 		{
 		case Patch_File_Delete:
@@ -149,22 +157,19 @@ bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, un
 bool ZPatcher::ApplyPatchFile(const std::string& patchFileName, const std::string& targetPath, unsigned long long& previousVersionNumber)
 {
 	FILE* patchFile;
-	errno_t err = 0;
 
 	std::string normalizedPatchFileName = patchFileName;
 	NormalizeFileName(normalizedPatchFileName);
 
-	err = fopen_s(&patchFile, normalizedPatchFileName.c_str(), "rb");
-
-	if (err == 0)
+	errno = 0;
+	patchFile = fopen(normalizedPatchFileName.c_str(), "rb");
+	if(errno != 0)
 	{
-		Log(LOG, "Reading patch file %s", normalizedPatchFileName.c_str());
-	}
-	else
-	{
-		Log(LOG_FATAL, "Unable to open for reading the patch file %s", normalizedPatchFileName.c_str());
+		Log(LOG_FATAL, "Unable to open for reading the patch file %s: %s", normalizedPatchFileName.c_str(), strerror(errno));
 		return false;
 	}
+
+	Log(LOG, "Reading patch file %s", normalizedPatchFileName.c_str());
 
 	bool success = ApplyPatchFile(patchFile, targetPath, previousVersionNumber);
 

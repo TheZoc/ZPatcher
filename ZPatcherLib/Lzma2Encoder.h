@@ -34,10 +34,10 @@ namespace ZPatcher
 	void WriteFileInfo(FILE* dest, const Byte& operation, const std::string& fileName);
 
 	// Write the modified file data to the patch file.
-	void WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest);
+	bool WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest);
 
 	// Write the modified file data to the patch file, uses the source file name as param, instead of the file handle.
-	void WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourceFileName, FILE* dest);
+	bool WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourceFileName, FILE* dest);
 }
 
 #endif // _LZMA2ENCODER_H_

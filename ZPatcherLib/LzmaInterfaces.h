@@ -14,8 +14,14 @@
 #ifndef _LZMAALLOCATORS_H_
 #define _LZMAALLOCATORS_H_ 
 
-#include <malloc.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include <stdio.h>
+
+#ifdef _WIN32
+	#include <malloc.h>
+#endif
+
 #include "7zFile.h"
 
 namespace ZPatcher
@@ -57,7 +63,7 @@ namespace ZPatcher
 	typedef struct
 	{
 		ICompressProgress CompressProgress;
-		__int64 TotalSize;
+		int64_t TotalSize;
 	} ICompressProgressPlus;
 
 	SRes OnProgress(void *p, UInt64 inSize, UInt64 outSize);

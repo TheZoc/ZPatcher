@@ -11,16 +11,24 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include <assert.h>
+#include <errno.h>
+#include <stdint.h>
 #include "FileUtils.h"
 #include "LogSystem.h"
 
 #ifdef _WIN32
 	#include "dirent.h"
 	#include <direct.h>
+
+	#define ftell64 _ftelli64
+	#define fseek64 _fseeki64
 #else
 	#include <dirent.h>
 	#include <unistd.h>
+	#include <sys/stat.h>
+
+	#define ftell64 ftell
+	#define fseek64 fseek
 #endif
 
 
@@ -56,7 +64,7 @@ bool ZPatcher::GetFilesInDirectory(std::vector<std::string>& fileList, const std
 			fileList.push_back(output);
 
 		}
-		else if (ent->d_type = DT_DIR) // Directories
+		else if (ent->d_type == DT_DIR) // Directories
 		{
 			if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
 			{
@@ -80,13 +88,14 @@ bool ZPatcher::GetFilesInDirectory(std::vector<std::string>& fileList, const std
 
 bool ZPatcher::AreFilesIdentical(FILE* file1, FILE* file2, bool &result)
 {
+	
 	// Compare their size, first
-	_fseeki64(file1, 0, SEEK_END);
-	long long int file1size = _ftelli64(file1);
+	fseek64(file1, 0, SEEK_END);
+	int64_t file1size = ftell64(file1);
 	rewind(file1);
 
-	_fseeki64(file2, 0, SEEK_END);
-	long long int file2size = _ftelli64(file2);
+	fseek64(file2, 0, SEEK_END);
+	int64_t	file2size = ftell64(file2);
 	rewind(file2);
 
 	if (file1size != file2size)
@@ -100,14 +109,12 @@ bool ZPatcher::AreFilesIdentical(FILE* file1, FILE* file2, bool &result)
 
 	while (identical && file1size > 0)
 	{
-		const unsigned long long buffer_size = 1 << 16;
+		const uint64_t buffer_size = 1 << 16;
 		unsigned char file1Buffer[buffer_size];
 		unsigned char file2Buffer[buffer_size];
 
 		size_t file1Len = fread(file1Buffer, 1, buffer_size, file1);
-		size_t file2Len = fread(file2Buffer, 1, buffer_size, file2);
-
-		assert(file1Len == file2Len);
+		fread(file2Buffer, 1, buffer_size, file2);
 
 		if (memcmp(file1Buffer, file2Buffer, file1Len) != 0)
 		{
@@ -124,28 +131,23 @@ bool ZPatcher::AreFilesIdentical(FILE* file1, FILE* file2, bool &result)
 
 bool ZPatcher::AreFilesIdentical(const std::string& file1, const std::string& file2, bool &result)
 {
-	errno_t err;
 	FILE* f1;
 	FILE* f2;
 
-	err = fopen_s(&f1, file1.c_str(), "rb");
-	if (err != 0)
+	errno = 0;
+	f1 = fopen(file1.c_str(), "rb");
+	if (errno != 0)
 	{
-		const size_t buffer_size = 1024;
-		char buffer[buffer_size];
-		strerror_s(buffer, buffer_size, err);
-		Log(LOG_FATAL, "Error opening file \"%s\" to reading for data comparison: %s", file1.c_str(), buffer);
+		Log(LOG_FATAL, "Error opening file \"%s\" to reading for data comparison: %s", file1.c_str(), strerror(errno));
 		result = false;
 		return false;
 	}
 
-	err = fopen_s(&f2, file2.c_str(), "rb");
-	if (err != 0)
+	errno = 0;
+	f2 = fopen(file2.c_str(), "rb");
+	if (errno != 0)
 	{
-		const size_t buffer_size = 1024;
-		char buffer[buffer_size];
-		strerror_s(buffer, buffer_size, err);
-		Log(LOG_FATAL, "Error opening file \"%s\" to reading for data comparison: %s", file2.c_str(), buffer);
+		Log(LOG_FATAL, "Error opening file \"%s\" to reading for data comparison: %s", file2.c_str(), strerror(errno));
 		result = false;
 		return false;
 	}
@@ -199,7 +201,7 @@ bool ZPatcher::DeleteDirectoryTree(const std::string& base, const std::string di
 			deleteFile += ent->d_name;
 			remove(deleteFile.c_str());
 		}
-		else if (ent->d_type = DT_DIR) // Directories
+		else if (ent->d_type == DT_DIR) // Directories
 		{
 			if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
 			{
@@ -219,9 +221,11 @@ bool ZPatcher::DeleteDirectoryTree(const std::string& base, const std::string di
 	std::string deleteCurrentDirectory = base + "/";
 	if (!directory.empty())
 		deleteCurrentDirectory += directory + "/";
-
+#ifdef _WIN32
 	_rmdir(deleteCurrentDirectory.c_str());
-
+#else
+	rmdir(deleteCurrentDirectory.c_str());
+#endif
 
 	return true;
 }
@@ -239,9 +243,15 @@ void ZPatcher::CreateDirectoryTree(const std::string& directory)
 		size_t length = slash - directory.c_str();
 		std::string subDirectory = directory.substr(0, length);
 
+#ifdef _WIN32
 		_mkdir(subDirectory.c_str());
-		slash = strpbrk(slash + 1, "\\/");
+#else
+		mode_t mask = umask(0);
+		umask(mask);
+		mkdir(subDirectory.c_str(), 0777 & ~mask);
+#endif
 
+		slash = strpbrk(slash + 1, "\\/");
 	}
 
 }
@@ -264,34 +274,29 @@ bool ZPatcher::CopyOneFile(const std::string& source, const std::string& target)
 {
 	FILE* sourceFile;
 	FILE* targetFile;
-	errno_t err = 0;
 
 	Log(LOG, "Copying file %s to %s", source.c_str(), target.c_str());
 
 	// Open source and target file
-	err = fopen_s(&sourceFile, source.c_str(), "rb");
-	if (err != 0)
+	errno = 0;
+	sourceFile = fopen(source.c_str(), "rb");
+	if (errno != 0)
 	{
-		const size_t buffer_size = 1024;
-		char buffer[buffer_size];
-		strerror_s(buffer, buffer_size, err);
-		Log(LOG_FATAL, "Error opening file \"%s\" to read for copy: %s", source.c_str(), buffer);
+		Log(LOG_FATAL, "Error opening file \"%s\" to read for copy: %s", source.c_str(), strerror(errno));
 		return false;
 	}
 
-	err = fopen_s(&targetFile, target.c_str(), "wb");
-	if (err != 0)
+	errno = 0;
+	targetFile = fopen(target.c_str(), "wb");
+	if (errno != 0)
 	{
-		const size_t buffer_size = 1024;
-		char buffer[buffer_size];
-		strerror_s(buffer, buffer_size, err);
-		Log(LOG_FATAL, "Error opening file \"%s\" to write for copy: %s", target.c_str(), buffer);
+		Log(LOG_FATAL, "Error opening file \"%s\" to write for copy: %s", target.c_str(), strerror(errno));
 		fclose(sourceFile);
 		return false;
 	}
 
 	// Do the actual copy
-	const unsigned long long buffer_size = 1 << 16;
+	const uint64_t buffer_size = 1 << 16;
 	unsigned char readBuffer[buffer_size];
 	size_t bytesRead;
 
@@ -318,17 +323,11 @@ bool ZPatcher::RemoveFile(const std::string& fileName)
 {
 	Log(LOG, "Deleting file: %s", fileName.c_str());
 
-	_set_errno(0);
+	errno = 0;
 	int result = remove(fileName.c_str());
-
 	if (result != 0)
 	{
-		_get_errno(&result);
-
-		const size_t buffer_size = 1024;
-		char buffer[buffer_size];
-		strerror_s(buffer, buffer_size, result);
-		Log(LOG_FATAL, "Error deleting file: %s", buffer);
+		Log(LOG_FATAL, "Error deleting file: %s", strerror(errno));
 		return false;
 	}
 
@@ -339,17 +338,17 @@ bool ZPatcher::RemoveOneDirectory(const std::string& directory)
 {
 	Log(LOG, "Removing directory %s", directory.c_str());
 
-	_set_errno(0);
+	errno = 0;
+
+#ifdef _WIN32
 	int result = _rmdir(directory.c_str());
+#else
+	int result = rmdir(directory.c_str());
+#endif
 
 	if (result != 0)
 	{
-		_get_errno(&result);
-
-		const size_t buffer_size = 1024;
-		char buffer[buffer_size];
-		strerror_s(buffer, buffer_size, result);
-		Log(LOG_FATAL, "Error removing directory: %s", result, buffer);
+		Log(LOG_FATAL, "Error removing directory %s: %s", directory.c_str(), strerror(errno));
 		return false;
 	}
 

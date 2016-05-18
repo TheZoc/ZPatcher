@@ -15,6 +15,7 @@
 #include <assert.h>
 #include <stdarg.h> 
 #include <chrono>
+#include <errno.h>
 #include <ctime>
 #include "LogSystem.h"
 #include "FileUtils.h"
@@ -37,11 +38,21 @@ void ZPatcher::InitLogSystem(const std::string& location)
 	NormalizeFileName(logFile);
 	CreateDirectoryTree(logFile);
 
-	errno_t err = 0;
-	err = fopen_s(&g_LogSystem, logFile.c_str(), "wb");
-	assert(err == 0);
-
-	Log(LOG, "Initializing log system");
+	if (g_LogSystem == nullptr)
+	{
+		errno = 0;
+		g_LogSystem = fopen(logFile.c_str(), "wb");
+		if (errno != 0)
+		{
+			int error = errno;
+			fprintf(stderr, "Unable to open log file %s for writing: %s", location.c_str(), strerror(error));
+			return;
+		}
+	}
+	else
+	{
+		Log(LOG_ERROR, "Attempt to initialize log system failed - it was already initialized.");
+	}
 }
 
 std::string ZPatcher::BuildHumanTimeStamp()
@@ -50,27 +61,32 @@ std::string ZPatcher::BuildHumanTimeStamp()
 	time_t tt = system_clock::to_time_t(system_clock::now());
 
 	tm timeinfo;
+
+#ifdef _WIN32
 	localtime_s(&timeinfo, &tt);
+#else
+	localtime_r(&tt, &timeinfo);
+#endif
 
 	std::string humanTimestamp;
 	
 	char buffer[16];
-	sprintf_s(buffer, 16, "%02d", timeinfo.tm_year + 1900);
+	sprintf(buffer, "%02d", timeinfo.tm_year + 1900);
 	humanTimestamp += buffer;
 	humanTimestamp += "-";
-	sprintf_s(buffer, 16, "%02d", timeinfo.tm_mon + 1);
+	sprintf(buffer, "%02d", timeinfo.tm_mon + 1);
 	humanTimestamp += buffer;
 	humanTimestamp += "-";
-	sprintf_s(buffer, 16, "%02d", timeinfo.tm_mday);
+	sprintf(buffer, "%02d", timeinfo.tm_mday);
 	humanTimestamp += buffer;
 	humanTimestamp += "-";
-	sprintf_s(buffer, 16, "%02d", timeinfo.tm_hour);
+	sprintf(buffer, "%02d", timeinfo.tm_hour);
 	humanTimestamp += buffer;
 	humanTimestamp += "-";
-	sprintf_s(buffer, 16, "%02d", timeinfo.tm_min);
+	sprintf(buffer, "%02d", timeinfo.tm_min);
 	humanTimestamp += buffer;
 	humanTimestamp += "-";
-	sprintf_s(buffer, 16, "%02d", timeinfo.tm_sec);
+	sprintf(buffer, "%02d", timeinfo.tm_sec);
 	humanTimestamp += buffer;
 
 	return humanTimestamp;
@@ -84,29 +100,29 @@ void ZPatcher::Log(LogLevel level, const char* format, ...)
 	va_list args;
 	va_start(args, format);
 
-	fprintf_s(g_LogSystem, "[%s] ", BuildHumanTimeStamp().c_str());
+	fprintf(g_LogSystem, "[%s] ", BuildHumanTimeStamp().c_str());
 
 	switch (level)
 	{
 	case LOG:
-		fprintf_s(g_LogSystem, "[Log] ");
+		fprintf(g_LogSystem, "[Log] ");
 		break;
 	case LOG_WARNING:
-		fprintf_s(g_LogSystem, "[Warning] ");
+		fprintf(g_LogSystem, "[Warning] ");
 		break;
 	case LOG_ERROR:
-		fprintf_s(g_LogSystem, "[ERROR] ");
+		fprintf(g_LogSystem, "[ERROR] ");
 		break;
 	case LOG_FATAL:
-		fprintf_s(g_LogSystem, "[FATAL] ");
+		fprintf(g_LogSystem, "[FATAL] ");
 		break;
 	default:
-		fprintf_s(g_LogSystem, "[???] ");
+		fprintf(g_LogSystem, "[???] ");
 		break;
 	}
-	fprintf_s(g_LogSystem, "> ");
-	vfprintf_s(g_LogSystem, format, args);
-	fprintf_s(g_LogSystem, "\n");
+	fprintf(g_LogSystem, "> ");
+	vfprintf(g_LogSystem, format, args);
+	fprintf(g_LogSystem, "\n");
 	fflush(g_LogSystem);
 }
 

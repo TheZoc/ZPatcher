@@ -4,13 +4,13 @@
 //
 
 #pragma once
-
-#include "targetver.h"
+#ifdef _WIN32
+	#include "targetver.h"
+	#include <malloc.h>
+#endif
 
 #include <stdio.h>
-#include <tchar.h>
 #include <string>
-#include <malloc.h>
 #include <assert.h>
 #include <vector>
 #include <algorithm>

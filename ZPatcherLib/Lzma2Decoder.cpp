@@ -11,12 +11,21 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include <stdint.h>
 #include <assert.h>
+#include <errno.h>
 #include "Lzma2Dec.h"
 #include "Lzma2Decoder.h"
 #include "LzmaInterfaces.h"
 #include "LogSystem.h"
 
+#ifdef _WIN32
+	#define ftell64 _ftelli64
+	#define fseek64 _fseeki64
+#else
+ 	#define ftell64 ftell
+	#define fseek64 fseek
+#endif
 
 CLzma2Dec* ZPatcher::InitLzma2Decoder(const Byte &props)
 {
@@ -65,18 +74,12 @@ void ZPatcher::GetFileinfo(FILE* patchFile, std::string& fileName, Byte& operati
 {
 	fread(&operation, sizeof(Byte), 1, patchFile);
 
-	long long int currentPos1 = _ftelli64(patchFile);
-
 	unsigned long fileNameLen;
 	fread(&fileNameLen, sizeof(unsigned long), 1, patchFile);
-
-	long long int currentPos2 = _ftelli64(patchFile);
 
 	fileName.clear();
 	fileName.resize(fileNameLen, '\0');
 	fread(&fileName[0], sizeof(char), fileNameLen, patchFile);
-
-	long long int currentPos3 = _ftelli64(patchFile);
 }
 
 bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, FILE* destFile)
@@ -89,7 +92,7 @@ bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, FILE* destFi
 	Byte destBuffer[buffer_size];
 	SizeT sourceLen = 0;
 	SizeT destLen = buffer_size;
-	__int64 sourceFilePos = _ftelli64(sourceFile);
+	int64_t sourceFilePos = ftell64(sourceFile);
 
 	// We must reinitialize every time we want a decode a new file.
 	Lzma2Dec_Init(decoder);
@@ -104,7 +107,7 @@ bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, FILE* destFi
 		fwrite(destBuffer, 1, destLen, destFile);
 
 		sourceFilePos += sourceLen;
-		res = _fseeki64(sourceFile, sourceFilePos, SEEK_SET);
+		res = fseek64(sourceFile, sourceFilePos, SEEK_SET);
 		assert(res == 0);
 
 		if (res == SZ_OK && status == LZMA_STATUS_FINISHED_WITH_MARK)
@@ -117,16 +120,12 @@ bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, FILE* destFi
 bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, const std::string& destFileName)
 {
 	FILE* destFile;
-	errno_t err = 0;
 
-	_set_errno(0);
-	err = fopen_s(&destFile, destFileName.c_str(), "wb");
-	if (err != 0)
+	errno = 0;
+	destFile = fopen(destFileName.c_str(), "wb");
+	if (errno != 0)
 	{
-		const size_t buffer_size = 1024;
-		char buffer[buffer_size];
-		strerror_s(buffer, buffer_size, err);
-		Log(LOG_FATAL, "Error opening file \"%s\" to write updated data: %s", destFileName.c_str(), buffer);
+		Log(LOG_FATAL, "Error opening file \"%s\" to write updated data: %s", destFileName.c_str(), strerror(errno));
 		return false;
 	}
 

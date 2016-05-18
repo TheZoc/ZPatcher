@@ -14,7 +14,18 @@
 #include "Lzma2Enc.h"
 #include "Lzma2Encoder.h"
 #include "LzmaInterfaces.h"
+#include "LogSystem.h"
+#include <stdint.h>
+#include <errno.h>
 #include <assert.h>
+
+#ifdef _WIN32
+	#define ftell64 _ftelli64
+	#define fseek64 _fseeki64
+#else
+ 	#define ftell64 ftell
+	#define fseek64 fseek
+#endif
 
 CLzma2EncHandle ZPatcher::InitLzma2Encoder()
 {
@@ -55,29 +66,41 @@ void ZPatcher::WriteFileInfo(FILE* dest, const Byte& operation, const std::strin
 	fwrite(fileName.c_str(), sizeof(char), fileNameLen, dest);
 }
 
-void ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest)
+bool ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest)
 {
-	_fseeki64(source, 0LL, SEEK_END);
-	__int64 srcFileSize = _ftelli64(source);
-	_fseeki64(source, 0LL, SEEK_SET);
+	fseek64(source, 0LL, SEEK_END);
+	int64_t	srcFileSize = ftell64(source);
+	rewind(source);
 
-	ICompressProgressPlus ProgressCallback = { &OnProgress, srcFileSize };
-	ISeqInStreamPlus inputHandler = { &SeqInStreamPlus_Read, source };
-	ISeqOutStreamPlus outputHandler = { &SeqOutStreamPlus_Write, dest };
+	ICompressProgressPlus ProgressCallback = { { &OnProgress }, srcFileSize };
+	ISeqInStreamPlus inputHandler = { { &SeqInStreamPlus_Read }, source };
+	ISeqOutStreamPlus outputHandler = { { &SeqOutStreamPlus_Write }, dest };
 
 	SRes res = Lzma2Enc_Encode(hLzma2Enc, (ISeqOutStream*)&outputHandler, (ISeqInStream*)&inputHandler, (ICompressProgress*)&ProgressCallback);
-	assert(res == SZ_OK);
+
+	if (res != SZ_OK)
+	{
+		fprintf(stderr, "Error in LZMA2Enc_Encode: Returned value was different from SZ_OK.");
+		return false;
+	}
+
+	return true;
 }
 
-void ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourceFileName, FILE* dest)
+bool ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourceFileName, FILE* dest)
 {
 	FILE* sourceFile;
-	errno_t err = 0;
 
-	err = fopen_s(&sourceFile, sourceFileName.c_str(), "rb");
-	assert(err == 0);
+	errno = 0;
+	sourceFile = fopen(sourceFileName.c_str(), "rb");
+	if (errno != 0)
+	{
+		Log(LOG_FATAL, "Error opening file \"%s\" to read updated data: %s", sourceFileName.c_str(), strerror(errno));
+		fprintf(stderr, "Error opening file \"%s\" to read updated data: %s", sourceFileName.c_str(), strerror(errno));
+		return false;
+	}
 
-	WriteCompressedFile(hLzma2Enc, sourceFile, dest);
-
+	bool result = WriteCompressedFile(hLzma2Enc, sourceFile, dest);
 	fclose(sourceFile);
+	return result;
 }

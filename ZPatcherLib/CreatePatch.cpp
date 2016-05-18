@@ -17,6 +17,7 @@
 #include "Lzma2Encoder.h"
 #include <algorithm>
 #include <assert.h>
+#include <errno.h>
 #include "LogSystem.h"
 
 ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std::string& newVersion)
@@ -60,7 +61,7 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std
 
 				if (success != true)
 				{
-					fprintf(stdout, "\n\nError comparing files! Patch file might be inconsistent! Check the logs for details.\n\n");
+					fprintf(stderr, "\n\nError comparing files! Patch file might be inconsistent! Check the logs for details.\n\n");
 				}
 
 				if (success && !identical)
@@ -172,7 +173,11 @@ bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 		{
 			WriteFileInfo(patchFile, Patch_File_Add, itr->c_str());
 			std::string localPath = newVersionPath + "/" + *itr;
-			WriteCompressedFile(hLzma2Enc, localPath, patchFile);
+
+			if (!WriteCompressedFile(hLzma2Enc, localPath, patchFile))
+			{
+				return false;
+			}
 		}
 		else
 		{
@@ -191,7 +196,11 @@ bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 
 		WriteFileInfo(patchFile, Patch_File_Replace, itr->c_str());
 		std::string localPath = newVersionPath + "/" + *itr;
-		WriteCompressedFile(hLzma2Enc, localPath, patchFile);
+
+		if (!WriteCompressedFile(hLzma2Enc, localPath, patchFile))
+		{
+			return false;
+		}
 	}
 
 	// Update our progress bar
@@ -214,15 +223,12 @@ bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 bool ZPatcher::CreatePatchFile(std::string& patchFileName, std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction)
 {
 	FILE* patchFile;
-	errno_t err = 0;
 
-	err = fopen_s(&patchFile, patchFileName.c_str(), "wb");
-	if (err != 0)
+	errno = 0;
+	patchFile = fopen(patchFileName.c_str(), "wb");
+	if (errno != 0)
 	{
-		const size_t buffer_size = 1024;
-		char buffer[buffer_size];
-		strerror_s(buffer, buffer_size, err);
-		Log(LOG_FATAL, "Error opening file \"%s\" to write patch data: %s", patchFileName.c_str(), buffer);
+		Log(LOG_FATAL, "Error opening file \"%s\" to write patch data: %s", patchFileName.c_str(), strerror(errno));
 		return false;
 	}
 
