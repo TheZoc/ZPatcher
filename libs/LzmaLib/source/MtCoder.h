@@ -16,7 +16,7 @@ typedef struct
   int stop;
   
   THREAD_FUNC_TYPE func;
-  LPVOID param;
+  void* param;
   THREAD_FUNC_RET_TYPE res;
 } CLoopThread;
 

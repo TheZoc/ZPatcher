@@ -3,6 +3,7 @@
 
 #include "Precomp.h"
 
+#ifdef _WIN32
 #include <windows.h>
 
 BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
@@ -12,3 +13,5 @@ BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
   UNUSED_VAR(lpReserved);
   return TRUE;
 }
+
+#endif
