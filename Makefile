@@ -5,6 +5,8 @@ CPPFLAGS=-I$(ZPATCHERLIBDIR) -Ilibs/LzmaLib/source
 LDFLAGS=
 ARFLAGS=-rvs
 
+LZMALIB=./libs/LzmaLib/source/out/liblzma.a
+
 # ZPatcherLib files
 ZPATCHERLIBDIR=ZPatcherLib
 ZPATCHERLIBSOURCES=$(wildcard $(ZPATCHERLIBDIR)/*.cpp)
@@ -16,7 +18,7 @@ CREATEPATCHSOURCES=$(wildcard $(CREATEPATCHDIR)/*.cpp)
 CREATEPATCHOBJECTS=$(addprefix obj/$(CREATEPATCHDIR)/, $(notdir $(CREATEPATCHSOURCES:.cpp=.o)))
 
 # ApplyPatch specific source files
-APPLYPATCHDIR=ApplyPatchDir
+APPLYPATCHDIR=ApplyPatch
 APPLYPATCHSOURCES=$(wildcard $(APPLYPATCHDIR)/*.cpp)
 APPLYPATCHOBJECTS=$(addprefix obj/$(APPLYPATCHDIR)/, $(notdir $(APPLYPATCHSOURCES:.cpp=.o)))
 
@@ -33,7 +35,7 @@ clean:
 # CreatePatch executable
 out/CreatePatch: $(CREATEPATCHOBJECTS) out/ZPatcherLib.a
 	$(create_output_dir)
-	$(CC) $(LDFLAGS) $^ -o $@
+	$(CC) $(LDFLAGS) $(LZMALIB)	$^ -o $@
 
 $(CREATEPATCHOBJECTS): obj/$(CREATEPATCHDIR)/%.o: $(CREATEPATCHDIR)/%.cpp
 	$(create_output_dir)
@@ -42,7 +44,7 @@ $(CREATEPATCHOBJECTS): obj/$(CREATEPATCHDIR)/%.o: $(CREATEPATCHDIR)/%.cpp
 # ApplyPatch executable
 out/ApplyPatch: $(APPLYPATCHOBJECTS) out/ZPatcherLib.a
 	$(create_output_dir)
-	$(CC) $(LDFLAGS) $^ -o $@
+	$(CC) $(LDFLAGS) $(LZMALIB) $^ -o $@
 
 $(APPLYPATCHOBJECTS): obj/$(APPLYPATCHDIR)/%.o: $(APPLYPATCHDIR)/%.cpp
 	$(create_output_dir)
