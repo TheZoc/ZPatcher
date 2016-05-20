@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 
 	if (argc < 4)
 	{
-		fprintf(stderr, "Usage: CreatePatch.exe <old version directory> <new version directory> <output patch file>\n");
+		fprintf(stderr, "Usage: %s <old version directory> <new version directory> <output patch file>\n", argv[0]);
 		exit(EXIT_SUCCESS);
 	}
 

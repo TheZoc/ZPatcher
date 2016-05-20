@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 
 	if (argc < 3)
 	{
-		fprintf(stderr, "Usage: ApplyPatch.exe <Patch file> <Directory to be patched>\n");
+		fprintf(stderr, "Usage: %s <Patch file> <Directory to be patched>\n", argv[0]);
 		exit(EXIT_SUCCESS);
 	}
 
