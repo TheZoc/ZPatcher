@@ -46,7 +46,7 @@ void ZPatcher::PrintPatchApplyingProgressBar(float Percentage)
 	fflush(stdout);
 }
 
-bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, unsigned long long &previousVersionNumber)
+bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, uint64_t &previousVersionNumber)
 {
 	std::string prevVersionNumber = std::to_string(previousVersionNumber);
 
@@ -154,7 +154,7 @@ bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, un
 	return success;
 }
 
-bool ZPatcher::ApplyPatchFile(const std::string& patchFileName, const std::string& targetPath, unsigned long long& previousVersionNumber)
+bool ZPatcher::ApplyPatchFile(const std::string& patchFileName, const std::string& targetPath, uint64_t& previousVersionNumber)
 {
 	FILE* patchFile;
 

@@ -113,7 +113,7 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std
 	return patchFileList;
 }
 
-void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const unsigned long long& leftAmount, const unsigned long long& rightAmount)
+void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const uint64_t& leftAmount, const uint64_t& rightAmount)
 {
 	int barWidth = 80;
 

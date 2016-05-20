@@ -59,10 +59,10 @@ void ZPatcher::WritePatchFileHeader(FILE* dest, Byte &Lzma2Properties)
 
 void ZPatcher::WriteFileInfo(FILE* dest, const Byte& operation, const std::string& fileName)
 {
-	unsigned long fileNameLen = static_cast<unsigned long>(fileName.length());
+	uint64_t fileNameLen = static_cast<uint64_t>(fileName.length());
 
 	fwrite(&operation, sizeof(Byte), 1, dest);
-	fwrite(&fileNameLen, sizeof(unsigned long), 1, dest);
+	fwrite(&fileNameLen, sizeof(uint64_t), 1, dest);
 	fwrite(fileName.c_str(), sizeof(char), fileNameLen, dest);
 }
 

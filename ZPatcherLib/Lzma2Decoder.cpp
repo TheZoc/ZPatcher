@@ -74,8 +74,8 @@ void ZPatcher::GetFileinfo(FILE* patchFile, std::string& fileName, Byte& operati
 {
 	fread(&operation, sizeof(Byte), 1, patchFile);
 
-	unsigned long fileNameLen;
-	fread(&fileNameLen, sizeof(unsigned long), 1, patchFile);
+	uint64_t fileNameLen;
+	fread(&fileNameLen, sizeof(uint64_t), 1, patchFile);
 
 	fileName.clear();
 	fileName.resize(fileNameLen, '\0');
