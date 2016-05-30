@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 	Log(LOG, "Patch file: %s", patchFileName.c_str());
 	Log(LOG, "Directory to be upgraded: %s", targetDirectory.c_str());
 
-	unsigned long long version = 1;
+	uint64_t version = 1;
 	bool success = ApplyPatchFile(patchFileName, targetDirectory, version); // TODO: Add a version file
 
 	DestroyLogSystem();
