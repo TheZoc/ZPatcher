@@ -51,7 +51,8 @@ namespace ZUpdater
 			return true;
 		}
 
-		// Zoc (2016-04-21): Ahhh, the good, old "Depth First Search". Since this is a small graph, it's fine to use this.
+		// Zoc (2016-04-21): Ahhh, the good, old "Depth First Search". Since this is a small graph, it's okay to use this.
+		// TODO: Convert this to Breadth First Search? It would allow us the "downgrade" feature with the proper setup.
 		// The cost to be minimized is the download total filesize. This is a brute-force method that explores all paths.
 		std::vector<unsigned int> bestPath;
 		uint64_t bestPathFileSize = ULLONG_MAX;
