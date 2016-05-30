@@ -28,8 +28,8 @@ namespace ZUpdater
 {
 	struct Patch
 	{
-		unsigned long long	sourceBuildNumber;
-		unsigned long long	targetBuildNumber;
+		uint64_t	sourceBuildNumber;
+		uint64_t	targetBuildNumber;
 
 		std::string         fileURL;
 		DWORD               fileLength;
@@ -37,45 +37,39 @@ namespace ZUpdater
 
 	};
 
-	// Lazy++
-// 	extern std::vector<Patch>				g_Patches;
-// 	extern std::vector<unsigned int>		g_BestPatchPath;
-// 	extern unsigned long long				g_BestPathFileSize;
-//	extern unsigned long long				g_LatestVersion;
-
 	/**
 	 * Download the Update XML from the server and process it. The output is stored in g_Patches.
 	 * Returns if file was downloaded and processed successfully
 	 */
-	bool CheckForUpdates(const std::string& updateURL, const unsigned long long& currentBuildNumber);
+	bool CheckForUpdates(const std::string& updateURL, const uint64_t& currentBuildNumber);
 
 	/**
 	 * Returns g_LatestVersion.
 	 */
-	unsigned long long GetLatestVersion();
+	uint64_t GetLatestVersion();
 
 	/**
 	 * With all the patches stored in g_Patches, find the best path to download updates, using the file download size as the value that should be minimized.
 	 * Returns true if there is a path from the source version to the target version (i.e. if the update is possible)
 	 */
-	bool GetSmallestUpdatePath(const unsigned long long& sourceBuildNumber, const unsigned long long& targetBuildNumber, std::vector<unsigned int>& path, unsigned long long& pathFileSize);
+	bool GetSmallestUpdatePath(const uint64_t& sourceBuildNumber, const uint64_t& targetBuildNumber, std::vector<unsigned int>& path, uint64_t& pathFileSize);
 
 	/**
 	 *
 	 */
-	bool DownloadAndApplyPatch(std::string targetDirectory, std::string targetVersionFile, unsigned long long targetCurrentVersion);
+	bool DownloadAndApplyPatch(std::string targetDirectory, std::string targetVersionFile, uint64_t targetCurrentVersion);
 
 	/**
 	 * Returns true if it was able to determine the current version stored in configFile.
 	 * The found version is returned in the "version" variable.
 	 * NOTE: If no file is found, it returns true and version gets the value 0 (i.e. No previous version found, perform full instalation)
  	 */
-	bool GetTargetCurrentVersion(const std::string& configFile, unsigned long long& version);
+	bool GetTargetCurrentVersion(const std::string& configFile, uint64_t& version);
 
 	/**
 	 * Updates given configFile to store the supplied version
 	 */
-	bool SaveTargetNewVersion(const std::string& configFile, const unsigned long long& version);
+	bool SaveTargetNewVersion(const std::string& configFile, const uint64_t& version);
 
 	/**
 	 * Calculate the MD5 hash of a file

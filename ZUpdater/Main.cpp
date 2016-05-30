@@ -60,7 +60,7 @@ int main()
 	std::string					updateURL = "http://www.example.org/example.xml";
 	std::string					targetDirectory = "./";
 	std::string					versionFile = "example.zversion";
-	unsigned long long			currentVersion;
+	uint64_t					currentVersion;
 
 	// Check if we have version information on file. If not, we consider this is a fresh install.
 	if (!GetTargetCurrentVersion(versionFile, currentVersion))

@@ -39,11 +39,11 @@ namespace ZUpdater
 {
 	std::vector<Patch>				g_Patches;
 	std::vector<unsigned int>		g_BestPatchPath;
-	unsigned long long				g_BestPathFileSize	= 0;
-	unsigned long long				g_LatestVersion		= 0;
+	uint64_t						g_BestPathFileSize	= 0;
+	uint64_t						g_LatestVersion		= 0;
 
 
-	bool GetSmallestUpdatePath(const unsigned long long& sourceBuildNumber, const unsigned long long& targetBuildNumber, std::vector<unsigned int>& path, unsigned long long& pathFileSize)
+	bool GetSmallestUpdatePath(const uint64_t& sourceBuildNumber, const uint64_t& targetBuildNumber, std::vector<unsigned int>& path, uint64_t& pathFileSize)
 	{
 		// Our current path is a path from the start to the destination builds.
 		if (sourceBuildNumber == targetBuildNumber)
@@ -54,7 +54,7 @@ namespace ZUpdater
 		// Zoc (2016-04-21): Ahhh, the good, old "Depth First Search". Since this is a small graph, it's fine to use this.
 		// The cost to be minimized is the download total filesize. This is a brute-force method that explores all paths.
 		std::vector<unsigned int> bestPath;
-		unsigned long long bestPathFileSize = ULLONG_MAX;
+		uint64_t bestPathFileSize = ULLONG_MAX;
 
 		for (unsigned int patchIndex = 0; patchIndex < g_Patches.size(); ++patchIndex)
 		{
@@ -65,7 +65,7 @@ namespace ZUpdater
 				std::vector<unsigned int> testPath;
 				testPath.push_back(patchIndex);
 
-				unsigned long long testPathFileSize = patch.fileLength;
+				uint64_t testPathFileSize = patch.fileLength;
 
 				// Find the best path recursively
 				if (GetSmallestUpdatePath(patch.targetBuildNumber, targetBuildNumber, testPath, testPathFileSize))
@@ -90,7 +90,7 @@ namespace ZUpdater
 		return false;
 	}
 
-	bool CheckForUpdates(const std::string& updateURL, const unsigned long long& currentBuildNumber)
+	bool CheckForUpdates(const std::string& updateURL, const uint64_t& currentBuildNumber)
 	{
 		size_t length = updateURL.find_last_of('/');
 
@@ -147,7 +147,7 @@ namespace ZUpdater
 				return false;
 			}
 
-			unsigned long long buildNumber = _strtoui64(versionElement->GetText(), nullptr, 10);
+			uint64_t buildNumber = _strtoui64(versionElement->GetText(), nullptr, 10);
 
 			if (buildNumber > g_LatestVersion)
 			{
@@ -274,7 +274,7 @@ namespace ZUpdater
 
 		/*
 		fprintf(stderr, "g_BestPatchPath.size() = %llu\r\n", g_BestPatchPath.size());
-		for (unsigned long long patchIndex = 0; patchIndex < g_BestPatchPath.size(); ++patchIndex)
+		for (uint64_t patchIndex = 0; patchIndex < g_BestPatchPath.size(); ++patchIndex)
 		{
 			const Patch& patch = g_Patches[g_BestPatchPath[patchIndex]];
 
@@ -290,7 +290,7 @@ namespace ZUpdater
 		return true;
 	}
 
-	unsigned long long GetLatestVersion()
+	uint64_t GetLatestVersion()
 	{
 		// Think about this as a pauper's version of C++ OOP :P
 		return g_LatestVersion;
@@ -301,7 +301,7 @@ namespace ZUpdater
 
 	//////////////////////////////////////////////////////////////////////////
 
-	bool DownloadAndApplyPatch(std::string targetDirectory, std::string versionFile, unsigned long long currentVersion)
+	bool DownloadAndApplyPatch(std::string targetDirectory, std::string versionFile, uint64_t currentVersion)
 	{
 		for (unsigned int patchIndex = 0; patchIndex < g_BestPatchPath.size(); ++patchIndex)
 		{
@@ -419,7 +419,7 @@ namespace ZUpdater
 
 	//////////////////////////////////////////////////////////////////////////
 
-	bool GetTargetCurrentVersion(const std::string& configFile, unsigned long long& version)
+	bool GetTargetCurrentVersion(const std::string& configFile, uint64_t& version)
 	{
 		FILE* targetFile;
 		errno_t err;
@@ -456,7 +456,7 @@ namespace ZUpdater
 		}
 	}
 
-	bool SaveTargetNewVersion(const std::string& configFile, const unsigned long long& version)
+	bool SaveTargetNewVersion(const std::string& configFile, const uint64_t& version)
 	{
 		FILE* targetFile;
 		errno_t err;
@@ -472,7 +472,7 @@ namespace ZUpdater
 			return false;
 		}
 
-		size_t elementsWritten = fwrite(&version, sizeof(unsigned long long), 1, targetFile);
+		size_t elementsWritten = fwrite(&version, sizeof(uint64_t), 1, targetFile);
 
 		fclose(targetFile);
 
@@ -503,7 +503,7 @@ namespace ZUpdater
 			return 0;
 		}
 
-		const unsigned long long buffer_size = 1 << 16;
+		const uint64_t buffer_size = 1 << 16;
 		unsigned char readBuffer[buffer_size];
 		size_t bytesRead;
 
