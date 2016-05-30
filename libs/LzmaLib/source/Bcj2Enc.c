@@ -13,7 +13,7 @@
 #endif
 
 #ifdef _WIN32
-	#include <winidows.h>
+	#include <windows.h>
 #endif
 #include <string.h>
 
