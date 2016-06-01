@@ -132,7 +132,7 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std
 	return patchFileList;
 }
 
-bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction)
+bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction, ICompressProgress LZMAProgressCallback)
 {
 	// Initialize our custom LZMA2 Encoder
 	CLzma2EncHandle hLzma2Enc = InitLzma2Encoder();
@@ -174,7 +174,7 @@ bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 			WriteFileInfo(patchFile, Patch_File_Add, itr->c_str());
 			std::string localPath = newVersionPath + "/" + *itr;
 
-			if (!WriteCompressedFile(hLzma2Enc, localPath, patchFile))
+			if (!WriteCompressedFile(hLzma2Enc, localPath, patchFile, LZMAProgressCallback))
 			{
 				return false;
 			}
@@ -197,7 +197,7 @@ bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 		WriteFileInfo(patchFile, Patch_File_Replace, itr->c_str());
 		std::string localPath = newVersionPath + "/" + *itr;
 
-		if (!WriteCompressedFile(hLzma2Enc, localPath, patchFile))
+		if (!WriteCompressedFile(hLzma2Enc, localPath, patchFile, LZMAProgressCallback))
 		{
 			return false;
 		}
@@ -220,7 +220,8 @@ bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 	return true;
 }
 
-bool ZPatcher::CreatePatchFile(std::string& patchFileName, std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction)
+
+bool ZPatcher::CreatePatchFile(std::string& patchFileName, std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction, ICompressProgress LZMAProgressCallback)
 {
 	FILE* patchFile;
 
@@ -232,7 +233,7 @@ bool ZPatcher::CreatePatchFile(std::string& patchFileName, std::string& newVersi
 		return false;
 	}
 
-	bool result = CreatePatchFile(patchFile, newVersionPath, patchFileList, progressFunction);
+	bool result = CreatePatchFile(patchFile, newVersionPath, patchFileList, progressFunction, LZMAProgressCallback);
 
 	fclose(patchFile);
 

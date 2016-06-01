@@ -66,17 +66,12 @@ void ZPatcher::WriteFileInfo(FILE* dest, const Byte& operation, const std::strin
 	fwrite(fileName.c_str(), sizeof(char), fileNameLen, dest);
 }
 
-bool ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest)
+bool ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest, ICompressProgressPlus LZMAProgressCallbackPlus)
 {
-	fseek64(source, 0LL, SEEK_END);
-	int64_t	srcFileSize = ftell64(source);
-	rewind(source);
-
-	ICompressProgressPlus ProgressCallback = { { &OnProgress }, srcFileSize };
 	ISeqInStreamPlus inputHandler = { { &SeqInStreamPlus_Read }, source };
 	ISeqOutStreamPlus outputHandler = { { &SeqOutStreamPlus_Write }, dest };
 
-	SRes res = Lzma2Enc_Encode(hLzma2Enc, (ISeqOutStream*)&outputHandler, (ISeqInStream*)&inputHandler, (ICompressProgress*)&ProgressCallback);
+	SRes res = Lzma2Enc_Encode(hLzma2Enc, (ISeqOutStream*)&outputHandler, (ISeqInStream*)&inputHandler, (ICompressProgress*)&LZMAProgressCallbackPlus);
 
 	if (res != SZ_OK)
 	{
@@ -87,7 +82,7 @@ bool ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE
 	return true;
 }
 
-bool ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourceFileName, FILE* dest)
+bool ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourceFileName, FILE* dest, ICompressProgress LZMAProgressCallback)
 {
 	FILE* sourceFile;
 
@@ -100,7 +95,13 @@ bool ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourc
 		return false;
 	}
 
-	bool result = WriteCompressedFile(hLzma2Enc, sourceFile, dest);
+	// Setup our data structure
+	fseek64(sourceFile, 0LL, SEEK_END);
+	int64_t	srcFileSize = ftell64(sourceFile);
+	rewind(sourceFile);
+	ICompressProgressPlus LZMAProgressCallbackPlus = { LZMAProgressCallback, srcFileSize, sourceFileName };
+
+	bool result = WriteCompressedFile(hLzma2Enc, sourceFile, dest, LZMAProgressCallbackPlus);
 	fclose(sourceFile);
 	return result;
 }

@@ -16,6 +16,7 @@
 
 #include "ZPatcherCurrentVersion.h"
 #include "Lzma2Enc.h"
+#include "LzmaInterfaces.h"
 #include <stdio.h>
 #include <string>
 
@@ -34,10 +35,10 @@ namespace ZPatcher
 	void WriteFileInfo(FILE* dest, const Byte& operation, const std::string& fileName);
 
 	// Write the modified file data to the patch file.
-	bool WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest);
+	bool WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest, ICompressProgressPlus LZMAProgressCallbackPlus);
 
 	// Write the modified file data to the patch file, uses the source file name as param, instead of the file handle.
-	bool WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourceFileName, FILE* dest);
+	bool WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourceFileName, FILE* dest, ICompressProgress LZMAProgressCallback = { &OnProgress });
 }
 
 #endif // _LZMA2ENCODER_H_

@@ -17,6 +17,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string>
 
 #ifdef _WIN32
 	#include <malloc.h>
@@ -64,6 +65,7 @@ namespace ZPatcher
 	{
 		ICompressProgress CompressProgress;
 		int64_t TotalSize;
+		std::string FileName;
 	} ICompressProgressPlus;
 
 	SRes OnProgress(void *p, UInt64 inSize, UInt64 outSize);

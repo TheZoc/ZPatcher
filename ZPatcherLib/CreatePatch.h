@@ -14,6 +14,7 @@
 #define _CREATEPATCH_H_
 
 #include <vector>
+#include "LzmaInterfaces.h"
 
 namespace ZPatcher
 {
@@ -48,13 +49,14 @@ namespace ZPatcher
 	 * newVersionPath is the directory that contains the updated files
 	 * patchFileList is a PatchFileList_t filled by GetDifferences() with the changes between directories
 	 * progressFunction is a pointer to a function to display the current progress. It defaults to our own PrintCreatePatchProgressBar(), but it can be changed.
+	 * LZMAProgressCallback is a pointer to a function to display the current progress of the file being compressed by the LZMA algorithm. It defaults to ZPatcher::OnProgress()
 	 */
-	bool CreatePatchFile(FILE* patchFile, std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction = &PrintCreatePatchProgressBar);
+	bool CreatePatchFile(FILE* patchFile, std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction = &PrintCreatePatchProgressBar, ICompressProgress LZMAProgressCallback = { &OnProgress });
 
 	/**
 	 * This is a shortcut to CreatePatchFile() that receives the output patch file as a string
 	 */
-	bool CreatePatchFile(std::string& patchFileName, std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction = &PrintCreatePatchProgressBar);
+	bool CreatePatchFile(std::string& patchFileName, std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction = &PrintCreatePatchProgressBar, ICompressProgress LZMAProgressCallback = { &OnProgress });
 }
 
 #endif // _CREATEPATCH_H_
