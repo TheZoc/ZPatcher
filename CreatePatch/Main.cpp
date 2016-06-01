@@ -59,6 +59,9 @@ int main(int argc, char* argv[])
 
 	CreatePatchFile(outputFilename, newDirectory, patchFileList);
 
+	if (patchFileList)
+		delete(patchFileList);
+
 	DestroyLogSystem();
 
 //	system("pause");

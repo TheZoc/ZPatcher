@@ -20,6 +20,25 @@
 #include <errno.h>
 #include "LogSystem.h"
 
+void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const uint64_t& leftAmount, const uint64_t& rightAmount)
+{
+	int barWidth = 80;
+
+	fprintf(stdout, "\xd[");
+
+	int pos = (int)(barWidth * Percentage / 100.0f);
+	for (int i = 0; i < barWidth; ++i)
+	{
+		if (i < pos) fprintf(stdout, "=");
+		else if (i == pos) fprintf(stdout, ">");
+		else fprintf(stdout, " ");
+	}
+
+	fprintf(stdout, "] %0.2f%% %llu/%llu", Percentage, leftAmount, rightAmount);
+
+	fflush(stdout);
+}
+
 ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std::string& newVersion, ProgressCallback progressFunction)
 {
 	PatchFileList_t* patchFileList = new PatchFileList_t();
@@ -111,25 +130,6 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std
 	fprintf(stdout, "\n\n");
 
 	return patchFileList;
-}
-
-void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const uint64_t& leftAmount, const uint64_t& rightAmount)
-{
-	int barWidth = 80;
-
-	fprintf(stdout, "\xd[");
-
-	int pos = (int)(barWidth * Percentage / 100.0f);
-	for (int i = 0; i < barWidth; ++i)
-	{
-		if (i < pos) fprintf(stdout, "=");
-		else if (i == pos) fprintf(stdout, ">");
-		else fprintf(stdout, " ");
-	}
-
-	fprintf(stdout, "] %0.2f%% %llu/%llu", Percentage, leftAmount, rightAmount);
-
-	fflush(stdout);
 }
 
 bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction)
