@@ -1,3 +1,6 @@
+# Ignore wxWidgets binaries
+wxWidgets/
+
 # Program-generated files to be ignored
 
 # User-specific files
