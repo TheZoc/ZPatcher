@@ -33,14 +33,14 @@ namespace ZPatcher
 	};
 
 	/**
-	* Get the difference between two directories (oldVersion and newVersion) and build a PatchFileList_t containing all the changes
+	* Print the progress bar used when comparing directories
 	*/
-	PatchFileList_t* GetDifferences(std::string& oldVersion, std::string& newVersion);
+	void PrintCreatePatchProgressBar(const float& Percentage, const uint64_t& leftAmount, const uint64_t& rightAmount);
 
 	/**
-	 * Print the progress bar used when comparing directories
-	 */
-	void PrintCreatePatchProgressBar(const float& Percentage, const uint64_t& leftAmount, const uint64_t& rightAmount);
+	* Get the difference between two directories (oldVersion and newVersion) and build a PatchFileList_t containing all the changes
+	*/
+	PatchFileList_t* GetDifferences(std::string& oldVersion, std::string& newVersion, ProgressCallback progressFunction = &PrintCreatePatchProgressBar);
 
 	/**
 	 * Creates the patch file with all the changes listed in patchFileList.

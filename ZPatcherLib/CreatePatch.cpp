@@ -20,7 +20,7 @@
 #include <errno.h>
 #include "LogSystem.h"
 
-ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std::string& newVersion)
+ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std::string& newVersion, ProgressCallback progressFunction)
 {
 	PatchFileList_t* patchFileList = new PatchFileList_t();
 
@@ -42,7 +42,7 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std
 	while (oldFileIndex < oldVersionFileList.size() && newFileIndex < newVersionFileList.size())
 	{
 		float progress = (oldFileIndex + newFileIndex) * 100.0f / (oldVersionFileList.size() + newVersionFileList.size());
-		PrintCreatePatchProgressBar(progress, oldFileIndex + newFileIndex, oldVersionFileList.size() + newVersionFileList.size());
+		progressFunction(progress, oldFileIndex + newFileIndex, oldVersionFileList.size() + newVersionFileList.size());
 
 		const std::string& oldFileName = oldVersionFileList[oldFileIndex];
 		const std::string& newFileName = newVersionFileList[newFileIndex];
@@ -92,7 +92,7 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std
 	while (oldFileIndex < oldVersionFileList.size())
 	{
 		float progress = (oldFileIndex + newFileIndex) * 100.0f / (oldVersionFileList.size() + newVersionFileList.size());
-		PrintCreatePatchProgressBar(progress, oldFileIndex + newFileIndex, oldVersionFileList.size() + newVersionFileList.size());
+		progressFunction(progress, oldFileIndex + newFileIndex, oldVersionFileList.size() + newVersionFileList.size());
 
 		patchFileList->RemovedFileList.push_back(oldVersionFileList[oldFileIndex]);
 		oldFileIndex++;
@@ -101,13 +101,13 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std
 	while (newFileIndex < newVersionFileList.size())
 	{
 		float progress = (newFileIndex + newFileIndex) * 100.0f / (newVersionFileList.size() + newVersionFileList.size());
-		PrintCreatePatchProgressBar(progress, oldFileIndex + newFileIndex, oldVersionFileList.size() + newVersionFileList.size());
+		progressFunction(progress, oldFileIndex + newFileIndex, oldVersionFileList.size() + newVersionFileList.size());
 
 		patchFileList->AddedFileList.push_back(newVersionFileList[newFileIndex]);
 		newFileIndex++;
 	}
 
-	PrintCreatePatchProgressBar(100.0f, oldFileIndex + newFileIndex, oldVersionFileList.size() + newVersionFileList.size());
+	progressFunction(100.0f, oldFileIndex + newFileIndex, oldVersionFileList.size() + newVersionFileList.size());
 	fprintf(stdout, "\n\n");
 
 	return patchFileList;
