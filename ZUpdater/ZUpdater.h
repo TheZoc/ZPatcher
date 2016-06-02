@@ -67,14 +67,14 @@ namespace ZUpdater
 	bool GetTargetCurrentVersion(const std::string& configFile, uint64_t& version);
 
 	/**
-	 * Updates given configFile to store the supplied version
-	 */
-	bool SaveTargetNewVersion(const std::string& configFile, const uint64_t& version);
-
-	/**
 	 * Calculate the MD5 hash of a file
 	 */
 	std::string MD5File(std::string fileName);
+
+	/**
+	 * Updates given configFile to store the supplied version
+	 */
+	bool SaveTargetNewVersion(const std::string& configFile, const uint64_t& version);
 
 	/**
 	 * Download file, from given URL, without renaming, to given targetPath.

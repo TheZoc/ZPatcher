@@ -11,13 +11,14 @@
 //////////////////////////////////////////////////////////////////////////
 
 
-#ifndef DOWNLOADFILEWRITER_H
-#define DOWNLOADFILEWRITER_H
+#ifndef _DOWNLOADFILEWRITER_H_
+#define _DOWNLOADFILEWRITER_H_
 
+#include <string>
 #include "curl/curl.h"
 
 #ifdef WIN32
-#include <windows.h>
+	#include <windows.h>
 #endif
 
 
@@ -25,22 +26,25 @@
 class DownloadFileWriter
 {
 public:
+	typedef					int(*TransferInfoFunc)(void* p, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow);
+protected:
 	DownloadFileWriter*		m_pSelf;
 	CURL*					m_CurlHandle;
 	double					m_LastRunTime;
 	char					m_CurlErrorMessage[CURL_ERROR_SIZE];
 
+	TransferInfoFunc		m_pTransferInfoFunc;
+
 	// Zoc (2016-04-26): File to write
+	std::string				m_DestFileName;
 	FILE*					m_hDestFile;
-
-
 
 public:
 	DownloadFileWriter();
 
-	int						PrepareFileToWrite(const char* DestFile);
+	int						PrepareFileToWrite(const std::string& DestFile);
 	int						PrepareCurlHandle();
-	void					SetupTransfer(const char* URL);
+	void					SetupTransfer(const std::string& URL);
 	CURLcode				StartDownload();
 	void					FinishDownload();
 
@@ -50,4 +54,4 @@ public:
 
 };
 
-#endif // DOWNLOADFILEWRITER_H
+#endif // _DOWNLOADFILEWRITER_H_

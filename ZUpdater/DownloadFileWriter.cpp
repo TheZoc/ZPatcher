@@ -11,35 +11,35 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include <errno.h>
+#include <string.h>
 #include "DownloadFileWriter.h"
+#include "LogSystem.h"
 
-// #define STOP_DOWNLOAD_AFTER_THIS_MANY_BYTES         500000
-// #define MINIMAL_PROGRESS_FUNCTIONALITY_INTERVAL     3
 
 DownloadFileWriter::DownloadFileWriter()
 {
 	m_pSelf								= nullptr;
 	m_CurlHandle						= nullptr;
-	m_hDestFile							= nullptr;
 	m_LastRunTime						= 0;
 	m_CurlErrorMessage[0]				= '\0';
+
+	m_pTransferInfoFunc					= nullptr;
+	m_hDestFile							= nullptr;
+	m_DestFileName						= "";
 }
 
-int DownloadFileWriter::PrepareFileToWrite(const char* DestFile)
+int DownloadFileWriter::PrepareFileToWrite(const std::string& DestFile)
 {
-
-	errno_t err;
-
-
-	err = fopen_s(&m_hDestFile, DestFile, "wb");
-	if (err != 0)
+	errno = 0;
+	m_hDestFile = fopen(DestFile.c_str(), "wb");
+	if (errno != 0)
 	{
-		const size_t buffer_size = 1024;
-		char buffer[buffer_size];
-		strerror_s(buffer, buffer_size, err);
-		fprintf(stderr, "Error opening file \"%s\" to reading for writing: %s\n", DestFile, buffer);
+		ZPatcher::Log(ZPatcher::LOG_FATAL, "Error opening file \"%s\" to write download data: %s", DestFile.c_str(), strerror(errno));
 		return 1;
 	}
+
+	m_DestFileName = DestFile;
 	return 0;
 }
 
@@ -48,27 +48,26 @@ int DownloadFileWriter::PrepareCurlHandle()
 	m_CurlHandle = curl_easy_init();
 	if (!m_CurlHandle)
 	{
-		fprintf(stderr, "Error initializing curl\n");
+		ZPatcher::Log(ZPatcher::LOG_FATAL, "Error initializing curl");
 		return -1;
 	}
 
 	return 0;
 }
 
-void DownloadFileWriter::SetupTransfer(const char* URL)
+void DownloadFileWriter::SetupTransfer(const std::string& URL)
 {
-	curl_easy_setopt( m_CurlHandle,	CURLOPT_URL,				URL										);
-	curl_easy_setopt( m_CurlHandle,	CURLOPT_USERAGENT,			"ZUpdater/0.1.0"						);
-//	curl_easy_setopt( m_CurlHandle,	CURLOPT_TIMEOUT,			0										);
+	curl_easy_setopt( m_CurlHandle,	CURLOPT_URL,				URL.c_str()																		);
+	curl_easy_setopt( m_CurlHandle,	CURLOPT_USERAGENT,			"ZLauncher/1.0.0"																);
 
-	curl_easy_setopt( m_CurlHandle,	CURLOPT_WRITEFUNCTION,		&DownloadFileWriter::Callback_WriteFile	);
-	curl_easy_setopt( m_CurlHandle,	CURLOPT_WRITEDATA,			(void*)this								);
+	curl_easy_setopt( m_CurlHandle,	CURLOPT_WRITEFUNCTION,		&DownloadFileWriter::Callback_WriteFile											);
+	curl_easy_setopt( m_CurlHandle,	CURLOPT_WRITEDATA,			(void*)this																		);
 
-	curl_easy_setopt( m_CurlHandle,	CURLOPT_XFERINFOFUNCTION,	&DownloadFileWriter::TransferInfo		);
-	curl_easy_setopt( m_CurlHandle,	CURLOPT_XFERINFODATA,		this									);
-	curl_easy_setopt( m_CurlHandle,	CURLOPT_NOPROGRESS,			0L										);
+	curl_easy_setopt(m_CurlHandle, CURLOPT_XFERINFOFUNCTION,	m_pTransferInfoFunc ? m_pTransferInfoFunc : &DownloadFileWriter::TransferInfo	); // Pay attention! This uses a ternary if!
+	curl_easy_setopt( m_CurlHandle,	CURLOPT_XFERINFODATA,		this																			);
+	curl_easy_setopt( m_CurlHandle,	CURLOPT_NOPROGRESS,			0L																				);
 
-	curl_easy_setopt( m_CurlHandle,	CURLOPT_ERRORBUFFER,		&m_CurlErrorMessage						);
+	curl_easy_setopt( m_CurlHandle,	CURLOPT_ERRORBUFFER,		&m_CurlErrorMessage																);
 }
 
 CURLcode DownloadFileWriter::StartDownload()
@@ -78,7 +77,7 @@ CURLcode DownloadFileWriter::StartDownload()
 
 	if (CurlResult != CURLE_OK)
 	{
-		fprintf(stderr, "\n\ncurl_easy_perform() failed: %s\nError Message: %s\n", curl_easy_strerror(CurlResult), m_CurlErrorMessage);
+		ZPatcher::Log(ZPatcher::LOG_FATAL, "curl_easy_perform() failed: %s\nError Message: %s", curl_easy_strerror(CurlResult), m_CurlErrorMessage);
 	}
 
 	FinishDownload();
