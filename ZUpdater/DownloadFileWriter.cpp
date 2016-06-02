@@ -16,12 +16,11 @@
 #include "DownloadFileWriter.h"
 #include "LogSystem.h"
 
-
 DownloadFileWriter::DownloadFileWriter()
 {
 	m_pSelf								= nullptr;
 	m_CurlHandle						= nullptr;
-	m_LastRunTime						= 0;
+	m_LastUpdateTime						= 0;
 	m_CurlErrorMessage[0]				= '\0';
 
 	m_pTransferInfoFunc					= nullptr;
@@ -53,6 +52,11 @@ int DownloadFileWriter::PrepareCurlHandle()
 	}
 
 	return 0;
+}
+
+void DownloadFileWriter::SetTransferInfoFunction(TransferInfoFunc func)
+{
+	m_pTransferInfoFunc = func;
 }
 
 void DownloadFileWriter::SetupTransfer(const std::string& URL)
@@ -94,6 +98,26 @@ void DownloadFileWriter::FinishDownload()
 	m_hDestFile = nullptr;
 
 	curl_easy_cleanup(m_CurlHandle);
+}
+
+CURL* DownloadFileWriter::GetCurlHandle()
+{
+	return m_CurlHandle;
+}
+
+std::string DownloadFileWriter::GetDestFileName()
+{
+	return m_DestFileName;
+}
+
+double DownloadFileWriter::GetLastUpdateTime()
+{
+	return m_LastUpdateTime;
+}
+
+void DownloadFileWriter::SetLastUpdateTime(const double& lastUpdate)
+{
+	m_LastUpdateTime = lastUpdate;
 }
 
 size_t DownloadFileWriter::Callback_WriteFile(void* Buffer, size_t ElementSize, size_t NumElements, void* DownloadFileWriterPointer)

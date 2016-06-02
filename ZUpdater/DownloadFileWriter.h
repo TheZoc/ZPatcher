@@ -27,10 +27,11 @@ class DownloadFileWriter
 {
 public:
 	typedef					int(*TransferInfoFunc)(void* p, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow);
+
 protected:
 	DownloadFileWriter*		m_pSelf;
 	CURL*					m_CurlHandle;
-	double					m_LastRunTime;
+	double					m_LastUpdateTime;		// Optionally used to limit the transfer info functin update frequency.
 	char					m_CurlErrorMessage[CURL_ERROR_SIZE];
 
 	TransferInfoFunc		m_pTransferInfoFunc;
@@ -39,14 +40,22 @@ protected:
 	std::string				m_DestFileName;
 	FILE*					m_hDestFile;
 
+
 public:
 	DownloadFileWriter();
 
 	int						PrepareFileToWrite(const std::string& DestFile);
 	int						PrepareCurlHandle();
+	void					SetTransferInfoFunction(TransferInfoFunc func);
 	void					SetupTransfer(const std::string& URL);
 	CURLcode				StartDownload();
 	void					FinishDownload();
+
+	// Information getters for the transfer function pointer
+	CURL*					GetCurlHandle();
+	std::string				GetDestFileName();
+	double					GetLastUpdateTime();
+	void					SetLastUpdateTime(const double& lastUpdate);
 
 	static size_t			Callback_WriteFile(void* Buffer, size_t ElementSize, size_t NumElements, void* DownloadFileWriterPointer);
 	static int				TransferInfo(void *p, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow);
