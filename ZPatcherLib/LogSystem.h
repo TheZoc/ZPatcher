@@ -30,7 +30,7 @@ namespace ZPatcher
 	};
 
 	// Location should the base directory being currently patched. This function will create a Log/ directory and place files in there. No logging will be done if this isn't called.
-	void InitLogSystem(const std::string& location );
+	void InitLogSystem(const std::string& location, const std::string& logFileName = "ZPatcher" );
 
 	// Build a human-readable timestamp in the format yyyy-mm-dd-hh-mm-ss
 	std::string BuildHumanTimeStamp();

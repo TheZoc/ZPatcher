@@ -18,20 +18,23 @@
 
 namespace ZPatcher
 {
+	/// Our function pointer callback for progress display
+	typedef void(*ProgressCallback)(const float& percentage);
+
 	/**
 	* Print the progress bar used applying a patch
 	*/
-	void PrintPatchApplyingProgressBar(float Percentage);
+	void PrintPatchApplyingProgressBar(const float& Percentage);
 
 	/**
 	* Apply the patch file to the target path
 	*/
-	bool ApplyPatchFile(FILE* patchFile, const std::string& targetPath, uint64_t& previousVersionNumber);
+	bool ApplyPatchFile(FILE* patchFile, const std::string& targetPath, uint64_t& previousVersionNumber, ProgressCallback progressCallback = &PrintPatchApplyingProgressBar);
 
 	/**
 	* Apply the patch file to the target path, given the patch name
 	*/
-	bool ApplyPatchFile(const std::string& patchFileName, const std::string& targetPath, uint64_t& previousVersionNumber);
+	bool ApplyPatchFile(const std::string& patchFileName, const std::string& targetPath, uint64_t& previousVersionNumber, ProgressCallback progressCallback = &PrintPatchApplyingProgressBar);
 
 	/**
 	* Restore the target backup list

@@ -24,14 +24,16 @@ FILE* ZPatcher::g_LogSystem = NULL;
 
 
 
-void ZPatcher::InitLogSystem(const std::string& location)
+void ZPatcher::InitLogSystem(const std::string& location, const std::string& logFileName)
 {
 	std::string logFile = location;
 
 	if (logFile.back() != '/') // Check if it has a trailing slash. If it doesn't, add it.
 		logFile += "/";
 
-	logFile += "Logs/ZPatcher-";
+	logFile += "Logs/";
+	logFile += logFileName;
+	logFile += " - ";
 	logFile += BuildHumanTimeStamp();
 	logFile += ".log";
 

@@ -29,7 +29,7 @@
 	#define fseek64 fseek
 #endif
 
-void ZPatcher::PrintPatchApplyingProgressBar(float Percentage)
+void ZPatcher::PrintPatchApplyingProgressBar(const float& Percentage)
 {
 	int barWidth = 80;
 
@@ -46,7 +46,7 @@ void ZPatcher::PrintPatchApplyingProgressBar(float Percentage)
 	fflush(stdout);
 }
 
-bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, uint64_t &previousVersionNumber)
+bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, uint64_t &previousVersionNumber, ProgressCallback progressCallback)
 {
 	std::string prevVersionNumber = std::to_string(previousVersionNumber);
 
@@ -80,7 +80,7 @@ bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, ui
 	for(int64_t currentPos = ftell64(patchFile); success && (currentPos < patchFileSize); currentPos = ftell64(patchFile))
 	{
 		float percentage = (float)ftell64(patchFile) / (float)patchFileSize * 100.0f;
-		PrintPatchApplyingProgressBar(percentage);
+		progressCallback(percentage);
 
 		std::string outputFile;
 		unsigned char operation;
@@ -134,7 +134,7 @@ bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, ui
 		Log(LOG, "Patching successful! Removing backup directory.");
 		std::string backupDirectoryName = normalizedTargetPath + "/" + "backup-" + prevVersionNumber + "/";
 		DeleteDirectoryTree(backupDirectoryName);
-		PrintPatchApplyingProgressBar(100.0f);
+		progressCallback(100.0f);
 	}
 	else
 	{
@@ -147,14 +147,12 @@ bool ZPatcher::ApplyPatchFile(FILE* patchFile, const std::string& targetPath, ui
 			Log(LOG_FATAL, "At least one file failed to be restored! The application is probably in an inconsistent state!");
 	}
 
-	fprintf(stdout, "\n");
-
 	DestroyLzma2Decoder(decoder);
 
 	return success;
 }
 
-bool ZPatcher::ApplyPatchFile(const std::string& patchFileName, const std::string& targetPath, uint64_t& previousVersionNumber)
+bool ZPatcher::ApplyPatchFile(const std::string& patchFileName, const std::string& targetPath, uint64_t& previousVersionNumber, ProgressCallback progressCallback)
 {
 	FILE* patchFile;
 
@@ -171,7 +169,7 @@ bool ZPatcher::ApplyPatchFile(const std::string& patchFileName, const std::strin
 
 	Log(LOG, "Reading patch file %s", normalizedPatchFileName.c_str());
 
-	bool success = ApplyPatchFile(patchFile, targetPath, previousVersionNumber);
+	bool success = ApplyPatchFile(patchFile, targetPath, previousVersionNumber, progressCallback);
 
 	fclose(patchFile);
 
