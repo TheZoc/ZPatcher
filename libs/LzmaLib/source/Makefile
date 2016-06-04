@@ -11,12 +11,14 @@ LZMAOBJECTS=$(addprefix obj/,$(notdir $(LZMASOURCES:.c=.o)))
 # A directory creation utility
 create_output_dir=@mkdir -p $(@D)
 
+.PHONY: all clean
+
 all: out/liblzma.a
 	@echo all done.
 
 clean:
-	rm -rf obj/
-	rm -rf out/
+	@ rm -rf obj/
+	@ rm -rf out/
 
 out/liblzma.a: $(LZMAOBJECTS)
 	$(create_output_dir)

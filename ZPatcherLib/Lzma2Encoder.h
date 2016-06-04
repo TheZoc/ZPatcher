@@ -17,8 +17,8 @@
 #include "ZPatcherCurrentVersion.h"
 #include "Lzma2Enc.h"
 #include "LzmaInterfaces.h"
-#include <stdio.h>
-#include <string>
+#include <cstdio>
+#include <cstring>
 
 namespace ZPatcher
 {

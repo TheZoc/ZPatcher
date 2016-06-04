@@ -13,7 +13,7 @@
 #ifndef _LOGSYSTEM_H_
 #define _LOGSYSTEM_H_
 
-#include <stdio.h>
+#include <cstdio>
 #include <string>
 
 namespace ZPatcher

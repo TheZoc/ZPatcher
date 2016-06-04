@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include <string>
 #include <vector>
-#include <limits.h>
+#include <climits>
 #include <io.h>
 
 #ifdef  _WIN32
@@ -484,7 +484,7 @@ namespace ZUpdater
 		// Read file and generate MD5 hash
 		md5_init(&state);
 
-		while (bytesRead = fread(readBuffer, 1, buffer_size, targetFile)) 
+		while (bytesRead = fread(readBuffer, 1, buffer_size, targetFile))
 			md5_append(&state, (const md5_byte_t*)readBuffer, static_cast<int>(bytesRead));
 
 		fclose(targetFile); // Close the file. It won't be needed anymore.
@@ -525,7 +525,7 @@ namespace ZUpdater
 
 		return true;
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////////
 
 	bool SimpleDownloadFile(const std::string& URL, const std::string& targetPath)
@@ -661,4 +661,3 @@ namespace ZUpdater
 #endif _WIN32
 
 }
-

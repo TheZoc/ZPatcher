@@ -16,8 +16,8 @@
 #include "FileUtils.h"
 #include "Lzma2Encoder.h"
 #include <algorithm>
-#include <assert.h>
-#include <errno.h>
+#include <cassert>
+#include <cerrno>
 #include "LogSystem.h"
 
 void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const uint64_t& leftAmount, const uint64_t& rightAmount)
@@ -239,4 +239,3 @@ bool ZPatcher::CreatePatchFile(std::string& patchFileName, std::string& newVersi
 
 	return result;
 }
-

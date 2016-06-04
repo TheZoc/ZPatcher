@@ -11,8 +11,8 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include <errno.h>
-#include <string.h>
+#include <cerrno>
+#include <cstring>
 #include "DownloadFileWriter.h"
 #include "LogSystem.h"
 

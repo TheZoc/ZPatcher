@@ -12,10 +12,10 @@
 
 
 #include "stdafx.h"
-#include <stdio.h>
+#include <cstdio>
 #include <string>
-#include <errno.h>
-#include <stdint.h>
+#include <cerrno>
+#include <cstdint>
 #include "ApplyPatch.h"
 #include "Lzma2Decoder.h"
 #include "LogSystem.h"
@@ -188,7 +188,7 @@ bool ZPatcher::RestoreBackup(std::vector<std::string>& backupFileList, std::vect
 		std::string fullBackupFileName = baseDirectory + "/backup-" + previousVersionNumber + "/" + *itr;
 
 		CreateDirectoryTree(fullFilename); // Lazy++;
-		result = result && CopyOneFile(fullBackupFileName, fullFilename);		
+		result = result && CopyOneFile(fullBackupFileName, fullFilename);
 	}
 
 	for (std::vector<std::string>::iterator itr = addedFileList.begin(); itr < addedFileList.end(); ++itr)

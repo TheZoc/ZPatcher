@@ -9,8 +9,8 @@
 	#include <malloc.h>
 #endif
 
-#include <stdio.h>
+#include <cstdio>
 #include <string>
-#include <assert.h>
+#include <cassert>
 #include <vector>
 #include <algorithm>

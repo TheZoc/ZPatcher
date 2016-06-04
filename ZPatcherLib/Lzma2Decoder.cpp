@@ -11,9 +11,9 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include <stdint.h>
-#include <assert.h>
-#include <errno.h>
+#include <cstdint>
+#include <cassert>
+#include <cerrno>
 #include "Lzma2Dec.h"
 #include "Lzma2Decoder.h"
 #include "LzmaInterfaces.h"

@@ -1,11 +1,14 @@
 CC=g++
 AR=ar
-CXXFLAGS=-c -Wall -std=c++14
+CXXFLAGS=-c -Wall -Wextra -std=c++14 -Wno-unused-parameter -Wno-unused-variable
 CPPFLAGS=-I$(ZPATCHERLIBDIR) -Ilibs/LzmaLib/source
-LDFLAGS=
+LDFLAGS= -L$(LZMADIR)/out
 ARFLAGS=-rvs
 
-LZMALIB=./libs/LzmaLib/source/out/liblzma.a
+LZMADIR=./libs/LzmaLib/source
+LZMALIB=$(LZMADIR)/out/liblzma.a
+
+LIBS=-llzma -lpthread
 
 # ZPatcherLib files
 ZPATCHERLIBDIR=ZPatcherLib
@@ -25,17 +28,23 @@ APPLYPATCHOBJECTS=$(addprefix obj/$(APPLYPATCHDIR)/, $(notdir $(APPLYPATCHSOURCE
 # A directory creation utility
 create_output_dir=@mkdir -p $(@D)
 
-all: out/ZPatcherLib.a out/CreatePatch out/ApplyPatch
+.PHONY: all lzma clean
+
+all: lzma out/ZPatcherLib.a out/CreatePatch out/ApplyPatch
 	@echo all done.
 
+lzma:
+	@ $(MAKE) -C $(LZMADIR)
+
 clean:
-	rm -rf obj/
-	rm -rf out/
+	@ rm -rf obj/
+	@ rm -rf out/
+	@ $(MAKE) -C $(LZMADIR) clean
 
 # CreatePatch executable
 out/CreatePatch: $(CREATEPATCHOBJECTS) out/ZPatcherLib.a
 	$(create_output_dir)
-	$(CC) $(LDFLAGS) $(LZMALIB)	$^ -o $@
+	$(CC) $(LDFLAGS) $^ -o $@ $(LIBS)
 
 $(CREATEPATCHOBJECTS): obj/$(CREATEPATCHDIR)/%.o: $(CREATEPATCHDIR)/%.cpp
 	$(create_output_dir)
@@ -44,7 +53,7 @@ $(CREATEPATCHOBJECTS): obj/$(CREATEPATCHDIR)/%.o: $(CREATEPATCHDIR)/%.cpp
 # ApplyPatch executable
 out/ApplyPatch: $(APPLYPATCHOBJECTS) out/ZPatcherLib.a
 	$(create_output_dir)
-	$(CC) $(LDFLAGS) $(LZMALIB) $^ -o $@
+	$(CC) $(LDFLAGS) $^ -o $@ $(LIBS)
 
 $(APPLYPATCHOBJECTS): obj/$(APPLYPATCHDIR)/%.o: $(APPLYPATCHDIR)/%.cpp
 	$(create_output_dir)

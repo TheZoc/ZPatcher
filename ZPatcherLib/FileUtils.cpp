@@ -11,8 +11,8 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include <errno.h>
-#include <stdint.h>
+#include <cerrno>
+#include <cstdint>
 #include "FileUtils.h"
 #include "LogSystem.h"
 
@@ -88,7 +88,7 @@ bool ZPatcher::GetFilesInDirectory(std::vector<std::string>& fileList, const std
 
 bool ZPatcher::AreFilesIdentical(FILE* file1, FILE* file2, bool &result)
 {
-	
+
 	// Compare their size, first
 	fseek64(file1, 0, SEEK_END);
 	int64_t file1size = ftell64(file1);
@@ -354,4 +354,3 @@ bool ZPatcher::RemoveOneDirectory(const std::string& directory)
 
 	return true;
 }
-
