@@ -1,0 +1,84 @@
+language: cpp
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-4.9
+            - g++-4.9
+      env:
+        - CCOMPILER=gcc-4.9
+        - CXXCOMPILER=g++-4.9
+    - os: linux
+      dist: trusty
+      sudo: required
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-5
+            - g++-5
+      env:
+        - CCOMPILER=gcc-5
+        - CXXCOMPILER=g++-5
+    - os: linux
+      dist: trusty
+      sudo: required
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-6
+            - g++-6
+      env:
+        - CCOMPILER=gcc-6
+        - CXXCOMPILER=g++-6
+    - os: osx
+      osx_image: xcode7.3
+      compiler: clang
+      env:
+        - CCOMPILER=clang
+        - CXXCOMPILER=clang++
+    - os: osx
+      osx_image: xcode6.4
+      compiler: clang
+      env:
+        - CCOMPILER=clang
+        - CXXCOMPILER=clang++
+    - os: osx
+      osx_image: xcode7.3
+      compiler: gcc
+      env:
+        - CCOMPILER=gcc
+        - CXXCOMPILER=g++
+    - os: osx
+      osx_image: xcode6.4
+      compiler: gcc
+      env:
+        - CCOMPILER=gcc
+        - CXXCOMPILER=g++
+
+before_install:
+  - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then sudo apt-get update -qq; fi
+#  - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then sudo apt-get install -y xxxxx; fi
+  - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then brew update; fi
+#  - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then brew install xxxxx; fi
+
+install:
+  - ${CCOMPILER} --version
+  - ${CXXCOMPILER} --version
+
+script:
+  - make all CC=${CCOMPILER} CXX=${CXXCOMPILER}
+  
