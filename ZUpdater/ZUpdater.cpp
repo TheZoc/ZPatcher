@@ -327,8 +327,8 @@ namespace ZUpdater
 
 			if (length == std::string::npos)
 			{
-				fprintf(stderr, "Invalid Update URL.\n");
 				// This is bad! Our URL is malformed (no slashes in it!)
+				ZPatcher::Log(ZPatcher::LOG_FATAL, "Invalid Update URL: %s", patch.fileURL.c_str());
 				return false;
 			}
 
@@ -385,8 +385,6 @@ namespace ZUpdater
 			ZPatcher::InitLogSystem("./");
 			if (ZPatcher::ApplyPatchFile(localFullPath, targetDirectory, currentVersion))
 			{
-				SaveTargetNewVersion(versionFile, patch.targetBuildNumber);
-
 				if (!SaveTargetNewVersion(versionFile, patch.targetBuildNumber))
 				{
 					ZPatcher::DestroyLogSystem();
@@ -616,6 +614,7 @@ namespace ZUpdater
 
 		if (fileExists == 0)
 		{
+			updateFound = true;		
 			FILE* batchFile;
 			// Open source and target file
 			_set_errno(0);
@@ -654,6 +653,10 @@ namespace ZUpdater
 
 			// Execute the self-destruct batch file and exit the program.
 			ShellExecuteA(NULL, "open", tempBatchFile, NULL, NULL, SW_HIDE);
+		}
+		else
+		{
+			updateFound = false;
 		}
 
 		return true;
