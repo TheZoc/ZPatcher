@@ -12,11 +12,11 @@
 //////////////////////////////////////////////////////////////////////////
 
 #ifndef _LZMAALLOCATORS_H_
-#define _LZMAALLOCATORS_H_ 
+#define _LZMAALLOCATORS_H_
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdint>
+#include <cstdlib>
+#include <cstdio>
 #include <string>
 
 #ifdef _WIN32

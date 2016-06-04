@@ -11,12 +11,12 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include <string>
-#include <assert.h>
-#include <stdarg.h> 
-#include <chrono>
-#include <errno.h>
+#include <cstring>
+#include <cassert>
+#include <cstdarg>
+#include <cerrno>
 #include <ctime>
+#include <chrono>
 #include "LogSystem.h"
 #include "FileUtils.h"
 
@@ -69,7 +69,7 @@ std::string ZPatcher::BuildHumanTimeStamp()
 #endif
 
 	std::string humanTimestamp;
-	
+
 	char buffer[16];
 	sprintf(buffer, "%02d", timeinfo.tm_year + 1900);
 	humanTimestamp += buffer;
@@ -133,4 +133,3 @@ void ZPatcher::DestroyLogSystem()
 
 	g_LogSystem = nullptr;
 }
-

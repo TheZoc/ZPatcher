@@ -211,3 +211,6 @@ FakesAssemblies/
 *.exe
 *.out
 *.app
+
+# Outdir
+/out

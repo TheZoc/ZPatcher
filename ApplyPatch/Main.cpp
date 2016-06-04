@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include "FileUtils.h"
 #include "LogSystem.h"
 #include "ApplyPatch.h"
@@ -58,4 +58,3 @@ int main(int argc, char* argv[])
 	else
 		exit(EXIT_FAILURE);
 }
-

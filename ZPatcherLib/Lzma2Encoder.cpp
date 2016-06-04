@@ -15,9 +15,9 @@
 #include "Lzma2Encoder.h"
 #include "LzmaInterfaces.h"
 #include "LogSystem.h"
-#include <stdint.h>
-#include <errno.h>
-#include <assert.h>
+#include <cstdint>
+#include <cerrno>
+#include <cassert>
 
 #ifdef _WIN32
 	#define ftell64 _ftelli64

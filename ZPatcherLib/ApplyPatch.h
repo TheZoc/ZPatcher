@@ -13,7 +13,7 @@
 #ifndef _APPLYPATCH_H_
 #define _APPLYPATCH_H_
 
-#include <string.h>
+#include <cstring>
 #include <vector>
 
 namespace ZPatcher
