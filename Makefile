@@ -1,8 +1,8 @@
-CC=g++
+CXX=g++
 AR=ar
 CXXFLAGS=-c -Wall -Wextra -std=c++14 -Wno-unused-parameter -Wno-unused-variable
 CPPFLAGS=-I$(ZPATCHERLIBDIR) -Ilibs/LzmaLib/source
-LDFLAGS= -L$(LZMADIR)/out
+LDFLAGS=-L$(LZMADIR)/out
 ARFLAGS=-rvs
 
 LZMADIR=./libs/LzmaLib/source
@@ -44,20 +44,20 @@ clean:
 # CreatePatch executable
 out/CreatePatch: $(CREATEPATCHOBJECTS) out/ZPatcherLib.a
 	$(create_output_dir)
-	$(CC) $(LDFLAGS) $^ -o $@ $(LIBS)
+	$(CXX) $(LDFLAGS) $^ -o $@ $(LIBS)
 
 $(CREATEPATCHOBJECTS): obj/$(CREATEPATCHDIR)/%.o: $(CREATEPATCHDIR)/%.cpp
 	$(create_output_dir)
-	$(CC) $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 
 # ApplyPatch executable
 out/ApplyPatch: $(APPLYPATCHOBJECTS) out/ZPatcherLib.a
 	$(create_output_dir)
-	$(CC) $(LDFLAGS) $^ -o $@ $(LIBS)
+	$(CXX) $(LDFLAGS) $^ -o $@ $(LIBS)
 
 $(APPLYPATCHOBJECTS): obj/$(APPLYPATCHDIR)/%.o: $(APPLYPATCHDIR)/%.cpp
 	$(create_output_dir)
-	$(CC) $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 
 # ZPatcherLib Static Library
 out/ZPatcherLib.a: $(ZPATCHERLIBOBJECTS)
@@ -66,4 +66,4 @@ out/ZPatcherLib.a: $(ZPATCHERLIBOBJECTS)
 
 $(ZPATCHERLIBOBJECTS): obj/$(ZPATCHERLIBDIR)/%.o: $(ZPATCHERLIBDIR)/%.cpp
 	$(create_output_dir)
-	$(CC) $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@
