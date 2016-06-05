@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/TheZoc/ZPatcher.svg?branch=master)](https://travis-ci.org/TheZoc/ZPatcher)
+
 # ZPatcher
 
 A suite to Create and Apply patches to application and games.
