@@ -1,6 +1,10 @@
 # Ignore wxWidgets binaries
 wxWidgets/
 
+# Ignore TinyXML2 32-bits output directories
+Debug-Dll/
+Release-Dll/
+
 # Program-generated files to be ignored
 
 # User-specific files
