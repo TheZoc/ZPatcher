@@ -13,85 +13,190 @@
 #include "ZLauncherThread.h"
 #include "DownloadFileWriter.h"
 
+//////////////////////////////////////////////////////////////////////////
+
+static const wxString g_ResourceDirectory = "./ZLauncherRes/";
+
+#define DARK_COLORS
+
+#ifdef DARK_COLORS
+
+static const wxString g_BackgroundImage = (g_ResourceDirectory + "bg-dark.png");
+
+#define APPLICATION_BACKGROUND	wxColour( 40, 40, 40 )
+#define COMPONENT_BACKGROUND	wxColour( 30, 30, 30 )
+#define COMPONENT_TEXT_COLOR	wxColour( 195, 195, 195 )
+
+static const char* g_htmlHeader = "<html><head><style type=\"text/css\">body {color: #c3c3c3; background-color: #1E1E1E; scrollbar-base-color: #1E1E1E; scrollbar-face-color: #1E1E1E; scrollbar-3dlight-color: #858585; scrollbar-highlight-color: #858585; scrollbar-shadow-color: #858585; scrollbar-dark-shadow-color: #858585; scrollbar-track-color: #282828; scrollbar-arrow-color: #C3C3C3;}</style></head><body>";
+
+#else
+
+static const wxString g_BackgroundImage = wxEmptyString;
+
+#define APPLICATION_BACKGROUND	wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW )
+#define COMPONENT_BACKGROUND	wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW )
+#define COMPONENT_TEXT_COLOR	wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT )
+
+static const char* g_htmlHeader = "<html><head><style type=\"text/css\">body {color: #000000; background-color: #FFFFFF; }</style></head><body>";
+
+#endif
+
+
 ///////////////////////////////////////////////////////////////////////////
 
 ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
+	wxImage::SetDefaultLoadFlags(wxImage::GetDefaultLoadFlags() & ~wxImage::Load_Verbose);
+
 	this->SetSizeHints( wxSize( 500,300 ), wxDefaultSize );
-	this->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
+	this->SetBackgroundColour( APPLICATION_BACKGROUND );
 	
+	// GridBagSizer for the whole frame
 	wxGridBagSizer* gridBagSizerFrame;
 	gridBagSizerFrame = new wxGridBagSizer( 0, 0 );
 	gridBagSizerFrame->SetFlexibleDirection( wxBOTH );
 	gridBagSizerFrame->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
 	gridBagSizerFrame->SetMinSize( wxSize( 800,600 ) ); 
+
+	// GridBagSizer For the "Body"  (HTML Window, etc.)
 	wxGridBagSizer* gridBagSizerBody;
 	gridBagSizerBody = new wxGridBagSizer( 0, 0 );
 	gridBagSizerBody->SetFlexibleDirection( wxBOTH );
 	gridBagSizerBody->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_htmlWin = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO|wxSIMPLE_BORDER );
+	// HTML Viewer
+	m_htmlWin = wxWebView::New(this, wxID_ANY, wxWebViewDefaultURLStr, wxDefaultPosition, wxDefaultSize, wxWebViewBackendDefault, wxSIMPLE_BORDER);
 	m_htmlWin->SetMinSize( wxSize( 400,300 ) );
-
 	gridBagSizerBody->Add( m_htmlWin, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 
+	// GridBagSizer for the right side of the window
+	wxGridBagSizer* gridBagSizerRight;
+	gridBagSizerRight = new wxGridBagSizer( 0, 0 );
+	gridBagSizerRight->SetFlexibleDirection( wxBOTH );
+	gridBagSizerRight->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	gridBagSizerRight->Add( 0, 0, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
+
+	// Close Button (Top Right)
+	m_CloseButtonImg_Normal.LoadFile(g_ResourceDirectory + "CloseButton_Normal.png", wxBITMAP_TYPE_PNG);
+	m_CloseButtonImg_Disabled.LoadFile(g_ResourceDirectory + "CloseButton_Disabled.png", wxBITMAP_TYPE_PNG);
+	m_CloseButtonImg_Pressed.LoadFile(g_ResourceDirectory + "CloseButton_Pressed.png", wxBITMAP_TYPE_PNG);
+	m_CloseButtonImg_Focus.LoadFile(g_ResourceDirectory + "CloseButton_Focus.png", wxBITMAP_TYPE_PNG);
+	m_CloseButtonImg_Hover.LoadFile(g_ResourceDirectory + "CloseButton_Hover.png", wxBITMAP_TYPE_PNG);
+	m_btnClose = new wxButton(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxBU_EXACTFIT | wxBU_NOTEXT);
+	m_btnClose->SetBitmap(m_CloseButtonImg_Normal);
+	m_btnClose->SetBitmapDisabled(m_CloseButtonImg_Disabled);
+	m_btnClose->SetBitmapPressed(m_CloseButtonImg_Pressed);
+	m_btnClose->SetBitmapFocus(m_CloseButtonImg_Focus);
+	m_btnClose->SetBitmapCurrent(m_CloseButtonImg_Hover);
+	m_btnClose->SetBackgroundColour(APPLICATION_BACKGROUND);
+	m_btnClose->Enable(true);
+
+	gridBagSizerRight->Add( m_btnClose, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	gridBagSizerRight->AddGrowableCol( 0 );
+	gridBagSizerRight->AddGrowableRow( 1 );
+
+	gridBagSizerBody->Add( gridBagSizerRight, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxALIGN_RIGHT|wxEXPAND, 5 );
+	gridBagSizerBody->AddGrowableCol( 1 );
 	gridBagSizerBody->AddGrowableRow( 0 );
 	
 	gridBagSizerFrame->Add( gridBagSizerBody, wxGBPosition( 0, 0 ), wxGBSpan( 1, 2 ), wxEXPAND, 5 );
 	
-	wxGridBagSizer* drigBagSizerFooter;
-	drigBagSizerFooter = new wxGridBagSizer( 0, 0 );
-	drigBagSizerFooter->SetFlexibleDirection( wxBOTH );
-	drigBagSizerFooter->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	// Footer Area (Progress Bar and Launch button)
+	wxGridBagSizer* gridBagSizerFooter;
+	gridBagSizerFooter = new wxGridBagSizer( 0, 0 );
+	gridBagSizerFooter->SetFlexibleDirection( wxBOTH );
+	gridBagSizerFooter->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
+	// Text for the Progress Bar
 	m_txtProgress = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxNO_BORDER );
-	m_txtProgress->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
+	m_txtProgress->SetForegroundColour( COMPONENT_TEXT_COLOR );
+	m_txtProgress->SetBackgroundColour( APPLICATION_BACKGROUND );
 	
-	drigBagSizerFooter->Add( m_txtProgress, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALIGN_BOTTOM|wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5 );
-	
+	gridBagSizerFooter->Add( m_txtProgress, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALIGN_BOTTOM|wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5 );
+
+	// Progress Bar
 	m_progress = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxDefaultSize, wxGA_HORIZONTAL );
-	m_progress->SetValue( 0 ); 
+	m_progress->SetValue( 0 );
 	m_progress->SetMinSize( wxSize( 500,25 ) );
 	
-	drigBagSizerFooter->Add( m_progress, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_TOP|wxALL|wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT, 5 );
+	gridBagSizerFooter->Add( m_progress, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_TOP|wxALL|wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT, 5 );
+	gridBagSizerFooter->AddGrowableCol( 0 );
+	gridBagSizerFooter->AddGrowableRow( 0 );
 	
+	gridBagSizerFrame->Add( gridBagSizerFooter, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
 	
-	drigBagSizerFooter->AddGrowableCol( 0 );
-	drigBagSizerFooter->AddGrowableRow( 0 );
-	
-	gridBagSizerFrame->Add( drigBagSizerFooter, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
-	
-	m_btnLaunch = new wxButton( this, wxID_ANY, wxT("Launch"), wxDefaultPosition, wxDefaultSize, 0 );
+	// Launch Button
+	m_LaunchButtonImg_Normal.LoadFile(g_ResourceDirectory + "LaunchButton_Normal.png", wxBITMAP_TYPE_PNG);
+	m_LaunchButtonImg_Disabled.LoadFile(g_ResourceDirectory + "LaunchButton_Disabled.png", wxBITMAP_TYPE_PNG);
+	m_LaunchButtonImg_Pressed.LoadFile(g_ResourceDirectory + "LaunchButton_Pressed.png", wxBITMAP_TYPE_PNG);
+	m_LaunchButtonImg_Focus.LoadFile(g_ResourceDirectory + "LaunchButton_Focus.png", wxBITMAP_TYPE_PNG);
+	m_LaunchButtonImg_Hover.LoadFile(g_ResourceDirectory + "LaunchButton_Hover.png", wxBITMAP_TYPE_PNG);
+	m_btnLaunch = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxBU_EXACTFIT | wxBU_NOTEXT);
+	m_btnLaunch->SetBitmap(m_LaunchButtonImg_Normal);
+	m_btnLaunch->SetBitmapDisabled(m_LaunchButtonImg_Disabled);
+	m_btnLaunch->SetBitmapPressed(m_LaunchButtonImg_Pressed);
+	m_btnLaunch->SetBitmapFocus(m_LaunchButtonImg_Focus);
+	m_btnLaunch->SetBitmapCurrent(m_LaunchButtonImg_Hover);
+	m_btnLaunch->SetBackgroundColour(APPLICATION_BACKGROUND);
 	m_btnLaunch->Enable( false );
-	
+
 	gridBagSizerFrame->Add( m_btnLaunch, wxGBPosition( 1, 1 ), wxGBSpan( 1, 1 ), wxALIGN_BOTTOM|wxALL, 5 );
-	
 	gridBagSizerFrame->AddGrowableCol( 0 );
 	gridBagSizerFrame->AddGrowableRow( 0 );
 	
 	this->SetSizer( gridBagSizerFrame );
 	this->Layout();
+
 	this->Centre( wxBOTH );
 
-	m_backgroundImg.LoadFile("bg.tga", wxBITMAP_TYPE_TGA);
+	// Set brakcground image, if any.
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
+	if (g_BackgroundImage != wxEmptyString)
+		m_backgroundImg.LoadFile(g_BackgroundImage, wxBITMAP_TYPE_PNG);
 
+
+	// Bind Message Events
 	Bind(wxEVT_PAINT, &ZLauncherFrame::PaintEvent, this);
 
 	Bind(wxEVT_COMMAND_UPDATE_PROGRESS_BAR, &ZLauncherFrame::OnProgressBarUpdate, this);
 	Bind(wxEVT_COMMAND_UPDATE_PROGRESS_TEXT, &ZLauncherFrame::OnProgressTextUpdate, this);
 
 	Bind(wxEVT_COMMAND_HTML_SET_CONTENT, &ZLauncherFrame::OnHTMLSetContent, this);
-	Bind(wxEVT_COMMAND_HTML_LOAD_PAGE, &ZLauncherFrame::OnHTMLSetContent, this);
+	Bind(wxEVT_COMMAND_HTML_LOAD_PAGE, &ZLauncherFrame::OnHTMLLoadPage, this);
 
 	Bind(wxEVT_COMMAND_ENABLE_LAUNCH_BUTTON, &ZLauncherFrame::OnEnableLaunchButton, this);
 
 	Bind(wxEVT_CLOSE_WINDOW, &ZLauncherFrame::OnClose, this);
+
+	// Bind Button Events
+	m_btnClose->Bind(wxEVT_BUTTON, &ZLauncherFrame::OnCloseButtonClicked, this);
+	m_btnLaunch->Bind(wxEVT_BUTTON, &ZLauncherFrame::OnLaunchButtonClicked, this);
+
 }
 
 ZLauncherFrame::~ZLauncherFrame()
 {
+}
+
+void ZLauncherFrame::SetLaunchExecutableName(wxString exe)
+{
+	m_LaunchExecutableName = exe;
+}
+
+void ZLauncherFrame::OnCloseButtonClicked(wxCommandEvent& WXUNUSED(evt))
+{
+	wxQueueEvent(wxTheApp->GetTopWindow()->GetEventHandler(), new wxCloseEvent(wxEVT_CLOSE_WINDOW));
+}
+
+void ZLauncherFrame::OnLaunchButtonClicked(wxCommandEvent& WXUNUSED(evt))
+{
+	// System specific
+#ifdef _WIN32
+	ShellExecuteA(NULL, "open", m_LaunchExecutableName.mbc_str(), NULL, NULL, SW_SHOW);
+#endif
+
+	// Exit after launching the game/application
+	wxQueueEvent(wxTheApp->GetTopWindow()->GetEventHandler(), new wxCloseEvent(wxEVT_CLOSE_WINDOW));
 }
 
 void ZLauncherFrame::PaintEvent(wxPaintEvent & evt)
@@ -108,7 +213,7 @@ void ZLauncherFrame::RenderFrame(wxDC& dc)
 	}
 	else
 	{
-		dc.SetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+		dc.SetBackground( APPLICATION_BACKGROUND );
 		dc.Clear();
 	}
 }
@@ -138,12 +243,12 @@ void ZLauncherFrame::OnProgressTextUpdate(wxThreadEvent& evt)
 
 void ZLauncherFrame::OnHTMLSetContent(wxThreadEvent& evt)
 {
-	m_htmlWin->SetPage(evt.GetString());
+	m_htmlWin->SetPage(evt.GetString(), "");
 }
 
 void ZLauncherFrame::OnHTMLLoadPage(wxThreadEvent& evt)
 {
-	m_htmlWin->LoadPage(evt.GetString());
+	m_htmlWin->LoadURL(evt.GetString());
 }
 
 void ZLauncherFrame::OnEnableLaunchButton(wxThreadEvent& evt)
@@ -161,6 +266,9 @@ void ZLauncherFrame::OnClose(wxCloseEvent& evt)
 		evt.Veto();
 		return;
 	}
+
+	// If we entered the critical section in the above check, leave it now.
+	m_pThreadCS.Leave();
 
 	{
 		wxCriticalSectionLocker enter(m_pThreadCS);
@@ -261,7 +369,12 @@ void ZLauncherFrame::ApplyPatchProgress(const float& Percentage)
 void ZLauncherFrame::HTMLSetContent(wxString html)
 {
 	wxThreadEvent* HTMLSetContentEvent = new wxThreadEvent(wxEVT_COMMAND_HTML_SET_CONTENT);
-	HTMLSetContentEvent->SetString(html);
+
+	wxString htmlContent;
+	htmlContent = g_htmlHeader;
+	htmlContent += html;
+
+	HTMLSetContentEvent->SetString(htmlContent);
 	wxQueueEvent(wxTheApp->GetTopWindow()->GetEventHandler(), HTMLSetContentEvent);
 }
 

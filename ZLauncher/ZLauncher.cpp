@@ -22,12 +22,18 @@ bool VisualCreatePatch::OnInit()
 		return false;
 
 	wxInitAllImageHandlers();
+	
+	//////////////////////////////////////////////////////////////////////////
+	// Simple config section
+	wxString	updateURL				= wxT("http://www.example.org/example.xml");
+	wxString	versionFile				= wxT("example.zversion");
+	wxString	targetDirectory			= wxT("./");
+	wxString	launcherExecutableName	= wxT("Example.exe");
 
-	wxString					updateURL = wxT("http://www.example.org/example.xml");
-	wxString					versionFile = wxT("example.zversion");
-	wxString					targetDirectory = wxT("./");
-
+	//////////////////////////////////////////////////////////////////////////
+	// Run the launcher!
 	ZLauncherFrame* f = new ZLauncherFrame(nullptr);
+	f->SetLaunchExecutableName(launcherExecutableName);
 	f->SetIcon(wxICON(frame_icon));
 	f->Show(true);
 

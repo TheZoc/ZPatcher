@@ -10,7 +10,7 @@
 
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
-#include <wx/html/htmlwin.h>
+#include <wx/webview.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
@@ -37,21 +37,48 @@ class ZLauncherFrame : public wxFrame
 	
 	protected:
 		wxBitmap m_backgroundImg;
-		wxHtmlWindow* m_htmlWin;
+		wxWebView* m_htmlWin;
+		wxButton* m_btnClose;
 		wxTextCtrl* m_txtProgress;
 		wxGauge* m_progress;
 		wxButton* m_btnLaunch;
 	
+		wxBitmap m_LaunchButtonImg_Normal;
+		wxBitmap m_LaunchButtonImg_Disabled;
+		wxBitmap m_LaunchButtonImg_Pressed;
+		wxBitmap m_LaunchButtonImg_Focus;
+		wxBitmap m_LaunchButtonImg_Hover;
+
+		wxBitmap m_CloseButtonImg_Normal;
+		wxBitmap m_CloseButtonImg_Disabled;
+		wxBitmap m_CloseButtonImg_Pressed;
+		wxBitmap m_CloseButtonImg_Focus;
+		wxBitmap m_CloseButtonImg_Hover;
+
 	public:
-		ZLauncherFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("ZLauncher : ZUpdater"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 800,600 ), long style = wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU );
+		ZLauncherFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("ZLauncher : ZUpdater"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 800,600 ), long style = 0L /* wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU */ );
 		~ZLauncherFrame();
 	
+protected:
+	wxString m_LaunchExecutableName;
 
 public:
 	//////////////////////////////////////////////////////////////////////////
+	// Set Launch Executable Name
+	void SetLaunchExecutableName(wxString exe);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Close button click
+	void OnCloseButtonClicked(wxCommandEvent& WXUNUSED(evt));
+
+	//////////////////////////////////////////////////////////////////////////
+	// Close button click
+	void OnLaunchButtonClicked(wxCommandEvent& WXUNUSED(evt));
+
+
+	//////////////////////////////////////////////////////////////////////////
 	// Background image
 	void PaintEvent(wxPaintEvent & evt);
-
 	void RenderFrame(wxDC& dc);
 
 	//////////////////////////////////////////////////////////////////////////

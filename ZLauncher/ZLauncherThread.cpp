@@ -91,7 +91,11 @@ wxThread::ExitCode ZLauncherThread::Entry()
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// CheckForUpdates() adds a delta changelog to m_UpdateDescription. Add it here.
+	// CheckForUpdates() adds a bunch of new information. Add everything here.
+	tmphtml.str("");
+	tmphtml.clear();
+	tmphtml << "<h1>" << m_ApplicationName << "</h1>";
+	tmphtml << "<b>Current Version: " << m_LocalCurrentVersion << "</b>";
 	tmphtml << "<br /><b>Latest Version: " << GetLatestVersion() << "</b>";
 	tmphtml << m_UpdateDescription;
 	ZLauncherFrame::HTMLSetContent(tmphtml.str());
@@ -137,8 +141,11 @@ wxThread::ExitCode ZLauncherThread::Entry()
 
 	//////////////////////////////////////////////////////////////////////////
 	// Do the update loop!
-	for (unsigned int patchIndex = 0; !TestDestroy() && patchIndex < m_BestPatchPath.size(); ++patchIndex)
+	for (unsigned int patchIndex = 0; patchIndex < m_BestPatchPath.size(); ++patchIndex)
 	{
+		// Check if we should stop before each file download
+		if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
+
 		const Patch& patch = m_Patches[m_BestPatchPath[patchIndex]];
 
 		// Split the filename from the URL
@@ -200,6 +207,8 @@ wxThread::ExitCode ZLauncherThread::Entry()
 			}
 		}
 
+		// This is a great place to check for a stopping condition.
+		if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
 
 		m_pHandler->m_pThreadCS.Enter();
 
@@ -294,6 +303,16 @@ bool ZLauncherThread::CheckForUpdates(const std::string& updateURL, const uint64
 	tinyxml2::XMLHandle hDocument(&document);
 
 	tinyxml2::XMLHandle hZUpdater = hDocument.FirstChildElement("zupdater");
+
+	tinyxml2::XMLHandle hApplication = hZUpdater.FirstChildElement("application");
+	if (hApplication.ToElement() == NULL)
+	{
+		ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: (hApplication.ToElement() == NULL)");
+		return false;
+	}
+
+	m_ApplicationName = hApplication.ToElement()->GetText();
+
 	tinyxml2::XMLHandle hBuilds = hZUpdater.FirstChildElement("builds");
 
 	if (hBuilds.ToElement() == NULL)

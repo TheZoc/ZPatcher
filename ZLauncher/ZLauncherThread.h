@@ -63,6 +63,7 @@ protected:
 	std::string					m_versionFile;
 	std::string					m_targetDirectory;
 
+	std::string					m_ApplicationName;
 	uint64_t					m_LocalCurrentVersion;
 	uint64_t					m_LatestVersion;
 	uint64_t					m_BestPathDownloadSize;
@@ -82,7 +83,7 @@ protected:
 	bool CheckForUpdates(const std::string& updateURL, const uint64_t& currentBuildNumber);
 
 	/**
-	* Returns g_LatestVersion.
+	* Returns the latest version fetched from the XML.
 	*/
 	uint64_t GetLatestVersion();
 
