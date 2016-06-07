@@ -75,6 +75,7 @@ ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString&
 	this->Centre( wxBOTH );
 
 	m_backgroundImg.LoadFile("bg.tga", wxBITMAP_TYPE_TGA);
+	SetBackgroundStyle(wxBG_STYLE_PAINT);
 
 	Bind(wxEVT_PAINT, &ZLauncherFrame::PaintEvent, this);
 
