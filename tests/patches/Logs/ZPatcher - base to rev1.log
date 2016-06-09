@@ -1,0 +1,8 @@
+[2016-06-08-23-17-09] [Log] > Writing patch data
+[2016-06-08-23-17-09] [Log] > [del] non_empty_directory_to_be_deleted/sample.txt
+[2016-06-08-23-17-09] [Log] > [del] non_empty_directory_to_be_deleted/
+[2016-06-08-23-17-09] [Log] > [del] file_to_be_deleted.txt
+[2016-06-08-23-17-09] [Log] > [del] empty_directory_to_be_deleted/
+[2016-06-08-23-17-09] [Log] > [mod] directory_to_be_modified/replaced_file.txt
+[2016-06-08-23-17-09] [Log] > [mod] file_to_be_updated.txt
+[2016-06-08-23-17-09] [Log] > Patch data writing process completed

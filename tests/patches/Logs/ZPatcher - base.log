@@ -1,0 +1,13 @@
+[2016-06-08-23-16-50] [Log] > Writing patch data
+[2016-06-08-23-16-50] [Log] > [add] directory_to_be_kept_as_is/
+[2016-06-08-23-16-50] [Log] > [add] directory_to_be_kept_as_is/sample.txt
+[2016-06-08-23-16-50] [Log] > [add] directory_to_be_modified/
+[2016-06-08-23-16-50] [Log] > [add] directory_to_be_modified/replaced_file.txt
+[2016-06-08-23-16-50] [Log] > [add] empty_directory/
+[2016-06-08-23-16-50] [Log] > [add] empty_directory_to_be_deleted/
+[2016-06-08-23-16-50] [Log] > [add] file_to_be_deleted.txt
+[2016-06-08-23-16-50] [Log] > [add] file_to_be_kept_as_is.txt
+[2016-06-08-23-16-50] [Log] > [add] file_to_be_updated.txt
+[2016-06-08-23-16-50] [Log] > [add] non_empty_directory_to_be_deleted/
+[2016-06-08-23-16-50] [Log] > [add] non_empty_directory_to_be_deleted/sample.txt
+[2016-06-08-23-16-50] [Log] > Patch data writing process completed
