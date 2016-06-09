@@ -154,7 +154,8 @@ wxThread::ExitCode ZLauncherThread::Entry()
 		{
 			// This is bad! Our URL is malformed (no slashes in it!)
 			ZPatcher::Log(ZPatcher::LOG_FATAL, "Invalid Update URL: %s", patch.fileURL.c_str());
-			return false;
+			return (wxThread::ExitCode)0;
+;
 		}
 
 		// Adjust the path accordingly
@@ -182,7 +183,11 @@ wxThread::ExitCode ZLauncherThread::Entry()
 			if (fileExists == 0)
 			{
 				std::string fileMD5 = MD5File(localFullPath);
+#ifdef _WIN32
 				if (_stricmp(fileMD5.c_str(), patch.fileMD5.c_str()) == 0)
+#else
+				if (strcasecmp(fileMD5.c_str(), patch.fileMD5.c_str()) == 0)
+#endif
 				{
 					downloadFile = false;
 					MD5Matches = true;
@@ -227,10 +232,10 @@ wxThread::ExitCode ZLauncherThread::Entry()
 		}
 		else
 		{
-			ZPatcher::Log(ZPatcher::LOG_FATAL, "Unable to apply the patch %s", localFullPath);
+			ZPatcher::Log(ZPatcher::LOG_FATAL, "Unable to apply the patch %s", localFullPath.c_str());
 			ZPatcher::DestroyLogSystem();
 			m_pHandler->m_pThreadCS.Leave();
-			return false;
+			return (wxThread::ExitCode)0;
 		}
 
 		m_pHandler->m_pThreadCS.Leave();
@@ -569,7 +574,7 @@ std::string ZLauncherThread::MD5File(std::string fileName)
 	if (errno != 0)
 	{
 		ZPatcher::Log(ZPatcher::LOG_FATAL, "Error opening file \"%s\" to calculate MD5 Hash: %s", fileName.c_str(), strerror(errno));
-		return false;
+		return "";
 	}
 
 	// Buffer to read the file
@@ -585,7 +590,7 @@ std::string ZLauncherThread::MD5File(std::string fileName)
 	// Read file and generate MD5 hash
 	md5_init(&state);
 
-	while (bytesRead = fread(readBuffer, 1, buffer_size, targetFile)) 
+	while ((bytesRead = fread(readBuffer, 1, buffer_size, targetFile))) 
 		md5_append(&state, (const md5_byte_t*)readBuffer, static_cast<int>(bytesRead));
 
 	fclose(targetFile); // Close the file. It won't be needed anymore.
@@ -763,4 +768,4 @@ bool ZLauncherThread::SelfUpdate(bool &updateFound)
 
 	return true;
 }
-#endif _WIN32
+#endif //_WIN32

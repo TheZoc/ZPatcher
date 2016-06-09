@@ -18,6 +18,9 @@
 #include <vector>
 #include "ZLauncherFrame.h"
 
+// Lets avoid adding an unnecessary header here.
+typedef unsigned long       DWORD;
+
 //////////////////////////////////////////////////////////////////////////
 // Declare the events used to update the main frame
 

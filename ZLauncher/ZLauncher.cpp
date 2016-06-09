@@ -34,7 +34,16 @@ bool VisualCreatePatch::OnInit()
 	// Run the launcher!
 	ZLauncherFrame* f = new ZLauncherFrame(nullptr);
 	f->SetLaunchExecutableName(launcherExecutableName);
+
+#ifdef _WIN32
 	f->SetIcon(wxICON(frame_icon));
+#elif __APPLE__
+	// TODO: Remove this hardcode
+	f->SetIcon(wxIcon("ZLauncher.icns"));
+//#else __linux__
+//	// TODO: Find out how this works in linux!
+#endif
+
 	f->Show(true);
 
 	f->DoStartCreatePatchThread(updateURL, versionFile, targetDirectory);

@@ -19,7 +19,7 @@ WXCONFIG_EXISTS:=$(shell command -v wx-config 2> /dev/null)
 ifdef WXCONFIG_EXISTS
 	CXXFLAGS+=$(shell wx-config --cxxflags)
 	CPPFLAGS+=$(shell wx-config --cppflags)
-	LIBS+=$(shell wx-config --libs std)
+	LIBS+=$(shell wx-config --libs std,webview)
 endif
 
 # ZPatcherLib files
@@ -43,6 +43,11 @@ VISUALCREATEPATCHSOURCES=$(wildcard $(VISUALCREATEPATCHDIR)/*.cpp)
 VISUALCREATEPATCHOBJECTS=$(addprefix obj/$(VISUALCREATEPATCHDIR)/, $(notdir $(VISUALCREATEPATCHSOURCES:.cpp=.o)))
 
 # ZUpdater specific source files
+ZLAUNCHERRDIR=ZLauncher
+ZLAUNCHERSOURCES=$(wildcard $(ZLAUNCHERRDIR)/*.cpp)
+ZLAUNCHEROBJECTS=$(addprefix obj/$(ZLAUNCHERRDIR)/, $(notdir $(ZLAUNCHERSOURCES:.cpp=.o)))
+
+# ZUpdater specific source files
 ZUPDATERDIR=ZUpdater
 ZUPDATERSOURCES=$(wildcard $(ZUPDATERDIR)/*.cpp)
 ZUPDATEROBJECTS=$(addprefix obj/$(ZUPDATERDIR)/, $(notdir $(ZUPDATERSOURCES:.cpp=.o)))
@@ -56,7 +61,7 @@ create_output_dir=@mkdir -p $(@D)
 ifndef WXCONFIG_EXISTS
 all: lzma tinyxml2 out/ZPatcherLib.a CreatePatch ApplyPatch ZUpdater
 else
-all: lzma tinyxml2 out/ZPatcherLib.a CreatePatch ApplyPatch ZUpdater VisualCreatePatch
+all: lzma tinyxml2 out/ZPatcherLib.a CreatePatch ApplyPatch ZUpdater VisualCreatePatch ZLauncher
 endif
 	@echo all done.
 
@@ -72,9 +77,12 @@ CreatePatch: libs out/CreatePatch
 
 ApplyPatch: libs out/ApplyPatch
 
-VisualCreatePatch: lzma out/VisualCreatePatch
+VisualCreatePatch: libs out/VisualCreatePatch
 
-ZUpdater: lzma out/ZUpdater
+ZLauncher: libs out/ZLauncher
+	@ cp -R ./ZLauncher/ZLauncherRes ./out/ZLauncherRes/
+
+ZUpdater: libs out/ZUpdater
 
 clean:
 	@ rm -rf obj/
@@ -106,6 +114,15 @@ out/VisualCreatePatch: $(VISUALCREATEPATCHOBJECTS) out/ZPatcherLib.a
 	$(CXX) $(LDFLAGS) $^ -o $@ $(LIBS)
 
 $(VISUALCREATEPATCHOBJECTS): obj/$(VISUALCREATEPATCHDIR)/%.o: $(VISUALCREATEPATCHDIR)/%.cpp
+	$(create_output_dir)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+
+# ZLauncher executable
+out/ZLauncher: $(ZLAUNCHEROBJECTS) out/ZPatcherLib.a
+	$(create_output_dir)
+	$(CXX) $(LDFLAGS) $^ -o $@ $(LIBS)
+
+$(ZLAUNCHEROBJECTS): obj/$(ZLAUNCHERRDIR)/%.o: $(ZLAUNCHERRDIR)/%.cpp
 	$(create_output_dir)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 

@@ -31,7 +31,7 @@
 #include "DownloadFileWriter.h"
 #include "LogSystem.h"
 
-#include "TinyXML2.h"
+#include "tinyxml2.h"
 #include "curl/curl.h"
 #include "md5.h"
 #include "FileUtils.h"

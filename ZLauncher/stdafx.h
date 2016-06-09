@@ -16,6 +16,8 @@
 	#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 	// Windows Header Files:
 	#include <windows.h>
+	#include <malloc.h>
+	#include <tchar.h>
 #endif // _WIN32
 
 // STD C++ Header Files
@@ -23,9 +25,7 @@
 
 // C RunTime Header Files
 #include <stdlib.h>
-#include <malloc.h>
 #include <memory.h>
-#include <tchar.h>
 
 // Every wx header we use.
 #include <wx/app.h>
@@ -43,5 +43,6 @@
 #include <wx/frame.h>
 #include <wx/thread.h>
 #include <wx/event.h>
+#include <wx/msgdlg.h>
 
 // TODO: reference additional headers your program requires here
