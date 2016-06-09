@@ -11,11 +11,9 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include <string>
 #include "CreatePatchFrame.h"
 #include "VisualCreatePatch.h"
-#include <wx/app.h>
-#include <string>
-#include <codecvt>
 #include "CreatePatch.h"
 
 wxIMPLEMENT_APP(VisualCreatePatch);
@@ -26,7 +24,16 @@ bool VisualCreatePatch::OnInit()
 		return false;
 
 	CreatePatchFrame* f = new CreatePatchFrame(nullptr);
+
+#ifdef _WIN32
 	f->SetIcon(wxICON(frame_icon));
+#elif __APPLE__
+	// TODO: Remove this hardcode
+	f->SetIcon(wxIcon("VisualCreatePatch.icns"));
+//#else __linux__
+//	// TODO: Find out how this works in linux!
+#endif
+
 	f->Show(true);
 
 	f->m_txtOldDirectory->SetLabelText(m_oldDirectory);

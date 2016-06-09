@@ -34,8 +34,7 @@ static const wxCmdLineEntryDesc g_cmdLineDesc[] =
 	{ wxCMD_LINE_OPTION, "o", "old", "old version directory", wxCMD_LINE_VAL_STRING , wxCMD_LINE_OPTION_MANDATORY },
 	{ wxCMD_LINE_OPTION, "n", "new", "new version directory", wxCMD_LINE_VAL_STRING , wxCMD_LINE_OPTION_MANDATORY },
 	{ wxCMD_LINE_OPTION, "p", "patchfile", "specifies the output filename of the patch file", wxCMD_LINE_VAL_STRING , wxCMD_LINE_OPTION_MANDATORY },
-
-	{ wxCMD_LINE_NONE }
+	wxCMD_LINE_DESC_END
 };
 
 #endif // _VISUALCREATEPATCH_H_

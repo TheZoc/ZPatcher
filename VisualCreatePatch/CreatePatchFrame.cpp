@@ -120,7 +120,9 @@ CreatePatchFrame::CreatePatchFrame( wxWindow* parent, wxWindowID id, const wxStr
 
 	Bind(wxEVT_CLOSE_WINDOW, &CreatePatchFrame::OnClose, this);
 
+#ifndef __APPLE__
 	SetDoubleBuffered(true);
+#endif
 }
 
 CreatePatchFrame::~CreatePatchFrame()

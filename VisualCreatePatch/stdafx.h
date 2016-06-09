@@ -8,18 +8,17 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "wx/wxprec.h"
 #undef _CRT_SECURE_NO_WARNINGS
-
-#include "targetver.h"
-
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
-#include <windows.h>
+#ifdef _WIN32
+	#include "targetver.h"
+	#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+	#include <windows.h>
+	#include <malloc.h>
+	#include <tchar.h>
+#endif
 
 // C RunTime Header Files
 #include <stdlib.h>
-#include <malloc.h>
 #include <memory.h>
-#include <tchar.h>
 
 // Every wx header we use.
 #include <wx/artprov.h>
@@ -36,5 +35,10 @@
 #include <wx/frame.h>
 #include <wx/thread.h>
 #include <wx/event.h>
+#include <wx/log.h>
+#include <wx/app.h>
+#include <wx/window.h>
+#include <wx/frame.h>
+#include <wx/icon.h>
 
 // TODO: reference additional headers your program requires here
