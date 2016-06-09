@@ -27,7 +27,7 @@ static const wxString g_BackgroundImage = (g_ResourceDirectory + "bg-dark.png");
 #define COMPONENT_BACKGROUND	wxColour( 30, 30, 30 )
 #define COMPONENT_TEXT_COLOR	wxColour( 195, 195, 195 )
 
-static const char* g_htmlHeader = "<html><head><style type=\"text/css\">body {color: #c3c3c3; background-color: #1E1E1E; scrollbar-base-color: #1E1E1E; scrollbar-face-color: #1E1E1E; scrollbar-3dlight-color: #858585; scrollbar-highlight-color: #858585; scrollbar-shadow-color: #858585; scrollbar-dark-shadow-color: #858585; scrollbar-track-color: #282828; scrollbar-arrow-color: #C3C3C3;}</style></head><body>";
+static const char* g_htmlHeader = "<html><head><style type=\"text/css\">body {color: #c3c3c3; background-color: #1E1E1E; scrollbar-base-color: #1E1E1E; scrollbar-face-color: #1E1E1E; scrollbar-3dlight-color: #858585; scrollbar-highlight-color: #858585; scrollbar-shadow-color: #858585; scrollbar-dark-shadow-color: #858585; scrollbar-track-color: #282828; scrollbar-arrow-color: #C3C3C3;} a { color: #B0B0FF; }</style></head><body>";
 
 #else
 

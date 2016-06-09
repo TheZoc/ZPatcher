@@ -16,7 +16,6 @@
             <version>0</version>
             <desc>
                 <![CDATA[<p><b>ZPatcher Test Suite - Base (Revision#1)</b></p>
-<br/>
 <ul>
 		<li>Initial release!</li>
 		<li>For the detailed base structure provided in this test, check <a href="https://github.com/TheZoc/ZPatcher/blob/master/tests/patches/Logs/ZPatcher%20-%20base.log">this link</a>.</li>
@@ -36,7 +35,7 @@
         <patch>
             <source_version>1</source_version>
             <destination_version>2</destination_version>
-            <file>https://raw.githubusercontent.com/TheZoc/ZPatcher/master/tests/patches/base_to_rev1.zpatch</file>
+            <file>https://raw.githubusercontent.com/TheZoc/ZPatcher/master/tests/patches/base_to_rev2.zpatch</file>
             <size>351</size>
             <md5>34239473447c4f8a866f04e47e075398</md5>
         </patch>

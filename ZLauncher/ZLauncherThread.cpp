@@ -47,6 +47,7 @@ ZLauncherThread::ZLauncherThread(ZLauncherFrame *handler, const wxString& update
 	m_updateURL = updateURL;
 	m_versionFile = versionFile;
 	m_targetDirectory = targetDirectory;
+	m_LatestVersion = 0LL;
 }
 
 ZLauncherThread::~ZLauncherThread()
@@ -155,7 +156,6 @@ wxThread::ExitCode ZLauncherThread::Entry()
 			// This is bad! Our URL is malformed (no slashes in it!)
 			ZPatcher::Log(ZPatcher::LOG_FATAL, "Invalid Update URL: %s", patch.fileURL.c_str());
 			return (wxThread::ExitCode)0;
-;
 		}
 
 		// Adjust the path accordingly
