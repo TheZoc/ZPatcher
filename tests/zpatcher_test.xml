@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<zupdater>
+    <application>ZPatcher Test Suite</application>
+    <builds>
+        <build>
+            <version>1</version>
+            <desc>
+                <![CDATA[<p><b>ZPatcher Test Suite - Revision #2</b></p>
+<ul>
+		<li>A few files were changed. For a complete list, check <a href="https://github.com/TheZoc/ZPatcher/blob/master/tests/patches/Logs/ZPatcher%20-%20base%20to%20rev1.log">this link</a>.</li>
+</ul>
+]]>
+</desc>
+        </build>
+        <build>
+            <version>0</version>
+            <desc>
+                <![CDATA[<p><b>ZPatcher Test Suite - Base (Revision#1)</b></p>
+<br/>
+<ul>
+		<li>Initial release!</li>
+		<li>For the detailed base structure provided in this test, check <a href="https://github.com/TheZoc/ZPatcher/blob/master/tests/patches/Logs/ZPatcher%20-%20base.log">this link</a>.</li>
+</ul>
+]]>
+</desc>
+        </build>
+    </builds>
+    <patches>
+        <patch>
+            <source_version>0</source_version>
+            <destination_version>1</destination_version>
+            <file>https://github.com/TheZoc/ZPatcher/raw/master/tests/patches/base.zpatch</file>
+            <size>678</size>
+            <md5>78e14f106f2a09da62eb6fccb1038177</md5>
+        </patch>
+        <patch>
+            <source_version>1</source_version>
+            <destination_version>2</destination_version>
+            <file>https://github.com/TheZoc/ZPatcher/raw/master/tests/patches/base_to_rev1.zpatch</file>
+            <size>351</size>
+            <md5>34239473447c4f8a866f04e47e075398</md5>
+        </patch>
+    </patches>
+</zupdater>
