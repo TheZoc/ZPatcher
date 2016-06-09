@@ -82,7 +82,7 @@ namespace ZUpdater
 	 */
 	bool SimpleDownloadFile(const std::string& URL, const std::string& targetPath = "./");
 
-
+#ifdef _WIN32
 	//////////////////////////////////////////////////////////////////////////
 	// Windows specific stuff
 
@@ -93,5 +93,6 @@ namespace ZUpdater
 	 * Please note, YOU (yes, you!) need to explicitly finish the application after calling this function and it returns updateFound == true
 	 */
 	bool SelfUpdate(bool &updateFound);
+#endif
 }
 #endif

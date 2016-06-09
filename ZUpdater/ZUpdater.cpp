@@ -13,13 +13,15 @@
 #include <string>
 #include <vector>
 #include <climits>
-#include <io.h>
+#include <cerrno>
+#include <cstring>
 
 #ifdef  _WIN32
 	#include <direct.h>
 	#include <sstream>
 	#include <windows.h>
 	#include <shellapi.h>
+	#include <io.h>
 #else
 	#include <unistd.h>
 #endif
@@ -356,8 +358,11 @@ namespace ZUpdater
 
 					fprintf(stdout, "Required MD5:\t%s\n", patch.fileMD5.c_str());
 					fprintf(stdout, "File MD5:\t%s\n", fileMD5.c_str());
-
+#ifdef _WIN32
 					if (_stricmp(fileMD5.c_str(), patch.fileMD5.c_str()) == 0)
+#else
+					if (strcasecmp(fileMD5.c_str(), patch.fileMD5.c_str()) == 0)
+#endif
 					{
 						fprintf(stdout, "Matches!\n");
 						downloadFile = false;
@@ -401,7 +406,7 @@ namespace ZUpdater
 				system("pause");
 				return false;
 			}
-
+#ifdef _WIN32
 			//////////////////////////////////////////////////////////////////////////
 			// HACK! HACK! HACK! HACK! HACK!
 			// TODO: Rewrite this function so that this horrendous hack isn't here!
@@ -414,6 +419,7 @@ namespace ZUpdater
 					exit(EXIT_SUCCESS);
 
 			//////////////////////////////////////////////////////////////////////////
+#endif
 		}
 		return true;
 	}
@@ -466,7 +472,7 @@ namespace ZUpdater
 		if (errno != 0)
 		{
 			ZPatcher::Log(ZPatcher::LOG_FATAL, "Error opening file \"%s\" to calculate MD5 Hash: %s", fileName.c_str(), strerror(errno));
-			return false;
+			return "";
 		}
 
 		// Buffer to read the file
@@ -482,7 +488,7 @@ namespace ZUpdater
 		// Read file and generate MD5 hash
 		md5_init(&state);
 
-		while (bytesRead = fread(readBuffer, 1, buffer_size, targetFile))
+		while ((bytesRead = fread(readBuffer, 1, buffer_size, targetFile)))
 			md5_append(&state, (const md5_byte_t*)readBuffer, static_cast<int>(bytesRead));
 
 		fclose(targetFile); // Close the file. It won't be needed anymore.
@@ -661,6 +667,6 @@ namespace ZUpdater
 
 		return true;
 	}
-#endif _WIN32
+#endif // _WIN32
 
 }

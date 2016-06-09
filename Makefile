@@ -42,6 +42,11 @@ VISUALCREATEPATCHDIR=VisualCreatePatch
 VISUALCREATEPATCHSOURCES=$(wildcard $(VISUALCREATEPATCHDIR)/*.cpp)
 VISUALCREATEPATCHOBJECTS=$(addprefix obj/$(VISUALCREATEPATCHDIR)/, $(notdir $(VISUALCREATEPATCHSOURCES:.cpp=.o)))
 
+# ZUpdater specific source files
+ZUPDATERDIR=ZUpdater
+ZUPDATERSOURCES=$(wildcard $(ZUPDATERDIR)/*.cpp)
+ZUPDATEROBJECTS=$(addprefix obj/$(ZUPDATERDIR)/, $(notdir $(ZUPDATERSOURCES:.cpp=.o)))
+
 # A directory creation utility
 create_output_dir=@mkdir -p $(@D)
 
@@ -49,9 +54,9 @@ create_output_dir=@mkdir -p $(@D)
 
 # If there is no wx-config file, assume wxWidgets is missing and only build the command-line utilities
 ifndef WXCONFIG_EXISTS
-all: lzma tinyxml2 out/ZPatcherLib.a CreatePatch ApplyPatch
+all: lzma tinyxml2 out/ZPatcherLib.a CreatePatch ApplyPatch ZUpdater
 else
-all: lzma tinyxml2 out/ZPatcherLib.a CreatePatch ApplyPatch VisualCreatePatch
+all: lzma tinyxml2 out/ZPatcherLib.a CreatePatch ApplyPatch ZUpdater VisualCreatePatch
 endif
 	@echo all done.
 
@@ -68,6 +73,8 @@ CreatePatch: libs out/CreatePatch
 ApplyPatch: libs out/ApplyPatch
 
 VisualCreatePatch: lzma out/VisualCreatePatch
+
+ZUpdater: lzma out/ZUpdater
 
 clean:
 	@ rm -rf obj/
@@ -99,6 +106,15 @@ out/VisualCreatePatch: $(VISUALCREATEPATCHOBJECTS) out/ZPatcherLib.a
 	$(CXX) $(LDFLAGS) $^ -o $@ $(LIBS)
 
 $(VISUALCREATEPATCHOBJECTS): obj/$(VISUALCREATEPATCHDIR)/%.o: $(VISUALCREATEPATCHDIR)/%.cpp
+	$(create_output_dir)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+
+# ZUpdater executable
+out/ZUpdater: $(ZUPDATEROBJECTS) out/ZPatcherLib.a
+	$(create_output_dir)
+	$(CXX) $(LDFLAGS) $^ -o $@ $(LIBS)
+
+$(ZUPDATEROBJECTS): obj/$(ZUPDATERDIR)/%.o: $(ZUPDATERDIR)/%.cpp
 	$(create_output_dir)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 

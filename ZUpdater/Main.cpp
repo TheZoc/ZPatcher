@@ -13,6 +13,8 @@
 
 #include "stdafx.h"
 #include <string>
+#include <cstdio>
+#include <cstdlib>
 #include "ZUpdater.h"
 #include "ApplyPatch.h"
 
@@ -34,6 +36,12 @@
 	#endif
 #endif
 
+#if _WIN32
+#define WINDOWS_PAUSE() system("pause");
+#else
+#define WINDOWS_PAUSE()
+#endif
+
 // This downloads and applies the patch on the current folder.
 int main()
 {
@@ -42,11 +50,12 @@ int main()
 	fprintf(stdout, "\nZUpdater Command Line : ZPatcher [%d] v1.0 beta : %s\n", ENVBITS, __DATE__);
 	fprintf(stdout, "Copyright (c) 2016 Felipe \"Zoc\" Silveira : http://www.github.com/TheZoc/ZPatcher\n\n");
 
+#ifdef _WIN32
 	// Check if there was an update to the updater itself
 	bool shouldRestart = false;
 	if (!SelfUpdate(shouldRestart))
 	{
-		system("pause");
+		WINDOWS_PAUSE();
 		exit(EXIT_FAILURE);
 	}
 	else
@@ -56,6 +65,7 @@ int main()
 			exit(EXIT_SUCCESS);
 		}
 	}
+#endif
 
 	std::string					updateURL = "http://www.example.org/example.xml";
 	std::string					targetDirectory = "./";
@@ -66,7 +76,7 @@ int main()
 	if (!GetTargetCurrentVersion(versionFile, currentVersion))
 	{
 		fprintf(stderr, "An error occurred while getting current application version.\n");
-		system("pause");
+		WINDOWS_PAUSE();
 		exit(EXIT_FAILURE);
 	}
 
@@ -76,7 +86,7 @@ int main()
 	if (!CheckForUpdates(updateURL, currentVersion))
 	{
 		fprintf(stderr, "An error occurred while checking for updates.\n");
-		system("pause");
+		WINDOWS_PAUSE();
 		exit(EXIT_FAILURE);
 	}
 
@@ -85,12 +95,12 @@ int main()
 	// If there is an updated version to download, download and apply it. (This might download multiple files).
 	if (!DownloadAndApplyPatch(targetDirectory, versionFile, currentVersion))
 	{
-		system("pause");
+		WINDOWS_PAUSE();
 		exit(EXIT_FAILURE);
 	}
 
 	fprintf(stdout, "\n");
-	system("pause");
+	WINDOWS_PAUSE();
 
 	exit(EXIT_SUCCESS);
 }
