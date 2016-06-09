@@ -67,9 +67,9 @@ int main()
 	}
 #endif
 
-	std::string					updateURL = "http://www.example.org/example.xml";
+	std::string					updateURL = "https://raw.githubusercontent.com/TheZoc/ZPatcher/master/tests/zpatcher_test.xml";
 	std::string					targetDirectory = "./";
-	std::string					versionFile = "example.zversion";
+	std::string					versionFile = "zpatcher_test.zversion";
 	uint64_t					currentVersion;
 
 	// Check if we have version information on file. If not, we consider this is a fresh install.

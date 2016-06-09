@@ -29,14 +29,14 @@
         <patch>
             <source_version>0</source_version>
             <destination_version>1</destination_version>
-            <file>https://github.com/TheZoc/ZPatcher/raw/master/tests/patches/base.zpatch</file>
+            <file>https://raw.githubusercontent.com/TheZoc/ZPatcher/master/tests/patches/base.zpatch</file>
             <size>678</size>
             <md5>78e14f106f2a09da62eb6fccb1038177</md5>
         </patch>
         <patch>
             <source_version>1</source_version>
             <destination_version>2</destination_version>
-            <file>https://github.com/TheZoc/ZPatcher/raw/master/tests/patches/base_to_rev1.zpatch</file>
+            <file>https://raw.githubusercontent.com/TheZoc/ZPatcher/master/tests/patches/base_to_rev1.zpatch</file>
             <size>351</size>
             <md5>34239473447c4f8a866f04e47e075398</md5>
         </patch>

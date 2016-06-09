@@ -64,6 +64,9 @@ void DownloadFileWriter::SetupTransfer(const std::string& URL)
 	curl_easy_setopt( m_CurlHandle,	CURLOPT_URL,				URL.c_str()																		);
 	curl_easy_setopt( m_CurlHandle,	CURLOPT_USERAGENT,			"ZLauncher/1.0.0"																);
 
+	curl_easy_setopt( m_CurlHandle, CURLOPT_FOLLOWLOCATION,		1L																				);
+	curl_easy_setopt( m_CurlHandle, CURLOPT_MAXREDIRS,			10																				);
+
 	curl_easy_setopt( m_CurlHandle,	CURLOPT_WRITEFUNCTION,		&DownloadFileWriter::Callback_WriteFile											);
 	curl_easy_setopt( m_CurlHandle,	CURLOPT_WRITEDATA,			(void*)this																		);
 

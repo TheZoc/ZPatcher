@@ -25,8 +25,8 @@ bool VisualCreatePatch::OnInit()
 	
 	//////////////////////////////////////////////////////////////////////////
 	// Simple config section
-	wxString	updateURL				= wxT("http://www.example.org/example.xml");
-	wxString	versionFile				= wxT("example.zversion");
+	wxString	updateURL				= wxT("https://raw.githubusercontent.com/TheZoc/ZPatcher/master/tests/zpatcher_test.xml");
+	wxString	versionFile				= wxT("zpatcher_test.zversion");
 	wxString	targetDirectory			= wxT("./");
 	wxString	launcherExecutableName	= wxT("Example.exe");
 
