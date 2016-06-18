@@ -144,6 +144,16 @@ wxThread::ExitCode ZLauncherThread::Entry()
 	// Do the update loop!
 	for (unsigned int patchIndex = 0; patchIndex < m_BestPatchPath.size(); ++patchIndex)
 	{
+		//////////////////////////////////////////////////////////////////////////
+		// Update the version display
+		tmphtml.str("");
+		tmphtml.clear();
+		tmphtml << "<h1>" << m_ApplicationName << "</h1>";
+		tmphtml << "<b>Current Version: " << m_LocalCurrentVersion << "</b>";
+		tmphtml << "<br /><b>Latest Version: " << GetLatestVersion() << "</b>";
+		tmphtml << m_UpdateDescription;
+		ZLauncherFrame::HTMLSetContent(tmphtml.str());
+
 		// Check if we should stop before each file download
 		if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
 
@@ -350,11 +360,12 @@ bool ZLauncherThread::CheckForUpdates(const std::string& updateURL, const uint64
 			m_LatestVersion = buildNumber;
 		}
 
-		if (buildNumber < currentBuildNumber)
-		{
-			// We've gotten all of the newer builds so no need to keep reading.
-			break;
-		}
+		// Disabled this for my own project, so we can see the entire patch notes.
+// 		if (buildNumber < currentBuildNumber)
+// 		{
+// 			// We've gotten all of the newer builds so no need to keep reading.
+// 			break;
+// 		}
 
 		++numUpdates;
 
