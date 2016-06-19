@@ -8,14 +8,14 @@ The ZPatcher suite is a set of applications developed to Create and Apply patche
 ![ZLauncher Sample Screenshot](https://raw.githubusercontent.com/TheZoc/ZPatcher/master/images/ZLauncher.png)
 
 Features:
-	* Multiplatform, currently supporting Windows, OSX and Linux.
-	* Open Source
-	* Easy to Create patch files for your game/application
-	* Skinnable
-	* Command line tools available to be easily included in deployment scripts
-	* Client-Side automatic Download-and-Apply patching process
-	* File backup when applying a patch, reducing the chances of a broken build on clients
-	* (Launcher Only) Display the Change Log for your patches
+* Multiplatform, currently supporting Windows, OSX and Linux.
+* Open Source
+* Easy to Create patch files for your game/application
+* Skinnable
+* Command line tools available to be easily included in deployment scripts
+* Client-Side automatic Download-and-Apply patching process
+* File backup when applying a patch, reducing the chances of a broken build on clients
+* (Launcher Only) Display the Change Log for your patches
 
 ## Compiling
 
