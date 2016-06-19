@@ -9,10 +9,8 @@ LZMADIR=./libs/LzmaLib/source
 LZMALIB=$(LZMADIR)/out/liblzma.a
 
 TINYXML2DIR=./libs/tinyxml2
-TINYXML2LIB=$(TINYXML2DIR)/tinyxml2.a
 
-# When tinyxml2 is updated, change it below to -ltinyxml2
-LIBS=-llzma -lpthread  -lcurl libs/tinyxml2/tinyxml2.a
+LIBS=-llzma -lpthread -lcurl -ltinyxml2
 
 # wxWidgets extra parameters
 WXCONFIG_EXISTS:=$(shell command -v wx-config 2> /dev/null)
