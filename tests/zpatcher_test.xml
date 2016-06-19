@@ -3,7 +3,7 @@
     <application>ZPatcher Test Suite</application>
     <builds>
         <build>
-            <version>1</version>
+            <version>2</version>
             <desc>
                 <![CDATA[<p><b>ZPatcher Test Suite - Revision #2</b></p>
 <ul>
@@ -13,9 +13,9 @@
 </desc>
         </build>
         <build>
-            <version>0</version>
+            <version>1</version>
             <desc>
-                <![CDATA[<p><b>ZPatcher Test Suite - Base (Revision#1)</b></p>
+                <![CDATA[<p><b>ZPatcher Test Suite - Revision #1</b></p>
 <ul>
 		<li>Initial release!</li>
 		<li>For the detailed base structure provided in this test, check <a href="https://github.com/TheZoc/ZPatcher/blob/master/tests/patches/Logs/ZPatcher%20-%20base.log">this link</a>.</li>

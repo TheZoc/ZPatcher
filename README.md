@@ -3,27 +3,65 @@
 
 # ZPatcher
 
-A suite to Create and Apply patches to application and games.
+The ZPatcher suite is a set of applications developed to Create and Apply patches to both applicatoin and games.
+
+![ZLauncher Sample Screenshot](https://raw.githubusercontent.com/TheZoc/ZPatcher/master/images/ZLauncher.png)
+
+Features:
+	* Multiplatform, currently supporting Windows, OSX and Linux.
+	* Open Source
+	* Easy to Create patch files for your game/application
+	* Skinnable
+	* Command line tools available to be easily included in deployment scripts
+	* Client-Side automatic Download-and-Apply patching process
+	* File backup when applying a patch, reducing the chances of a broken build on clients
+	* (Launcher Only) Display the Change Log for your patches
 
 ## Compiling
 
-Run the file ```.\libs\curl\projects\generate.bat``` to generate libcurl required files.
-Currently, you will need to upgrade TinyXML2 project file to Visual Studio 2015.
-A pull request was already made to [TinyXML2][2] to upgrade it's repository to use Visual Studio 2015.
+### On Windows
 
-Oopen ```ZPatcher.sln``` solution file and compile it. Make sure Configuration and Platform are correct!
+1. Run the file ```.\libs\curl\projects\generate.bat``` to generate libcurl required files.
+2. Open ```ZPatcher.sln``` solution file and compile it. Make sure Configuration and Platform are correct!
+3. The executables will be in the ```_Output/``` directory.
 
-The executables will be in the ```_Output/``` directory.
+### On OSX
 
-## Applications - Offline Patching
+1. Install the required dependencies: ```libcurl``` and ```wxWidgets```. It's recommended to use [homebrew][7] to do that.
+2. Run ```make```
+3. The executables will be on the ```out/``` directory.
 
-### CreatePatch
+Please note, the ```Makefile``` uses the ```wx-config``` utility to build the visual applications of the ZPatcher suite. Make sure this utility is available if you plan to build these applications.
 
-Usage:
+### On Linux
+
+1. Install the requried dependencies using your favourite package manager: ```libcurl``` and ```wxWidgets```.
+2. Run ```make```
+3. The executables will be on the ```out/``` directory.
+
+Please note that the visual applications were developed with ```wxWidgets 3.1``` and was not tested with older versions.
+Also, the ```Makefile``` uses the ```wx-config``` utility to build the visual applications of the ZPatcher suite. Make sure this utility is available if you plan to build these applications.
+
+## Applications
+
+### Patch creation utilites
+
+Both ```CreatePatch``` and ```VisualCreatePatch``` can be used to create the patch files.
+* ```CreatePatch``` is better suited to create patches on batch files and scripts, being a command-line application. 
+* ```VisualCreatePatch``` is better suited to create a patch manually, since it displays a window with the patch creation process in a user friendly interface. It is also faster than the command-line counterpart.
+
+To create a patch with ```CreatePatch```, the usage is:
 ```CreatePatch.exe <old version directory> <new version directory> <output patch file>```
 
-This utility compare two folders, find the differences between them and creates a "zpatch" file with this information.
-Currently, it doesn't store any hash of the files changed nor deltas.
+To create a patch with ```VisualCreatePatch```, the usage is:
+```VisualCreatePatch.exe -o <old version directory> -n <new version directory> -p <output patch file>```
+
+The command line input is slightly different, since ```VisualCreatePatch``` uses wxWidgets tools to process the command line input.
+
+Currently, both applications must be run using a command line, the ```VisualCreatePatch``` user interface is currently pending.
+Note: You can always submit a pull request for it! Make the command line input optional and add dialogs for folder inputs.
+
+## Patch Applying utilities
 
 ### ApplyPatch
 
@@ -36,78 +74,35 @@ If a file is missing - even if it's supposed to be deleted during the patching p
 
 If the patch applying process fails, it reverts all the changes processed until it fails.
 
-Missing Features of the *offline patcher*:
-
-- There is no version tracking mechanism in place.
-	
-## Applications - Online Patching
+Currently, ApplyPatch do not have a version tracking mechanism in place.
 
 ### ZUpdater
 
+Command line tool to fetch the update information from an URL, download the required patches and apply them.
+
 It is required to setup a webserver with a XML file containing the update data.
 After it's configured, you will need to edit the necessary data in ```ZUpdater/main.cpp```.
-Compile the code and run it, you will see the magic happening.
+Compile and run it, the magic will happen.
 
 It is possible to do a self-update on Windows, you just need to add an executable name with an extra "a" on it's name.
 For example, to update ```ZUpdater.exe```, add a file called ```ZUpdatera.exe``` on the same directory.
 This file can be delivered using a ```.zpatch``` file.
 
-#### XML Structure
+### ZLauncher
 
-This is the structure of the required XML file for the update proccess.
+Visual application that feches the update information from an URL, download the required patches and apply them.
 
-```
-<?xml version="1.0" ?>
-<zupdater>
-    <application>ZUpdater Example Application</application>
-    <builds>
-        <build>
-            <version>223</version>
-            <desc>
-                <![CDATA[<p><b>ZUpdater Example Application - Revision #223</b></p>
-<br/>
-<ul></li>
-<li>Fixed game-breaking issue #10</li>
-<li>Improved user experience</li>
-</ul>
-]]>
-</desc>
-        </build>
-        <build>
-            <version>0</version>
-            <desc>
-                <![CDATA[<p><b>ZUpdater Example Application - Base</b></p>
-<br/>
-<ul>
-<li>Initial release!</li>
-</ul>
-]]>
-</desc>
-        </build>
-    </builds>
-    <patches>
-        <patch>
-            <source_version>0</source_version>
-            <destination_version>1</destination_version>
-            <file>http://www.example.org/filevault/exampleapp_base.zpatch</file>
-            <size>256480658</size>
-            <md5>60fb5269a6b219c7431edb1f12a8315d</md5>
-        </patch>
-        <patch>
-            <source_version>1</source_version>
-            <destination_version>223</destination_version>
-            <file>http://www.example.org/filevault/exampleapp_base_to_220.zpatch</file>
-            <size>88780502</size>
-            <md5>6fe73bcdf3bbeccfc1148bd93979038b</md5>
-        </patch>
-    </patches>
-</zupdater>
-```
+The setup is exactly the same as the ```ZUpdater``` one, but this one will also display the changes for each patch.
+
+#### XML Structure for the Update information
+
+A [sample XML][8] is included in the ```tests/``` directory. You can see the structure of it there.
 
 ## Patch Logging
 
 There is a very simple (and extremely verbose, for now), log system in the patcher.
 It will create a Logs/ folder on it's base directory and output all the operations (including failures) to it.
+Pull requests for improving the log system are welcome!
 
 ## Missing features
 
@@ -115,10 +110,8 @@ There are a number of planned, but missing features. These include, but are not 
 
 - Add hash check of the files to be updated by a patch.
 - Add support for binary file deltas. Currently considering using [minibsdiff][6], but suggestions are welcome.
-- Appropriate changelog display. (This will probably require a Visual Patcher).
 - Patch merger (i.e. Given two incremental patch files, merge them in a single patch file).
 - Update the file format so it includes the compressed block size, avoiding to use the "file ended" flag from LZMA.
-- Visual patcher (i.e. "Fancy User Interface").
 
 Please note these features are not listed in order of priority. Also, there isn't a timeframe for those features to be added.
 Pull requests are welcome!
@@ -144,7 +137,6 @@ I'd love to have a visual patcher for this project, but my current available tim
 
 Contributions to the project are welcome! Get in touch if you want to contribute and be sure to send pull requests!
 
-
 Last but not least, I'm not sure how to properly give credit to libraries used in this project.
 If it's done in a wrong way, I'd certainly appreciate some help on how to format and give credit in an appropriate way. :)
 
@@ -154,3 +146,5 @@ If it's done in a wrong way, I'd certainly appreciate some help on how to format
 [4]: https://curl.haxx.se/libcurl/
 [5]: https://sourceforge.net/projects/libmd5-rfc/files/
 [6]: https://github.com/thoughtpolice/minibsdiff
+[7]: http://brew.sh/
+[8]: https://github.com/TheZoc/ZPatcher/blob/master/tests/zpatcher_test.xml
