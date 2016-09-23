@@ -103,7 +103,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\LzmaLib\;$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\ZPatcherLib\;$(SolutionDir)\$(Configuration)-Lib\;$(SolutionDir)\libs\wxWidgets\lib\vc_dll;$(SolutionDir)\libs\curl\build\Win32\VC14\LIB Debug - DLL Windows SSPI;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;tinyxml2.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;tinyxml2.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;crypt32.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
@@ -123,7 +123,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\LzmaLib\;$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\ZPatcherLib\;$(SolutionDir)\bin\$(Platform)-$(Configuration)-Lib\;$(SolutionDir)\libs\wxWidgets\lib\vc_x64_dll;$(SolutionDir)\libs\curl\build\Win64\VC14\LIB Debug - DLL Windows SSPI;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;tinyxml2.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;tinyxml2.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;crypt32.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
@@ -146,7 +146,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\LzmaLib\;$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\ZPatcherLib\;$(SolutionDir)\$(Configuration)-Lib\;$(SolutionDir)\libs\wxWidgets\lib\vc_dll;$(SolutionDir)\libs\curl\build\Win32\VC14\LIB Release - DLL Windows SSPI;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;tinyxml2.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;tinyxml2.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;crypt32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
@@ -169,7 +169,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\LzmaLib\;$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\ZPatcherLib\;$(SolutionDir)\bin\$(Platform)-$(Configuration)-Lib\;$(SolutionDir)\libs\wxWidgets\lib\vc_x64_dll;$(SolutionDir)\libs\curl\build\Win64\VC14\LIB Release - DLL Windows SSPI;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;tinyxml2.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;tinyxml2.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;crypt32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
