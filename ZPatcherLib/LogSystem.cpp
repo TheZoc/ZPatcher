@@ -20,41 +20,62 @@
 #include "LogSystem.h"
 #include "FileUtils.h"
 
-FILE* ZPatcher::g_LogSystem = NULL;
+// Temporary new global variable, avoiding conflict with the old system for now.
+std::map<std::string, FILE*> ZPatcher::g_NewLogSystem;
 
+// For now, the log directory will be specified here. 
+std::string ZPatcher::g_LogDirectory = "./Logs/";
 
+static std::string ActiveLogName = "";
 
-void ZPatcher::InitLogSystem(const std::string& location, const std::string& logFileName)
+bool ZPatcher::SetActiveLog(const std::string& logName)
 {
-	std::string logFile = location;
+	if (logName == "")
+	{
+		fprintf(stderr, "Error attempting to set the active log: The log name can't be empty!");
+		return false;
+	}
 
-	if (logFile.back() != '/') // Check if it has a trailing slash. If it doesn't, add it.
+	ActiveLogName = logName;
+	return true;
+}
+
+bool ZPatcher::InitNewLogFile(const std::string& logName)
+{
+	// Prepare the filename of the log and location that will receive it.
+	std::string logFile = g_LogDirectory;
+
+	if (g_LogDirectory.back() != '/') // Check if it has a trailing slash. If it doesn't, add it.
 		logFile += "/";
 
 	logFile += "Logs/";
-	logFile += logFileName;
-	logFile += " - ";
 	logFile += BuildHumanTimeStamp();
+	logFile += " - ";
+	logFile += logName;
 	logFile += ".log";
 
 	NormalizeFileName(logFile);
-	CreateDirectoryTree(logFile);
+	CreateDirectoryTree(logFile, false);
 
-	if (g_LogSystem == nullptr)
+	if (g_NewLogSystem[logName] == nullptr)
 	{
 		errno = 0;
-		g_LogSystem = fopen(logFile.c_str(), "wb");
+		g_NewLogSystem[logName] = fopen(logFile.c_str(), "wb");
 		if (errno != 0)
 		{
 			int error = errno;
-			fprintf(stderr, "Unable to open log file %s for writing: %s", location.c_str(), strerror(error));
-			return;
+			fprintf(stderr, "Unable to open log file \"%s\" for writing: %s", logFile.c_str(), strerror(error));
+			return false;
 		}
 	}
 	else
 	{
-		Log(LOG_ERROR, "Attempt to initialize log system failed - it was already initialized.");
+		// If this happens, there's something wrong with the code. Print out an error!
+		fprintf(stderr, "Attempt to initialize log file \"%s\" failed - it was already initialized.", logFile.c_str());
+		return false;
 	}
+	
+	return true;
 }
 
 std::string ZPatcher::BuildHumanTimeStamp()
@@ -94,44 +115,84 @@ std::string ZPatcher::BuildHumanTimeStamp()
 	return humanTimestamp;
 }
 
-void ZPatcher::Log(LogLevel level, const char* format, ...)
+// We don't want anyone calling this form somewhere else.
+static void DoLog(std::string logName, ZPatcher::LogLevel level, const char* format, va_list args)
 {
-	if (g_LogSystem == nullptr)
+	using namespace ZPatcher;
+
+	if (logName == "")
+	{
+		fprintf(stderr, "Error attempting to create log entry: The log name can't be empty!!!");
 		return;
+	}
 
-	va_list args;
-	va_start(args, format);
+	if (g_NewLogSystem[logName] == nullptr)
+		if (!InitNewLogFile(logName))
+				return;
 
-	fprintf(g_LogSystem, "[%s] ", BuildHumanTimeStamp().c_str());
+	FILE* targetLog = g_NewLogSystem[logName];
+
+	fprintf(targetLog, "[%s] ", BuildHumanTimeStamp().c_str());
 
 	switch (level)
 	{
 	case LOG:
-		fprintf(g_LogSystem, "[Log] ");
+		fprintf(targetLog, "[Log] ");
 		break;
 	case LOG_WARNING:
-		fprintf(g_LogSystem, "[Warning] ");
+		fprintf(targetLog, "[Warning] ");
 		break;
 	case LOG_ERROR:
-		fprintf(g_LogSystem, "[ERROR] ");
+		fprintf(targetLog, "[ERROR] ");
 		break;
 	case LOG_FATAL:
-		fprintf(g_LogSystem, "[FATAL] ");
+		fprintf(targetLog, "[FATAL] ");
 		break;
 	default:
-		fprintf(g_LogSystem, "[???] ");
+		fprintf(targetLog, "[???] ");
 		break;
 	}
-	fprintf(g_LogSystem, "> ");
-	vfprintf(g_LogSystem, format, args);
-	fprintf(g_LogSystem, "\n");
-	fflush(g_LogSystem);
+	fprintf(targetLog, "> ");
+	vfprintf(targetLog, format, args);
+	fprintf(targetLog, "\n");
+	fflush(targetLog);
+}
+
+void ZPatcher::Log(std::string logName, LogLevel level, const char* format, ...)
+{
+	if (logName == "")
+	{
+		fprintf(stderr, "Error attempting to log entry: The log name can't be empty!");
+		return;
+	}
+
+	va_list args;
+	va_start(args, format);
+	DoLog(logName, level, format, args);
+	va_end(args);
+}
+
+void ZPatcher::Log(LogLevel level, const char* format, ...)
+{
+	if (ActiveLogName == "")
+	{
+		fprintf(stderr, "Error attempting to log to active log: No active log set!");
+		return;
+	}
+
+	va_list args;
+	va_start(args, format);
+	DoLog(ActiveLogName, level, format, args);
+	va_end(args);
 }
 
 void ZPatcher::DestroyLogSystem()
 {
-	if (g_LogSystem)
-		fclose(g_LogSystem);
-
-	g_LogSystem = nullptr;
+	for(auto &logEntry : g_NewLogSystem)
+		if (logEntry.second)
+		{
+			fclose(logEntry.second);
+			logEntry.second = nullptr;
+		}
 }
+

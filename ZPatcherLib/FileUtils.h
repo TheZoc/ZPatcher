@@ -27,7 +27,7 @@ namespace ZPatcher
 	 * Receives two files as input and stores in "result" if they are identical, byte to byte.
 	 * The function returns true if it executed successfully or false if there was an IO error.
 	 */
-	bool AreFilesIdentical(FILE* file1, FILE* file2, bool &result);
+	bool DoAreFilesIdentical(FILE* file1, FILE* file2, bool &result);
 
 	/**
 	* Receives two files as input and stores in "result" if they are identical, byte to byte, given their filenames.
@@ -50,7 +50,7 @@ namespace ZPatcher
 	 * Create the supplied directory tree. It may or may not contain a file at the end - It will create directories up to until the last / found.
 	 * It will ignore silently if any directory in the tree that already exists.
 	 */
-	void CreateDirectoryTree(const std::string& directory);
+	void CreateDirectoryTree(const std::string& directory, const bool logCommand = true);
 
 	/**
 	 * Backup the supplied file to BackupSuffix folder

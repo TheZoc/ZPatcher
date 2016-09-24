@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include "ZUpdater.h"
 #include "ApplyPatch.h"
+#include "LogSystem.h"
 
 // Check windows
 #if _WIN32 || _WIN64
@@ -56,12 +57,14 @@ int main()
 	if (!SelfUpdate(shouldRestart))
 	{
 		WINDOWS_PAUSE();
+		ZPatcher::DestroyLogSystem();
 		exit(EXIT_FAILURE);
 	}
 	else
 	{
 		if (shouldRestart)
 		{
+			ZPatcher::DestroyLogSystem();
 			exit(EXIT_SUCCESS);
 		}
 	}
@@ -72,11 +75,14 @@ int main()
 	std::string					versionFile = "zpatcher_test.zversion";
 	uint64_t					currentVersion;
 
+	ZPatcher::SetActiveLog("ZUpdater");
+
 	// Check if we have version information on file. If not, we consider this is a fresh install.
 	if (!GetTargetCurrentVersion(versionFile, currentVersion))
 	{
 		fprintf(stderr, "An error occurred while getting current application version.\n");
 		WINDOWS_PAUSE();
+		ZPatcher::DestroyLogSystem();
 		exit(EXIT_FAILURE);
 	}
 
@@ -87,6 +93,7 @@ int main()
 	{
 		fprintf(stderr, "An error occurred while checking for updates.\n");
 		WINDOWS_PAUSE();
+		ZPatcher::DestroyLogSystem();
 		exit(EXIT_FAILURE);
 	}
 
@@ -96,11 +103,12 @@ int main()
 	if (!DownloadAndApplyPatch(targetDirectory, versionFile, currentVersion))
 	{
 		WINDOWS_PAUSE();
+		ZPatcher::DestroyLogSystem();
 		exit(EXIT_FAILURE);
 	}
 
 	fprintf(stdout, "\n");
 	WINDOWS_PAUSE();
-
+	ZPatcher::DestroyLogSystem();
 	exit(EXIT_SUCCESS);
 }

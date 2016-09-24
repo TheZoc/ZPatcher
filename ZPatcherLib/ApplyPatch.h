@@ -29,7 +29,7 @@ namespace ZPatcher
 	/**
 	* Apply the patch file to the target path
 	*/
-	bool ApplyPatchFile(FILE* patchFile, const std::string& targetPath, uint64_t& previousVersionNumber, ProgressCallback progressCallback = &PrintPatchApplyingProgressBar);
+	bool DoApplyPatchFile(FILE* patchFile, const std::string& targetPath, uint64_t& previousVersionNumber, ProgressCallback progressCallback = &PrintPatchApplyingProgressBar);
 
 	/**
 	* Apply the patch file to the target path, given the patch name

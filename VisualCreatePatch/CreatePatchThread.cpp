@@ -53,10 +53,10 @@ wxThread::ExitCode CreatePatchThread::Entry()
 {
 	using namespace ZPatcher;
 
-	if (!TestDestroy())
-	{
-		InitLogSystem("./");
-	}
+	// Check through execution if we should destroy the thread and exit
+	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
+
+	SetActiveLog("VisualCreatePatch");
 
 	std::string oldDirectory = m_oldDirectory.ToStdString();
 	NormalizeFileName(oldDirectory);
@@ -67,27 +67,17 @@ wxThread::ExitCode CreatePatchThread::Entry()
 	std::string outputFilename = m_outputFilename.ToStdString();
 	NormalizeFileName(outputFilename);
 
+	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
 
 	// First, create the list of files to be added to the patch
-	if (!TestDestroy())
-	{
-		m_pPatchFileList = GetDifferences(oldDirectory, newDirectory, &CreatePatchFrame::UpdateComparisonDisplay);
-	}
+	m_pPatchFileList = GetDifferences(oldDirectory, newDirectory, &CreatePatchFrame::UpdateComparisonDisplay);
+
+	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
 
 	// Then, create the patch file.
-	if (!TestDestroy())
-	{
-		// This is ugly, since there is no way to check inside CreatePatch() if the thread was destroyed. Since this is a proof of concept, it will do for now :)
-		CreatePatchFile(outputFilename, newDirectory, m_pPatchFileList, &CreatePatchFrame::UpdatePatchProcessedDisplay, { &CreatePatchFrame::OnLZMAProgress } );
-	}
+	// This is ugly, since there is no way to check inside CreatePatch() if the thread was destroyed. Since this is a proof of concept, it will do for now :)
+	CreatePatchFile(outputFilename, newDirectory, m_pPatchFileList, &CreatePatchFrame::UpdatePatchProcessedDisplay, { &CreatePatchFrame::OnLZMAProgress } );
 
-
-	// This was kept as reference only, for now.
-// 	while (!TestDestroy())
-// 	{
-// 		wxThreadEvent* updateEvent = new wxThreadEvent(wxEVT_COMMAND_MYTHREAD_UPDATE);
-// 		updateEvent->SetInt(37);
-// 		wxQueueEvent(m_pHandler, updateEvent);
-// 	}
+	ZPatcher::DestroyLogSystem();
 	return (wxThread::ExitCode)0;     // success
 }

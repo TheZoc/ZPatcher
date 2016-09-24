@@ -387,7 +387,8 @@ namespace ZUpdater
 			// If we got here, the file is downloaded and the MD5 Matches
 			fprintf(stdout, "\nApplying patch: %s \n", fileName.c_str());
 
-			ZPatcher::InitLogSystem("./");
+			std::string logName = "ZUpdater" + fileName;
+			ZPatcher::SetActiveLog(logName);
 			if (ZPatcher::ApplyPatchFile(localFullPath, targetDirectory, currentVersion))
 			{
 				if (!SaveTargetNewVersion(versionFile, patch.targetBuildNumber))
@@ -406,6 +407,8 @@ namespace ZUpdater
 				system("pause");
 				return false;
 			}
+			ZPatcher::SetActiveLog("ZUpdater");
+
 #ifdef _WIN32
 			//////////////////////////////////////////////////////////////////////////
 			// HACK! HACK! HACK! HACK! HACK!

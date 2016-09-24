@@ -42,7 +42,6 @@ bool VisualCreatePatch::OnInit()
 
 	f->DoStartCreatePatchThread(m_oldDirectory, m_newDirectory, m_outputFilename);
 
-
 	return true;
 }
 

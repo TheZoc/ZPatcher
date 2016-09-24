@@ -42,7 +42,9 @@ int main(int argc, char* argv[])
 	std::string patchFileName = argv[1];
 	std::string targetDirectory = argv[2];
 
-	InitLogSystem("./");
+	// Log our entries. TODO: Parse the input file name, get the log file name.
+	SetActiveLog("ApplyPatch");
+
 	Log(LOG, "Patch file: %s", patchFileName.c_str());
 	Log(LOG, "Directory to be upgraded: %s", targetDirectory.c_str());
 
@@ -50,8 +52,6 @@ int main(int argc, char* argv[])
 	bool success = ApplyPatchFile(patchFileName, targetDirectory, version); // TODO: Add a version file
 
 	DestroyLogSystem();
-
-//	system("pause");
 
 	if (success)
 		exit(EXIT_SUCCESS);
