@@ -194,7 +194,7 @@ namespace ZUpdater
 
 			// If the file name is not absolute, make it so.
 
-			if (strncmp(patch.fileURL.c_str(), "http://", 7) != 0)
+			if (strncmp(patch.fileURL.c_str(), "http://", 7) != 0 && strncmp(patch.fileURL.c_str(), "https://", 8) != 0)
 			{
 				patch.fileURL = urlBase + patch.fileURL;
 			}
@@ -620,7 +620,7 @@ namespace ZUpdater
 
 		if (fileExists == 0)
 		{
-			updateFound = true;		
+			updateFound = true;
 			FILE* batchFile;
 			// Open source and target file
 			_set_errno(0);
