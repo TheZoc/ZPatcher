@@ -11,6 +11,7 @@ Release-Dll/
 *.suo
 *.user
 *.sln.docstates
+.ycm_extra_conf.pyc
 
 # Build results
 [Dd]ebug/
