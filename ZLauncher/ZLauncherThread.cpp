@@ -21,7 +21,6 @@
 #include "ZLauncherThread.h"
 #include "LogSystem.h"
 #include "FileUtils.h"
-#include "LogSystem.h"
 #include "DownloadFileWriter.h"
 #include "md5.h"
 #include "ApplyPatch.h"
@@ -54,6 +53,9 @@ ZLauncherThread::~ZLauncherThread()
 {
 	wxCriticalSectionLocker enter(m_pHandler->m_pThreadCS);
 
+	// No harm in being overzealous here
+	ZPatcher::DestroyLogSystem();
+
 	// the thread is being destroyed; make sure not to leave dangling pointers around
 	m_pHandler->m_pThread = NULL;
 }
@@ -61,11 +63,9 @@ ZLauncherThread::~ZLauncherThread()
 wxThread::ExitCode ZLauncherThread::Entry()
 {
 	// TestDestroy() checks if the thread should be cancelled/destroyed
-	if (TestDestroy()) {
-		ZPatcher::DestroyLogSystem();
-		return (wxThread::ExitCode)0; }
+	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
 
-	ZPatcher::InitLogSystem("./", "ZLauncher");
+	ZPatcher::SetActiveLog("ZLauncher");
 	std::ostringstream tmphtml;
 
 	//////////////////////////////////////////////////////////////////////////
@@ -129,15 +129,15 @@ wxThread::ExitCode ZLauncherThread::Entry()
 	if (!SelfUpdate(shouldRestart))
 	{
 		ZPatcher::Log(ZPatcher::LOG_FATAL, "Error trying to perform a self update.");
-		return false;
+		ZPatcher::DestroyLogSystem();
+		return (wxThread::ExitCode)0;;
 	}
-	else
-		if (shouldRestart)
-		{
-			ZPatcher::DestroyLogSystem();
-			wxQueueEvent(wxTheApp->GetTopWindow()->GetEventHandler(), new wxCloseEvent(wxEVT_CLOSE_WINDOW));
-			return (wxThread::ExitCode)0;
-		}
+	else if (shouldRestart)
+	{
+		ZPatcher::DestroyLogSystem();
+		wxQueueEvent(wxTheApp->GetTopWindow()->GetEventHandler(), new wxCloseEvent(wxEVT_CLOSE_WINDOW));
+		return (wxThread::ExitCode)0;
+	}
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
@@ -165,6 +165,7 @@ wxThread::ExitCode ZLauncherThread::Entry()
 		{
 			// This is bad! Our URL is malformed (no slashes in it!)
 			ZPatcher::Log(ZPatcher::LOG_FATAL, "Invalid Update URL: %s", patch.fileURL.c_str());
+			ZPatcher::DestroyLogSystem();
 			return (wxThread::ExitCode)0;
 		}
 
@@ -173,10 +174,7 @@ wxThread::ExitCode ZLauncherThread::Entry()
 		std::string fileName = std::string(patch.fileURL, length + 1, std::string::npos);
 		std::string localFullPath = (updatesDirectory + fileName);
 
-		ZPatcher::DestroyLogSystem();
-		// We're going to store a log for each patch applied.
-		ZPatcher::InitLogSystem("./", "ZLauncher_" + fileName);
-
+		ZPatcher::SetActiveLog("ZLauncher - " + fileName);
 		// Check if we already have a file downloaded with the same name as the patch.
 		// If the file exists, check if the MD5 hash matches. If not, re-download the file.
 		bool MD5Matches = false;
@@ -259,7 +257,8 @@ wxThread::ExitCode ZLauncherThread::Entry()
 		if (!SelfUpdate(shouldRestart))
 		{
 			ZPatcher::Log(ZPatcher::LOG_FATAL, "Error trying to perform a self update.");
-			return false;
+			ZPatcher::DestroyLogSystem();
+			return (wxThread::ExitCode)0;;
 		}
 		else
 			if (shouldRestart)
@@ -272,12 +271,9 @@ wxThread::ExitCode ZLauncherThread::Entry()
 	}
 	ZPatcher::DestroyLogSystem();
 
+	// Update progress bar and enable launch button
 	ZLauncherFrame::UpdateProgress(100, "Up-to-date!");
 	ZLauncherFrame::EnableLaunchButton(true);
-
-	// Enable launch button
-
-
 	return (wxThread::ExitCode)0;     // success
 }
 

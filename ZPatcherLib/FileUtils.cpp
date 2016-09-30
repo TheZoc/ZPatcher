@@ -86,7 +86,7 @@ bool ZPatcher::GetFilesInDirectory(std::vector<std::string>& fileList, const std
 	return true;
 }
 
-bool ZPatcher::AreFilesIdentical(FILE* file1, FILE* file2, bool &result)
+bool ZPatcher::DoAreFilesIdentical(FILE* file1, FILE* file2, bool &result)
 {
 
 	// Compare their size, first
@@ -152,7 +152,7 @@ bool ZPatcher::AreFilesIdentical(const std::string& file1, const std::string& fi
 		return false;
 	}
 
-	bool success = AreFilesIdentical(f1, f2, result);
+	bool success = DoAreFilesIdentical(f1, f2, result);
 
 	fclose(f1);
 	fclose(f2);
@@ -230,9 +230,11 @@ bool ZPatcher::DeleteDirectoryTree(const std::string& base, const std::string di
 	return true;
 }
 
-void ZPatcher::CreateDirectoryTree(const std::string& directory)
+void ZPatcher::CreateDirectoryTree(const std::string& directory, const bool logCommand)
 {
-	Log(LOG, "Creating directory tree: %s", directory.c_str());
+	if (logCommand)
+		(LOG, "Creating directory tree: %s", directory.c_str());
+
 	const char* slash = strpbrk(directory.c_str(), "\\/");
 	while (slash != NULL)
 	{
@@ -261,7 +263,7 @@ bool ZPatcher::BackupFile(const std::string& baseDirectory, const std::string& f
 // 	size_t lastSlash = fullBackupFileName.find_last_of("\\/");
 // 	fullBackupFileName.insert(lastSlash, "/backup-" + suffix);
 
-	Log(LOG, "Backing up file %s to %s (There should be a Create Directory Tree, Copy and Delete below)", fullFilename.c_str(), fullBackupFileName.c_str());
+	Log(LOG, "Attempting to backup up file %s to %s", fullFilename.c_str(), fullBackupFileName.c_str());
 
 	CreateDirectoryTree(fullBackupFileName);
 	return CopyOneFile(fullFilename, fullBackupFileName);

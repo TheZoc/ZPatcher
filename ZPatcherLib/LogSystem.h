@@ -15,11 +15,15 @@
 
 #include <cstdio>
 #include <string>
+#include <map>
 
 namespace ZPatcher
 {
-	// File handle for your output log file
-	extern FILE* g_LogSystem;
+	// Map that holds all the open log files.
+	extern std::map<std::string, FILE*> g_NewLogSystem;
+
+	// This specifies the directory that will receive the log files
+	extern std::string g_LogDirectory;
 
 	enum LogLevel
 	{
@@ -29,13 +33,20 @@ namespace ZPatcher
 		LOG_FATAL,
 	};
 
-	// Location should the base directory being currently patched. This function will create a Log/ directory and place files in there. No logging will be done if this isn't called.
-	void InitLogSystem(const std::string& location, const std::string& logFileName = "ZPatcher" );
+	// This will create the directory structure defined in 
+	// This function will create a Log/ directory and place files in there.
+	//No logging will be done if this isn't called.
+	bool InitNewLogFile(const std::string& logName);
+
+	bool SetActiveLog(const std::string& logName);
 
 	// Build a human-readable timestamp in the format yyyy-mm-dd-hh-mm-ss
 	std::string BuildHumanTimeStamp();
 
-	// Add a line to the log file. The format should be the same as the one used in printf
+	// Add a line to the target log file. The format should be the same as the one used in printf
+	void Log(std::string logName, LogLevel level, const char* format, ...);
+
+	// Add a line to the ACTIVE log file. Use SetActiveLog() to set the active log file.
 	void Log(LogLevel level, const char* format, ...);
 
 	// Close the log file

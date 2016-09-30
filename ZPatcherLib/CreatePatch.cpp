@@ -132,7 +132,7 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std
 	return patchFileList;
 }
 
-bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction, ICompressProgress LZMAProgressCallback)
+bool ZPatcher::DoCreatePatchFile(FILE* patchFile, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction, ICompressProgress LZMAProgressCallback)
 {
 	// Initialize our custom LZMA2 Encoder
 	CLzma2EncHandle hLzma2Enc = InitLzma2Encoder();
@@ -221,7 +221,7 @@ bool ZPatcher::CreatePatchFile(FILE* patchFile, std::string& newVersionPath, Pat
 }
 
 
-bool ZPatcher::CreatePatchFile(std::string& patchFileName, std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction, ICompressProgress LZMAProgressCallback)
+bool ZPatcher::CreatePatchFile(const std::string& patchFileName, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction, ICompressProgress LZMAProgressCallback)
 {
 	FILE* patchFile;
 
@@ -233,7 +233,7 @@ bool ZPatcher::CreatePatchFile(std::string& patchFileName, std::string& newVersi
 		return false;
 	}
 
-	bool result = CreatePatchFile(patchFile, newVersionPath, patchFileList, progressFunction, LZMAProgressCallback);
+	bool result = DoCreatePatchFile(patchFile, newVersionPath, patchFileList, progressFunction, LZMAProgressCallback);
 
 	fclose(patchFile);
 
