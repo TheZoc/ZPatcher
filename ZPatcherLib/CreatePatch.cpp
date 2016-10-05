@@ -22,9 +22,22 @@
 
 void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const uint64_t& leftAmount, const uint64_t& rightAmount)
 {
-	int barWidth = 80;
+	static const int bufferSize = 30;
+	char buffer[bufferSize];
 
+	// Write file size remaining to a buffer first, so the number of characters
+	//   can be subtracted from the maximum progress bar size
+	int charsForPercentage = snprintf(buffer, bufferSize, "%0.2f%% %llu/%llu ", Percentage, leftAmount, rightAmount);
+
+	static const int fixedChars = 4; // Number of static progress bar chars ("[" and "] ")
+	int barWidth = 80 - fixedChars - charsForPercentage;
+
+#ifdef  _WIN32
 	fprintf(stdout, "\xd[");
+#else
+	// http://stackoverflow.com/a/6774395
+	fprintf(stdout, "\r\033[K[");
+#endif
 
 	int pos = (int)(barWidth * Percentage / 100.0f);
 	for (int i = 0; i < barWidth; ++i)
@@ -33,9 +46,8 @@ void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const uint64
 		else if (i == pos) fprintf(stdout, ">");
 		else fprintf(stdout, " ");
 	}
-
-	fprintf(stdout, "] %0.2f%% %llu/%llu", Percentage, leftAmount, rightAmount);
-
+	fprintf(stdout, "] ");
+	fputs(buffer, stdout);
 	fflush(stdout);
 }
 

@@ -132,8 +132,30 @@ size_t DownloadFileWriter::Callback_WriteFile(void* Buffer, size_t ElementSize, 
 
 void DownloadFileWriter::PrintProgressBar(const int Percentage, curl_off_t CurrentDownload)
 {
-	int barWidth = 80;
+	static const int bufferSize = 15;
+	char buffer[bufferSize];
+
+	// Write file size remaining to a buffer first, so the number of characters
+	//   can be subtracted from the maximum progress bar size
+	int charsForProgress = 0;
+	if (CurrentDownload / 1048576.0f > 1.0f)
+	{
+		charsForProgress = snprintf(buffer, bufferSize, "%0.2f MiB ", CurrentDownload / 1048576.0f);
+	}
+	else// if (CurrentDownload / 1024.0f > 1.0f)
+	{
+		charsForProgress = snprintf(buffer, bufferSize, "%0.2f KiB ", CurrentDownload / 1024.0f);
+	}
+
+
+	static const int fixedChars = 3; // Number of static progress bar chars ("[" and "] ")
+	int barWidth = 80 - fixedChars - charsForProgress;
+#ifdef  _WIN32
 	fprintf(stdout, "\xd[");
+#else
+	// http://stackoverflow.com/a/6774395
+	fprintf(stdout, "\r\033[K[");
+#endif
 
 	int pos = (int)(barWidth * Percentage / 100.0f);
 	for (int i = 0; i < barWidth; ++i)
@@ -144,14 +166,9 @@ void DownloadFileWriter::PrintProgressBar(const int Percentage, curl_off_t Curre
 	}
 	fprintf(stdout, "] ");
 
-	if (CurrentDownload / 1048576.0f > 1.0f)
-	{
-		fprintf(stdout, "%0.2f MiB   ", CurrentDownload / 1048576.0f);
-	}
-	else// if (CurrentDownload / 1024.0f > 1.0f)
-	{
-		fprintf(stdout, "%0.2f KiB   ", CurrentDownload / 1024.0f);
-	}
+	fputs(buffer, stdout);
+
+	fflush(stdout);
 }
 
 int DownloadFileWriter::TransferInfo(void *p, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow)
