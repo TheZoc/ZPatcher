@@ -22,7 +22,7 @@
 
 void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const uint64_t& leftAmount, const uint64_t& rightAmount)
 {
-	int barWidth = 80;
+	int barWidth = 60;
 
 	fprintf(stdout, "\xd[");
 

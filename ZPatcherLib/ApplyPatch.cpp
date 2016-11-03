@@ -31,7 +31,7 @@
 
 void ZPatcher::PrintPatchApplyingProgressBar(const float& Percentage)
 {
-	int barWidth = 80;
+	int barWidth = 60;
 
 	fprintf(stdout, "\xd[");
 

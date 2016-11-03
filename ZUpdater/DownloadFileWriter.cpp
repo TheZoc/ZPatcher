@@ -132,7 +132,7 @@ size_t DownloadFileWriter::Callback_WriteFile(void* Buffer, size_t ElementSize, 
 
 void DownloadFileWriter::PrintProgressBar(const int Percentage, curl_off_t CurrentDownload)
 {
-	int barWidth = 80;
+	int barWidth = 60;
 	fprintf(stdout, "\xd[");
 
 	int pos = (int)(barWidth * Percentage / 100.0f);
