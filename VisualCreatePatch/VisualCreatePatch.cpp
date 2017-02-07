@@ -15,6 +15,7 @@
 #include "CreatePatchFrame.h"
 #include "VisualCreatePatch.h"
 #include "CreatePatch.h"
+#include <wx/timer.h>
 
 wxIMPLEMENT_APP(VisualCreatePatch);
 
@@ -23,24 +24,27 @@ bool VisualCreatePatch::OnInit()
 	if (!wxApp::OnInit())
 		return false;
 
-	CreatePatchFrame* f = new CreatePatchFrame(nullptr);
+	// Allow us to process Idle events
+	Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(VisualCreatePatch::OnIdle));
+
+	m_pFrame = new CreatePatchFrame(nullptr);
 
 #ifdef _WIN32
-	f->SetIcon(wxICON(frame_icon));
+	m_pFrame->SetIcon(wxICON(frame_icon));
 #elif __APPLE__
 	// TODO: Remove this hardcode
-	f->SetIcon(wxIcon("VisualCreatePatch.icns"));
+	m_pFrame->SetIcon(wxIcon("VisualCreatePatch.icns"));
 //#else __linux__
 //	// TODO: Find out how this works in linux!
 #endif
 
-	f->Show(true);
+	m_pFrame->Show(true);
 
-	f->m_txtOldDirectory->SetLabelText(m_oldDirectory);
-	f->m_txtNewDirectory->SetLabelText(m_newDirectory);
-	f->m_txtPatchFile->SetLabelText(m_outputFilename);
+	m_pFrame->m_txtOldDirectory->SetLabelText(m_oldDirectory);
+	m_pFrame->m_txtNewDirectory->SetLabelText(m_newDirectory);
+	m_pFrame->m_txtPatchFile->SetLabelText(m_outputFilename);
 
-	f->DoStartCreatePatchThread(m_oldDirectory, m_newDirectory, m_outputFilename);
+	m_pFrame->DoStartCreatePatchThread(m_oldDirectory, m_newDirectory, m_outputFilename);
 
 	return true;
 }
@@ -60,4 +64,14 @@ bool VisualCreatePatch::OnCmdLineParsed(wxCmdLineParser& parser)
 	if (!parser.Found(wxT("p"), &m_outputFilename)) return false;
 
 	return true;
+}
+
+void VisualCreatePatch::OnIdle(wxIdleEvent& event)
+{
+	// Check if our thread has ended - if so, automatically close the program
+	if (m_pFrame->m_pThread == nullptr)
+		wxQueueEvent(wxTheApp->GetTopWindow()->GetEventHandler(), new wxCloseEvent(wxEVT_CLOSE_WINDOW));
+
+	// Ask for the next Idle event
+	event.RequestMore();
 }

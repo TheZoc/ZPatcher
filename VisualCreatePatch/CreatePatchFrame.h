@@ -83,6 +83,7 @@ public:
 	static SRes OnLZMAProgress(void *p, UInt64 inSize, UInt64 outSize);
 
 protected:
+	friend class VisualCreatePatch;		// Allows to check if m_pThread is set to null, to end the program
 	friend class CreatePatchThread;		// Allow it to access our m_pThread
 	CreatePatchThread* m_pThread;		// Our thread pointer
 	wxCriticalSection m_pThreadCS;		// protects the m_pThread pointer

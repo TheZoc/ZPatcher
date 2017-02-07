@@ -19,14 +19,20 @@
 class VisualCreatePatch : public wxApp
 {
 public:
-	virtual bool OnInit();
+	virtual bool OnInit() override;
+
 	virtual void OnInitCmdLine(wxCmdLineParser& parser);
 	virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
 
+	void OnIdle(wxIdleEvent& event);
+
 private:
-	wxString m_oldDirectory;
-	wxString m_newDirectory;
-	wxString m_outputFilename;
+	CreatePatchFrame*	m_pFrame;
+	wxString			m_oldDirectory;
+	wxString			m_newDirectory;
+	wxString			m_outputFilename;
+
+	wxTimer*			m_pTimer;
 };
 
 static const wxCmdLineEntryDesc g_cmdLineDesc[] =
