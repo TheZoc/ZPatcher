@@ -15,7 +15,6 @@
 #include "CreatePatchFrame.h"
 #include "VisualCreatePatch.h"
 #include "CreatePatch.h"
-#include <wx/timer.h>
 
 wxIMPLEMENT_APP(VisualCreatePatch);
 
