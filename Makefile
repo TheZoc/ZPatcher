@@ -1,6 +1,6 @@
 CXX=g++
 AR=ar
-CXXFLAGS=-c -Wall -Wextra -std=c++14 -Wno-unused-parameter -Wno-unused-variable
+CXXFLAGS=-c -Wall -Wextra -std=c++14 -Wno-unused-parameter -Wno-unused-variable -D_FILE_OFFSET_BITS=64
 CPPFLAGS=-I$(ZPATCHERLIBDIR) -Ilibs/LzmaLib/source -Ilibs/tinyxml2
 LDFLAGS=-L$(LZMADIR)/out -L$(TINYXML2DIR)
 ARFLAGS=-rvs
