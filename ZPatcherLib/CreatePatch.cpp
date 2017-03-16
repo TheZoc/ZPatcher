@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cerrno>
+#include <inttypes.h>
 #include "LogSystem.h"
 
 void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const uint64_t& leftAmount, const uint64_t& rightAmount)
@@ -34,7 +35,7 @@ void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const uint64
 		else fprintf(stdout, " ");
 	}
 
-	fprintf(stdout, "] %0.2f%% %llu/%llu", Percentage, leftAmount, rightAmount);
+	fprintf(stdout, "] %0.2f%% %" PRIu64 "/%" PRIu64, Percentage, leftAmount, rightAmount);
 
 	fflush(stdout);
 }

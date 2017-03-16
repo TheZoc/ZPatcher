@@ -229,7 +229,7 @@ namespace ZUpdater
 		}
 
 		/*
-		fprintf(stderr, "g_BestPatchPath.size() = %llu\r\n", g_BestPatchPath.size());
+		fprintf(stderr, "g_BestPatchPath.size() = %" PRIu64 "\r\n", g_BestPatchPath.size());
 		for (uint64_t patchIndex = 0; patchIndex < g_BestPatchPath.size(); ++patchIndex)
 		{
 			const Patch& patch = g_Patches[g_BestPatchPath[patchIndex]];

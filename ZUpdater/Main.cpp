@@ -15,6 +15,7 @@
 #include <string>
 #include <cstdio>
 #include <cstdlib>
+#include <inttypes.h>
 #include "ZUpdater.h"
 #include "ApplyPatch.h"
 #include "LogSystem.h"
@@ -86,7 +87,7 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	fprintf(stdout, "\nCurrent version: %llu\n\n", currentVersion);
+	fprintf(stdout, "\nCurrent version: %" PRIu64 "\n\n", currentVersion);
 
 	// Check the Updates URL for the XML file with updates and process it.
 	if (!CheckForUpdates(updateURL, currentVersion))
@@ -97,7 +98,7 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	fprintf(stdout, "\nLatest version available for download: %llu\n", GetLatestVersion());
+	fprintf(stdout, "\nLatest version available for download: %" PRIu64 "\n", GetLatestVersion());
 
 	// If there is an updated version to download, download and apply it. (This might download multiple files).
 	if (!DownloadAndApplyPatch(targetDirectory, versionFile, currentVersion))
