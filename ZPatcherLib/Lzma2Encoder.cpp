@@ -34,7 +34,7 @@ CLzma2EncHandle ZPatcher::InitLzma2Encoder()
 
 	CLzma2EncProps props;
 	Lzma2EncProps_Init(&props);
-	props.lzmaProps.writeEndMark = 1;
+	props.lzmaProps.writeEndMark = 0;
 	props.lzmaProps.level = 9;
 	props.lzmaProps.dictSize = 1 << 27;
 
@@ -66,7 +66,7 @@ void ZPatcher::WriteFileInfo(FILE* dest, const Byte& operation, const std::strin
 	fwrite(fileName.c_str(), sizeof(char), fileNameLen, dest);
 }
 
-bool ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest, ICompressProgressPlus LZMAProgressCallbackPlus)
+uint64_t ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest, ICompressProgressPlus LZMAProgressCallbackPlus)
 {
 	ISeqInStreamPlus inputHandler = { { &SeqInStreamPlus_Read }, source };
 	ISeqOutStreamPlus outputHandler = { { &SeqOutStreamPlus_Write }, dest };
@@ -76,10 +76,10 @@ bool ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE
 	if (res != SZ_OK)
 	{
 		fprintf(stderr, "Error in LZMA2Enc_Encode: Returned value was different from SZ_OK.");
-		return false;
+		return 0;
 	}
 
-	return true;
+	return outputHandler.BytesWritten;
 }
 
 bool ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourceFileName, FILE* dest, ICompressProgress LZMAProgressCallback)
@@ -101,7 +101,17 @@ bool ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourc
 	rewind(sourceFile);
 	ICompressProgressPlus LZMAProgressCallbackPlus = { LZMAProgressCallback, srcFileSize, sourceFileName };
 
-	bool result = WriteCompressedFile(hLzma2Enc, sourceFile, dest, LZMAProgressCallbackPlus);
+	int64_t		compressedFileSizePosition	= ftell64(dest);	// Not using uint64_t here because ftell64 returns a signed value
+	uint64_t	compressedFileSize			= 0;
+
+	fwrite(&compressedFileSize, 1, sizeof(int64_t), dest);
+
+	compressedFileSize = WriteCompressedFile(hLzma2Enc, sourceFile, dest, LZMAProgressCallbackPlus);
+
+	fseek64(dest, compressedFileSizePosition, SEEK_SET);
+	fwrite(&compressedFileSize, 1, sizeof(int64_t), dest);
+	fseek64(dest, 0LL, SEEK_END);
+
 	fclose(sourceFile);
-	return result;
+	return (compressedFileSize > 0);
 }

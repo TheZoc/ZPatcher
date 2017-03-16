@@ -53,7 +53,7 @@ namespace ZPatcher
 	{
 		ISeqOutStream SeqOutStream;
 		FILE* file;
-
+		uint64_t BytesWritten;
 	} ISeqOutStreamPlus;
 
 	size_t SeqOutStreamPlus_Write(void* p, const void* buf, size_t originalSize);
