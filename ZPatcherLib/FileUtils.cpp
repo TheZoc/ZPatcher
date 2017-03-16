@@ -230,10 +230,10 @@ bool ZPatcher::DeleteDirectoryTree(const std::string& base, const std::string di
 	return true;
 }
 
-void ZPatcher::CreateDirectoryTree(const std::string& directory, const bool logCommand)
+void ZPatcher::CreateDirectoryTree(const std::string& directory, const bool& logCommand)
 {
 	if (logCommand)
-		(LOG, "Creating directory tree: %s", directory.c_str());
+		Log(LOG, "Creating directory tree: %s", directory.c_str());
 
 	const char* slash = strpbrk(directory.c_str(), "\\/");
 	while (slash != NULL)

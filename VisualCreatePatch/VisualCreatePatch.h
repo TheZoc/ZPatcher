@@ -21,8 +21,8 @@ class VisualCreatePatch : public wxApp
 public:
 	virtual bool OnInit() override;
 
-	virtual void OnInitCmdLine(wxCmdLineParser& parser);
-	virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
+	virtual void OnInitCmdLine(wxCmdLineParser& parser) override;
+	virtual bool OnCmdLineParsed(wxCmdLineParser& parser) override;
 
 	void OnIdle(wxIdleEvent& event);
 
@@ -31,8 +31,6 @@ private:
 	wxString			m_oldDirectory;
 	wxString			m_newDirectory;
 	wxString			m_outputFilename;
-
-	wxTimer*			m_pTimer;
 };
 
 static const wxCmdLineEntryDesc g_cmdLineDesc[] =

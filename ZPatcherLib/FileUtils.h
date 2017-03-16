@@ -50,7 +50,7 @@ namespace ZPatcher
 	 * Create the supplied directory tree. It may or may not contain a file at the end - It will create directories up to until the last / found.
 	 * It will ignore silently if any directory in the tree that already exists.
 	 */
-	void CreateDirectoryTree(const std::string& directory, const bool logCommand = true);
+	void CreateDirectoryTree(const std::string& directory, const bool& logCommand = true);
 
 	/**
 	 * Backup the supplied file to BackupSuffix folder
