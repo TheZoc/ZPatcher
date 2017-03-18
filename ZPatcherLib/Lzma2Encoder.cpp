@@ -104,12 +104,12 @@ bool ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourc
 	int64_t		compressedFileSizePosition	= ftell64(dest);	// Not using uint64_t here because ftell64 returns a signed value
 	uint64_t	compressedFileSize			= 0;
 
-	fwrite(&compressedFileSize, 1, sizeof(int64_t), dest);
+	fwrite(&compressedFileSize, 1, sizeof(uint64_t), dest);
 
 	compressedFileSize = WriteCompressedFile(hLzma2Enc, sourceFile, dest, LZMAProgressCallbackPlus);
 
 	fseek64(dest, compressedFileSizePosition, SEEK_SET);
-	fwrite(&compressedFileSize, 1, sizeof(int64_t), dest);
+	fwrite(&compressedFileSize, 1, sizeof(uint64_t), dest);
 	fseek64(dest, 0LL, SEEK_END);
 
 	fclose(sourceFile);
