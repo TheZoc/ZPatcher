@@ -59,7 +59,7 @@ class CreatePatchFrame : public wxFrame
 		wxGauge* m_progressFileProccess;
 	
 	public:
-		CreatePatchFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("CreatePatch : ZUpdater"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 530,325 ), long style = wxCAPTION|wxCLOSE_BOX|wxRESIZE_BORDER|wxSYSTEM_MENU );
+		CreatePatchFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("CreatePatch : ZPatcher v2.0 beta"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 530,325 ), long style = wxCAPTION|wxCLOSE_BOX|wxRESIZE_BORDER|wxSYSTEM_MENU );
 		~CreatePatchFrame();
 
 public:

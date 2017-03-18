@@ -149,7 +149,7 @@ ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString&
 
 	this->Centre( wxBOTH );
 
-	// Set brakcground image, if any.
+	// Set background image, if any.
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
 	if (g_BackgroundImage != wxEmptyString)
 		m_backgroundImg.LoadFile(g_BackgroundImage, wxBITMAP_TYPE_PNG);

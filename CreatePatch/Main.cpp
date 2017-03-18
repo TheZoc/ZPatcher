@@ -30,8 +30,8 @@ int main(int argc, char* argv[])
 {
 	using namespace ZPatcher;
 
-	fprintf(stderr, "\nCreatePatch : ZPatcher [%d] v1.0 beta : %s\n", ENVBITS, __DATE__);
-	fprintf(stderr, "Copyright (c) 2016 Felipe \"Zoc\" Silveira : http://www.github.com/TheZoc/ZPatcher\n\n");
+	fprintf(stderr, "\nCreatePatch : ZPatcher [%d] v2.0 beta : %s\n", ENVBITS, __DATE__);
+	fprintf(stderr, "Copyright (c) 2016-2017 Felipe \"Zoc\" Silveira : http://www.github.com/TheZoc/ZPatcher\n\n");
 
 	if (argc < 4)
 	{
