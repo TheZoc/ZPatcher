@@ -92,15 +92,16 @@ bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, FILE* destFi
 	Byte destBuffer[buffer_size];
 	SizeT sourceLen = 0;
 	SizeT destLen = buffer_size;
-	int64_t sourceFilePos = ftell64(sourceFile);
 
 	// We must reinitialize every time we want a decode a new file.
 	Lzma2Dec_Init(decoder);
 
 	// Get the compressed size of the file
 	uint64_t CompressedSize;
-	int elementsRead	= fread(&CompressedSize, 1, sizeof(uint64_t), sourceFile);
+	fread(&CompressedSize, 1, sizeof(uint64_t), sourceFile);
 	uint64_t RemainingCompressedData = CompressedSize;
+
+	int64_t sourceFilePos = ftell64(sourceFile);
 
 	while (CompressedSize > 0)
 	{
@@ -127,11 +128,11 @@ bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, FILE* destFi
 		res = fseek64(sourceFile, sourceFilePos, SEEK_SET);
 		assert(res == 0);
 
-		if (res == SZ_OK && status == LZMA_STATUS_FINISHED_WITH_MARK)
-		{
-			Log(LOG_FATAL, "Found LZMA Status Finished with Mark!");
-			break;
-		}
+// 		if (res == SZ_OK && status == LZMA_STATUS_FINISHED_WITH_MARK)
+// 		{
+// 			Log(LOG_FATAL, "Found LZMA Status Finished with Mark!");
+// 			break;
+// 		}
 	}
 
 	return true;
