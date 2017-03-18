@@ -69,7 +69,7 @@ void ZPatcher::WriteFileInfo(FILE* dest, const Byte& operation, const std::strin
 uint64_t ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest, ICompressProgressPlus LZMAProgressCallbackPlus)
 {
 	ISeqInStreamPlus inputHandler = { { &SeqInStreamPlus_Read }, source };
-	ISeqOutStreamPlus outputHandler = { { &SeqOutStreamPlus_Write }, dest };
+	ISeqOutStreamPlus outputHandler = { { &SeqOutStreamPlus_Write }, dest, 0 };
 
 	SRes res = Lzma2Enc_Encode(hLzma2Enc, (ISeqOutStream*)&outputHandler, (ISeqInStream*)&inputHandler, (ICompressProgress*)&LZMAProgressCallbackPlus);
 
