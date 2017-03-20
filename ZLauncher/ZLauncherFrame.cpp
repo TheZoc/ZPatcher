@@ -14,35 +14,22 @@
 #include "DownloadFileWriter.h"
 
 //////////////////////////////////////////////////////////////////////////
-// Theme Files
+// HACK! TODO: Encapsulate these properly
 
-#define BACKGROUND_IMAGE			"bg-dark.png"
-#define PATCH_HEADER_HTML_FILE		"PatchNotesHeader.html"
+wxString g_PatchHTMLHeaderFileName = PATCH_HEADER_HTML_FILE;
 
-#define CLOSE_BUTTON_NORMAL			"CloseButton_Normal.png"
-#define CLOSE_BUTTON_DISABLED		"CloseButton_Disabled.png"
-#define CLOSE_BUTTON_PRESSED		"CloseButton_Pressed.png"
-#define CLOSE_BUTTON_FOCUS			"CloseButton_Focus.png"
-#define CLOSE_BUTTON_HOVER			"CloseButton_Hover.png"
+// This will hold the HTML header data for the patch notes window. Please note, it must include an open <body> tag as the last tag!
+static wxString PatchHTMLHeader = "";
 
-#define LAUNCH_BUTTON_NORMAL		"LaunchButton_Normal.png"
-#define LAUNCH_BUTTON_DISABLED		"LaunchButton_Disabled.png"
-#define LAUNCH_BUTTON_PRESSED		"LaunchButton_Pressed.png"
-#define LAUNCH_BUTTON_FOCUS			"LaunchButton_Focus.png"
-#define LAUNCH_BUTTON_HOVER			"LaunchButton_Hover.png"
 
 //////////////////////////////////////////////////////////////////////////
-
-static const wxString g_ResourceDirectory = "./ZLauncherRes/";
-static wxString g_PatchHTMLHeader = "";
-
-
-
+// Comment this out to use system colors!
 #define DARK_COLORS
 
+//////////////////////////////////////////////////////////////////////////
 #ifdef DARK_COLORS
 
-static const wxString g_BackgroundImage = (g_ResourceDirectory + BACKGROUND_IMAGE);
+static const wxString g_BackgroundImage = (ZLauncherFrame::GetResourcesDirectory() + BACKGROUND_IMAGE);
 
 #define APPLICATION_BACKGROUND	wxColour( 40, 40, 40 )
 #define COMPONENT_BACKGROUND	wxColour( 30, 30, 30 )
@@ -56,7 +43,7 @@ static const wxString g_BackgroundImage = wxEmptyString;
 #define COMPONENT_BACKGROUND	wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW )
 #define COMPONENT_TEXT_COLOR	wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT )
 
-// g_PatchHTMLHeader = "<!DOCTYPE html><html><head><style type=\"text/css\">body {color: #000000; background-color: #FFFFFF; }</style></head><body>";
+// PatchHTMLHeader = "<!DOCTYPE html><html><head><style type=\"text/css\">body {color: #000000; background-color: #FFFFFF; }</style></head><body>";
 
 #endif
 
@@ -98,11 +85,11 @@ ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString&
 	gridBagSizerRight->Add( 0, 0, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
 
 	// Close Button (Top Right)
-	m_CloseButtonImg_Normal.LoadFile(g_ResourceDirectory + CLOSE_BUTTON_NORMAL, wxBITMAP_TYPE_PNG);
-	m_CloseButtonImg_Disabled.LoadFile(g_ResourceDirectory + CLOSE_BUTTON_DISABLED, wxBITMAP_TYPE_PNG);
-	m_CloseButtonImg_Pressed.LoadFile(g_ResourceDirectory + CLOSE_BUTTON_PRESSED, wxBITMAP_TYPE_PNG);
-	m_CloseButtonImg_Focus.LoadFile(g_ResourceDirectory + CLOSE_BUTTON_FOCUS, wxBITMAP_TYPE_PNG);
-	m_CloseButtonImg_Hover.LoadFile(g_ResourceDirectory + CLOSE_BUTTON_HOVER, wxBITMAP_TYPE_PNG);
+	m_CloseButtonImg_Normal.LoadFile(GetResourcesDirectory() + CLOSE_BUTTON_NORMAL, wxBITMAP_TYPE_PNG);
+	m_CloseButtonImg_Disabled.LoadFile(GetResourcesDirectory() + CLOSE_BUTTON_DISABLED, wxBITMAP_TYPE_PNG);
+	m_CloseButtonImg_Pressed.LoadFile(GetResourcesDirectory() + CLOSE_BUTTON_PRESSED, wxBITMAP_TYPE_PNG);
+	m_CloseButtonImg_Focus.LoadFile(GetResourcesDirectory() + CLOSE_BUTTON_FOCUS, wxBITMAP_TYPE_PNG);
+	m_CloseButtonImg_Hover.LoadFile(GetResourcesDirectory() + CLOSE_BUTTON_HOVER, wxBITMAP_TYPE_PNG);
 	m_btnClose = new wxButton(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxBU_EXACTFIT | wxBU_NOTEXT);
 	m_btnClose->SetBitmap(m_CloseButtonImg_Normal);
 	m_btnClose->SetBitmapDisabled(m_CloseButtonImg_Disabled);
@@ -147,11 +134,11 @@ ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString&
 	gridBagSizerFrame->Add( gridBagSizerFooter, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
 	
 	// Launch Button
-	m_LaunchButtonImg_Normal.LoadFile(g_ResourceDirectory + LAUNCH_BUTTON_NORMAL, wxBITMAP_TYPE_PNG);
-	m_LaunchButtonImg_Disabled.LoadFile(g_ResourceDirectory + LAUNCH_BUTTON_DISABLED, wxBITMAP_TYPE_PNG);
-	m_LaunchButtonImg_Pressed.LoadFile(g_ResourceDirectory + LAUNCH_BUTTON_PRESSED, wxBITMAP_TYPE_PNG);
-	m_LaunchButtonImg_Focus.LoadFile(g_ResourceDirectory + LAUNCH_BUTTON_FOCUS, wxBITMAP_TYPE_PNG);
-	m_LaunchButtonImg_Hover.LoadFile(g_ResourceDirectory + LAUNCH_BUTTON_HOVER, wxBITMAP_TYPE_PNG);
+	m_LaunchButtonImg_Normal.LoadFile(GetResourcesDirectory() + LAUNCH_BUTTON_NORMAL, wxBITMAP_TYPE_PNG);
+	m_LaunchButtonImg_Disabled.LoadFile(GetResourcesDirectory() + LAUNCH_BUTTON_DISABLED, wxBITMAP_TYPE_PNG);
+	m_LaunchButtonImg_Pressed.LoadFile(GetResourcesDirectory() + LAUNCH_BUTTON_PRESSED, wxBITMAP_TYPE_PNG);
+	m_LaunchButtonImg_Focus.LoadFile(GetResourcesDirectory() + LAUNCH_BUTTON_FOCUS, wxBITMAP_TYPE_PNG);
+	m_LaunchButtonImg_Hover.LoadFile(GetResourcesDirectory() + LAUNCH_BUTTON_HOVER, wxBITMAP_TYPE_PNG);
 	m_btnLaunch = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxBU_EXACTFIT | wxBU_NOTEXT);
 	m_btnLaunch->SetBitmap(m_LaunchButtonImg_Normal);
 	m_btnLaunch->SetBitmapDisabled(m_LaunchButtonImg_Disabled);
@@ -194,14 +181,14 @@ ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString&
 	m_btnLaunch->Bind(wxEVT_BUTTON, &ZLauncherFrame::OnLaunchButtonClicked, this);
 
 	// Read Header html data from external file
-	if (wxFile::Exists(g_ResourceDirectory + PATCH_HEADER_HTML_FILE))
+	if (wxFile::Exists(GetResourcesDirectory() + g_PatchHTMLHeaderFileName))
 	{
-		wxFile headerFile(g_ResourceDirectory + PATCH_HEADER_HTML_FILE, wxFile::OpenMode::read);
-		headerFile.ReadAll(&g_PatchHTMLHeader);
+		wxFile headerFile(GetResourcesDirectory() + g_PatchHTMLHeaderFileName, wxFile::OpenMode::read);
+		headerFile.ReadAll(&PatchHTMLHeader);
 	}
 	else
 	{
-		wxMessageBox(wxString::Format("HTML Header file missing. Make sure it can be found in the following directory:\n %s", g_ResourceDirectory + PATCH_HEADER_HTML_FILE), "Missing file", wxOK| wxICON_EXCLAMATION);
+		wxMessageBox(wxString::Format("HTML Header file missing. Make sure it can be found in the following directory:\n %s", GetResourcesDirectory() + g_PatchHTMLHeaderFileName), "Missing file", wxOK| wxICON_EXCLAMATION);
 	}
 }
 
@@ -402,7 +389,7 @@ void ZLauncherFrame::HTMLSetContent(wxString html)
 	wxThreadEvent* HTMLSetContentEvent = new wxThreadEvent(wxEVT_COMMAND_HTML_SET_CONTENT);
 
 	wxString htmlContent;
-	htmlContent = g_PatchHTMLHeader;
+	htmlContent = PatchHTMLHeader;
 	htmlContent += html;
 
 	HTMLSetContentEvent->SetString(htmlContent);

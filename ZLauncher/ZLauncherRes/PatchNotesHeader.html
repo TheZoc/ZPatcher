@@ -31,15 +31,34 @@
       h1 {
         font-size: 2.0em;
       }
+    ul {
+      list-style: none;
+      vertical-align: top;
+    }
 
-      ul {
-        list-style: square;
-        vertical-align: top;
-      }
+    li {
+      margin: 0.25rem;
+    }
 
-      li {
-        margin: 0.25rem;
-      }
+    li::before {
+      content: ' ';
+      background: #52DF5E;
+      width: 0.75rem;
+      height: 0.75rem;
+      border-radius: 25%;
+      display: inline-block;
+      line-height: 0.9rem;
+      color: white;
+      text-align: center;
+      margin-right: 0.5rem;
+    }
+
+    ul ul li::before {
+      background: #48D9A9;
+    }
+    ul ul ul li::before {
+      background: #417FD6;
+    }
     -->
     </style>
     <title>ZPatcher v2.0</title>

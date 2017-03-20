@@ -36,6 +36,12 @@ bool VisualCreatePatch::OnInit()
 	wxString	targetDirectory			= wxT("./");
 	wxString	launcherExecutableName	= wxT("Example.exe");
 
+#ifdef _WIN32
+	//////////////////////////////////////////////////////////////////////////
+	// Make wxWebView use the latest installed Internet Explorer/Edge version
+	UseLatestIEVersion();
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Run the launcher!
 	ZLauncherFrame* f = new ZLauncherFrame(nullptr);
@@ -44,16 +50,29 @@ bool VisualCreatePatch::OnInit()
 #ifdef _WIN32
 	f->SetIcon(wxICON(frame_icon));
 #elif __APPLE__
-	// TODO: Remove this hardcode
+	// TODO: Remove this hardcoded value
 	f->SetIcon(wxIcon("ZLauncher.icns"));
 //#else __linux__
 //	// TODO: Find out how this works in Linux!
 #endif
 
+	f->Show(true);
+	f->DoStartCreatePatchThread(updateURL, versionFile, targetDirectory);
+
+	return true;
+}
+
 #ifdef _WIN32
-	//////////////////////////////////////////////////////////////////////////
-	// Make wxWebView use the latest installed Internet Explorer/Edge version
-	//////////////////////////////////////////////////////////////////////////
+void VisualCreatePatch::UseLatestIEVersion()
+{
+	enum E_InternetExplorer_RegKey
+	{
+		IE_7	= 7000,
+		IE_8	= 8888,
+		IE_9	= 9999,
+		IE_10	= 10001,
+		IE_EDGE	= 11001
+	};
 
 	// Get the application Executable Name
 	wxString ExecPath = ::wxStandardPaths::Get().GetExecutablePath();
@@ -63,7 +82,7 @@ bool VisualCreatePatch::OnInit()
 	wxRegKey IEVersionKey(wxRegKey::HKLM, wxT("SOFTWARE\\Microsoft\\Internet Explorer"));
 
 	wxString IEFullVersion;
- 	if (IEVersionKey.HasValue(wxT("svcVersion")))
+	if (IEVersionKey.HasValue(wxT("svcVersion")))
 	{
 		IEVersionKey.QueryRawValue(wxT("svcVersion"), IEFullVersion);
 	}
@@ -80,33 +99,35 @@ bool VisualCreatePatch::OnInit()
 	int IEVersion = wxAtoi(IEFullVersion.BeforeFirst('.'));
 
 	wxLogNull nolog;   // suppress error messages
-	wxRegKey rk(wxRegKey::HKCU, wxT("Software\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION"));
+	wxRegKey fbe(wxRegKey::HKCU, wxT("Software\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION"));
 
 	// List here: https://support.microsoft.com/en-us/help/969393/information-about-internet-explorer-versions
+	long TargetValue;
 	switch (IEVersion)
 	{
 	case 11:
-		rk.SetValue(ExecName, 11001);
+		TargetValue = IE_EDGE;
 		break;
 	case 10:
-		rk.SetValue(ExecName, 10001);
+		TargetValue = IE_10;
 		break;
 	case 9:
-		rk.SetValue(ExecName, 9999);
+		TargetValue = IE_9;
 		break;
 	case 8:
-		rk.SetValue(ExecName, 8888);
+		TargetValue = IE_8;
 		break;
 	case 7:
 	default:
-		rk.SetValue(ExecName, 7000);
+		TargetValue = IE_7;
 		break;
 	}
-#endif
 
-	f->Show(true);
-	f->DoStartCreatePatchThread(updateURL, versionFile, targetDirectory);
+	if (TargetValue < IE_EDGE)
+	{
+		g_PatchHTMLHeaderFileName = PATCH_HEADER_COMPATIBILITY_HTML_FILE;
+	}
 
-	return true;
+	fbe.SetValue(ExecName, TargetValue);
 }
-
+#endif

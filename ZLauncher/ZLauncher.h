@@ -21,6 +21,11 @@ class VisualCreatePatch : public wxApp
 public:
 	virtual bool OnInit();
 
+#ifdef _WIN32
+	// Make wxWebView use the latest installed Internet Explorer/Edge version on Windows
+	void UseLatestIEVersion();
+#endif
+
 };
 
 

@@ -25,8 +25,29 @@
 
 class ZLauncherThread;
 
-///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// Theme Files
 
+#define RESOURCES_DIRECTORY						"./ZLauncherRes/"					// This is the directory that will hold all the assets used by the patcher
+#define BACKGROUND_IMAGE						"bg-dark.png"
+#define PATCH_HEADER_HTML_FILE					"PatchNotesHeader.html"
+#define PATCH_HEADER_COMPATIBILITY_HTML_FILE	"PatchNotesHeaderCompat.html"		// Used in Windows only, for systems that doesn't have Microsoft Edge installed
+
+#define CLOSE_BUTTON_NORMAL						"CloseButton_Normal.png"
+#define CLOSE_BUTTON_DISABLED					"CloseButton_Disabled.png"
+#define CLOSE_BUTTON_PRESSED					"CloseButton_Pressed.png"
+#define CLOSE_BUTTON_FOCUS						"CloseButton_Focus.png"
+#define CLOSE_BUTTON_HOVER						"CloseButton_Hover.png"
+
+#define LAUNCH_BUTTON_NORMAL					"LaunchButton_Normal.png"
+#define LAUNCH_BUTTON_DISABLED					"LaunchButton_Disabled.png"
+#define LAUNCH_BUTTON_PRESSED					"LaunchButton_Pressed.png"
+#define LAUNCH_BUTTON_FOCUS						"LaunchButton_Focus.png"
+#define LAUNCH_BUTTON_HOVER						"LaunchButton_Hover.png"
+
+//////////////////////////////////////////////////////////////////////////
+// Header related files
+extern wxString g_PatchHTMLHeaderFileName;
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class ZLauncherFrame
@@ -63,6 +84,10 @@ protected:
 	wxString m_LaunchExecutableName;
 
 public:
+	//////////////////////////////////////////////////////////////////////////
+	// This is the directory that will hold all the assets related to the patcher
+	static const wxString GetResourcesDirectory() { return wxString(RESOURCES_DIRECTORY); }
+
 	//////////////////////////////////////////////////////////////////////////
 	// Set Launch Executable Name
 	void SetLaunchExecutableName(wxString exe);
