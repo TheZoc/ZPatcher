@@ -14,20 +14,39 @@
 #include "DownloadFileWriter.h"
 
 //////////////////////////////////////////////////////////////////////////
+// Theme Files
+
+#define BACKGROUND_IMAGE			"bg-dark.png"
+#define PATCH_HEADER_HTML_FILE		"PatchNotesHeader.html"
+
+#define CLOSE_BUTTON_NORMAL			"CloseButton_Normal.png"
+#define CLOSE_BUTTON_DISABLED		"CloseButton_Disabled.png"
+#define CLOSE_BUTTON_PRESSED		"CloseButton_Pressed.png"
+#define CLOSE_BUTTON_FOCUS			"CloseButton_Focus.png"
+#define CLOSE_BUTTON_HOVER			"CloseButton_Hover.png"
+
+#define LAUNCH_BUTTON_NORMAL		"LaunchButton_Normal.png"
+#define LAUNCH_BUTTON_DISABLED		"LaunchButton_Disabled.png"
+#define LAUNCH_BUTTON_PRESSED		"LaunchButton_Pressed.png"
+#define LAUNCH_BUTTON_FOCUS			"LaunchButton_Focus.png"
+#define LAUNCH_BUTTON_HOVER			"LaunchButton_Hover.png"
+
+//////////////////////////////////////////////////////////////////////////
 
 static const wxString g_ResourceDirectory = "./ZLauncherRes/";
+static wxString g_PatchHTMLHeader = "";
+
+
 
 #define DARK_COLORS
 
 #ifdef DARK_COLORS
 
-static const wxString g_BackgroundImage = (g_ResourceDirectory + "bg-dark.png");
+static const wxString g_BackgroundImage = (g_ResourceDirectory + BACKGROUND_IMAGE);
 
 #define APPLICATION_BACKGROUND	wxColour( 40, 40, 40 )
 #define COMPONENT_BACKGROUND	wxColour( 30, 30, 30 )
 #define COMPONENT_TEXT_COLOR	wxColour( 195, 195, 195 )
-
-static const char* g_htmlHeader = "<html><head><style type=\"text/css\">body {color: #c3c3c3; background-color: #1E1E1E; scrollbar-base-color: #1E1E1E; scrollbar-face-color: #1E1E1E; scrollbar-3dlight-color: #858585; scrollbar-highlight-color: #858585; scrollbar-shadow-color: #858585; scrollbar-dark-shadow-color: #858585; scrollbar-track-color: #282828; scrollbar-arrow-color: #C3C3C3;} a { color: #B0B0FF; }</style></head><body>";
 
 #else
 
@@ -37,7 +56,7 @@ static const wxString g_BackgroundImage = wxEmptyString;
 #define COMPONENT_BACKGROUND	wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW )
 #define COMPONENT_TEXT_COLOR	wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT )
 
-static const char* g_htmlHeader = "<html><head><style type=\"text/css\">body {color: #000000; background-color: #FFFFFF; }</style></head><body>";
+// g_PatchHTMLHeader = "<!DOCTYPE html><html><head><style type=\"text/css\">body {color: #000000; background-color: #FFFFFF; }</style></head><body>";
 
 #endif
 
@@ -74,14 +93,16 @@ ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString&
 	gridBagSizerRight = new wxGridBagSizer( 0, 0 );
 	gridBagSizerRight->SetFlexibleDirection( wxBOTH );
 	gridBagSizerRight->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	gridBagSizerRight->Add( 0, 0, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
+
+	// Add a spacer, for empty space, at the left side of the close button
+	gridBagSizerRight->Add( 0, 0, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
 
 	// Close Button (Top Right)
-	m_CloseButtonImg_Normal.LoadFile(g_ResourceDirectory + "CloseButton_Normal.png", wxBITMAP_TYPE_PNG);
-	m_CloseButtonImg_Disabled.LoadFile(g_ResourceDirectory + "CloseButton_Disabled.png", wxBITMAP_TYPE_PNG);
-	m_CloseButtonImg_Pressed.LoadFile(g_ResourceDirectory + "CloseButton_Pressed.png", wxBITMAP_TYPE_PNG);
-	m_CloseButtonImg_Focus.LoadFile(g_ResourceDirectory + "CloseButton_Focus.png", wxBITMAP_TYPE_PNG);
-	m_CloseButtonImg_Hover.LoadFile(g_ResourceDirectory + "CloseButton_Hover.png", wxBITMAP_TYPE_PNG);
+	m_CloseButtonImg_Normal.LoadFile(g_ResourceDirectory + CLOSE_BUTTON_NORMAL, wxBITMAP_TYPE_PNG);
+	m_CloseButtonImg_Disabled.LoadFile(g_ResourceDirectory + CLOSE_BUTTON_DISABLED, wxBITMAP_TYPE_PNG);
+	m_CloseButtonImg_Pressed.LoadFile(g_ResourceDirectory + CLOSE_BUTTON_PRESSED, wxBITMAP_TYPE_PNG);
+	m_CloseButtonImg_Focus.LoadFile(g_ResourceDirectory + CLOSE_BUTTON_FOCUS, wxBITMAP_TYPE_PNG);
+	m_CloseButtonImg_Hover.LoadFile(g_ResourceDirectory + CLOSE_BUTTON_HOVER, wxBITMAP_TYPE_PNG);
 	m_btnClose = new wxButton(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxBU_EXACTFIT | wxBU_NOTEXT);
 	m_btnClose->SetBitmap(m_CloseButtonImg_Normal);
 	m_btnClose->SetBitmapDisabled(m_CloseButtonImg_Disabled);
@@ -93,7 +114,7 @@ ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString&
 
 	gridBagSizerRight->Add( m_btnClose, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	gridBagSizerRight->AddGrowableCol( 0 );
-	gridBagSizerRight->AddGrowableRow( 1 );
+	gridBagSizerRight->AddGrowableRow( 0 );
 
 	gridBagSizerBody->Add( gridBagSizerRight, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxALIGN_RIGHT|wxEXPAND, 5 );
 	gridBagSizerBody->AddGrowableCol( 1 );
@@ -112,25 +133,25 @@ ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString&
 	m_txtProgress->SetForegroundColour( COMPONENT_TEXT_COLOR );
 	m_txtProgress->SetBackgroundColour( APPLICATION_BACKGROUND );
 	
-	gridBagSizerFooter->Add( m_txtProgress, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALIGN_BOTTOM|wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5 );
+	gridBagSizerFooter->Add( m_txtProgress, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALIGN_BOTTOM|wxEXPAND, 5 );
 
 	// Progress Bar
 	m_progress = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxDefaultSize, wxGA_HORIZONTAL );
 	m_progress->SetValue( 0 );
 	m_progress->SetMinSize( wxSize( 500,25 ) );
 	
-	gridBagSizerFooter->Add( m_progress, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_TOP|wxALL|wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT, 5 );
+	gridBagSizerFooter->Add( m_progress, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_TOP|wxALL|wxEXPAND, 5 );
 	gridBagSizerFooter->AddGrowableCol( 0 );
 	gridBagSizerFooter->AddGrowableRow( 0 );
 	
 	gridBagSizerFrame->Add( gridBagSizerFooter, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
 	
 	// Launch Button
-	m_LaunchButtonImg_Normal.LoadFile(g_ResourceDirectory + "LaunchButton_Normal.png", wxBITMAP_TYPE_PNG);
-	m_LaunchButtonImg_Disabled.LoadFile(g_ResourceDirectory + "LaunchButton_Disabled.png", wxBITMAP_TYPE_PNG);
-	m_LaunchButtonImg_Pressed.LoadFile(g_ResourceDirectory + "LaunchButton_Pressed.png", wxBITMAP_TYPE_PNG);
-	m_LaunchButtonImg_Focus.LoadFile(g_ResourceDirectory + "LaunchButton_Focus.png", wxBITMAP_TYPE_PNG);
-	m_LaunchButtonImg_Hover.LoadFile(g_ResourceDirectory + "LaunchButton_Hover.png", wxBITMAP_TYPE_PNG);
+	m_LaunchButtonImg_Normal.LoadFile(g_ResourceDirectory + LAUNCH_BUTTON_NORMAL, wxBITMAP_TYPE_PNG);
+	m_LaunchButtonImg_Disabled.LoadFile(g_ResourceDirectory + LAUNCH_BUTTON_DISABLED, wxBITMAP_TYPE_PNG);
+	m_LaunchButtonImg_Pressed.LoadFile(g_ResourceDirectory + LAUNCH_BUTTON_PRESSED, wxBITMAP_TYPE_PNG);
+	m_LaunchButtonImg_Focus.LoadFile(g_ResourceDirectory + LAUNCH_BUTTON_FOCUS, wxBITMAP_TYPE_PNG);
+	m_LaunchButtonImg_Hover.LoadFile(g_ResourceDirectory + LAUNCH_BUTTON_HOVER, wxBITMAP_TYPE_PNG);
 	m_btnLaunch = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxBU_EXACTFIT | wxBU_NOTEXT);
 	m_btnLaunch->SetBitmap(m_LaunchButtonImg_Normal);
 	m_btnLaunch->SetBitmapDisabled(m_LaunchButtonImg_Disabled);
@@ -172,6 +193,16 @@ ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString&
 	m_btnClose->Bind(wxEVT_BUTTON, &ZLauncherFrame::OnCloseButtonClicked, this);
 	m_btnLaunch->Bind(wxEVT_BUTTON, &ZLauncherFrame::OnLaunchButtonClicked, this);
 
+	// Read Header html data from external file
+	if (wxFile::Exists(g_ResourceDirectory + PATCH_HEADER_HTML_FILE))
+	{
+		wxFile headerFile(g_ResourceDirectory + PATCH_HEADER_HTML_FILE, wxFile::OpenMode::read);
+		headerFile.ReadAll(&g_PatchHTMLHeader);
+	}
+	else
+	{
+		wxMessageBox(wxString::Format("HTML Header file missing. Make sure it can be found in the following directory:\n %s", g_ResourceDirectory + PATCH_HEADER_HTML_FILE), "Missing file", wxOK| wxICON_EXCLAMATION);
+	}
 }
 
 ZLauncherFrame::~ZLauncherFrame()
@@ -371,7 +402,7 @@ void ZLauncherFrame::HTMLSetContent(wxString html)
 	wxThreadEvent* HTMLSetContentEvent = new wxThreadEvent(wxEVT_COMMAND_HTML_SET_CONTENT);
 
 	wxString htmlContent;
-	htmlContent = g_htmlHeader;
+	htmlContent = g_PatchHTMLHeader;
 	htmlContent += html;
 
 	HTMLSetContentEvent->SetString(htmlContent);
