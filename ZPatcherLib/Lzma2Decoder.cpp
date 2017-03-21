@@ -103,36 +103,25 @@ bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, FILE* destFi
 
 	int64_t sourceFilePos = ftell64(sourceFile);
 
-	while (CompressedSize > 0)
+	while (true)
 	{
 		SRes res;
 
-		if (CompressedSize > buffer_size)
-		{
-			sourceLen = fread(sourceBuffer, 1, buffer_size, sourceFile);
-			res = Lzma2Dec_DecodeToBuf(decoder, destBuffer, &destLen, sourceBuffer, &sourceLen, LZMA_FINISH_ANY, &status);	
-		}
-		else
-		{
-			sourceLen = fread(sourceBuffer, 1, RemainingCompressedData, sourceFile);
-			res = Lzma2Dec_DecodeToBuf(decoder, destBuffer, &destLen, sourceBuffer, &sourceLen, LZMA_FINISH_END, &status);
-		}
+		sourceLen = fread(sourceBuffer, 1, buffer_size, sourceFile);
+		res = Lzma2Dec_DecodeToBuf(decoder, destBuffer, &destLen, sourceBuffer, &sourceLen, LZMA_FINISH_ANY, &status);	
 
 		assert(res == SZ_OK);
 
 		fwrite(destBuffer, 1, destLen, destFile);
 
-		CompressedSize -= sourceLen;
+		RemainingCompressedData -= sourceLen;
 		sourceFilePos  += sourceLen;
 
 		res = fseek64(sourceFile, sourceFilePos, SEEK_SET);
 		assert(res == 0);
 
-// 		if (res == SZ_OK && status == LZMA_STATUS_FINISHED_WITH_MARK)
-// 		{
-// 			Log(LOG_FATAL, "Found LZMA Status Finished with Mark!");
-// 			break;
-// 		}
+		if (res == SZ_OK && status == LZMA_STATUS_FINISHED_WITH_MARK && RemainingCompressedData == 0)
+			break;
 	}
 
 	return true;
