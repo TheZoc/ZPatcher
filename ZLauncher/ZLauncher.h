@@ -16,10 +16,23 @@
 #include <wx/wxprec.h>
 #include <wx/cmdline.h>
 
+struct ZLauncherConfig
+{
+	std::string UpdateURL;
+	std::string VersionFile;
+	std::string TargetDirectory;
+	std::string LaunchExecutable;
+};
+
 class VisualCreatePatch : public wxApp
 {
+protected:
+	ZLauncherConfig m_Config;
+
 public:
 	virtual bool OnInit();
+
+	virtual bool ParseConfigFile(wxString ConfigFileName);
 
 #ifdef _WIN32
 	// Make wxWebView use the latest installed Internet Explorer/Edge version on Windows

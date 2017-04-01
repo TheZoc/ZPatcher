@@ -205,6 +205,9 @@
     <Image Include="small.ico" />
     <Image Include="ZLauncher.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="ZLauncher.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

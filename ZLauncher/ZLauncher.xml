@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ZLauncher>
+  <Config>
+    <UpdateURL>https://raw.githubusercontent.com/TheZoc/ZPatcher/master/tests/zpatcher_test.xml</UpdateURL> <!-- URL containing the XML Update Data -->
+    <VersionFile>zpatcher_test.zversion</VersionFile> <!-- Name of the local file that will store the current version of the patched product -->
+    <TargetDirectory>./</TargetDirectory> <!-- Target directory to be patched, relative to the executable -->
+    <LaunchExecutable>Example.exe</LaunchExecutable> <!-- Executable filename to be called when the launch button is clicked -->
+  </Config>
+</ZLauncher>

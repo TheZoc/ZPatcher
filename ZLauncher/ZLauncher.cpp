@@ -14,6 +14,9 @@
 #include <wx/stdpaths.h>
 #include "ZLauncher.h"
 #include "ZLauncherFrame.h"
+#include "LogSystem.h"
+#include "tinyxml2.h"
+#include <wx/stdpaths.h>
 
 #ifdef _WIN32
 // Allows us to set the correct version of Internet Explorer for changelog display
@@ -28,13 +31,22 @@ bool VisualCreatePatch::OnInit()
 		return false;
 
 	wxInitAllImageHandlers();
-	
-	//////////////////////////////////////////////////////////////////////////
-	// Simple config section
-	wxString	updateURL				= wxT("https://raw.githubusercontent.com/TheZoc/ZPatcher/master/tests/zpatcher_test.xml");
-	wxString	versionFile				= wxT("zpatcher_test.zversion");
-	wxString	targetDirectory			= wxT("./");
-	wxString	launcherExecutableName	= wxT("Example.exe");
+
+	// The configuration XML file is the same as the executable. On Windows, it replaces the .exe extension
+	wxString ConfigPath = wxStandardPaths::Get().GetExecutablePath();
+
+#ifdef _WIN32
+	// Since only Windows actively uses extensions for the executable, remove it.
+	ConfigPath = ConfigPath.BeforeLast('.');
+#endif
+	ConfigPath += ".xml";
+
+	// Load the configuration file
+	if (!ParseConfigFile(ConfigPath))
+	{
+		wxMessageBox(wxString::Format("Error Loading XML configuration file:\n\n%s\n\nMake sure it exists and has the appropriate format.", ConfigPath), "Missing file - Exiting...", wxOK | wxICON_ERROR);
+		return false;
+	}
 
 #ifdef _WIN32
 	//////////////////////////////////////////////////////////////////////////
@@ -45,7 +57,7 @@ bool VisualCreatePatch::OnInit()
 	//////////////////////////////////////////////////////////////////////////
 	// Run the launcher!
 	ZLauncherFrame* f = new ZLauncherFrame(nullptr);
-	f->SetLaunchExecutableName(launcherExecutableName);
+	f->SetLaunchExecutableName(m_Config.LaunchExecutable);
 
 #ifdef _WIN32
 	f->SetIcon(wxICON(frame_icon));
@@ -57,7 +69,66 @@ bool VisualCreatePatch::OnInit()
 #endif
 
 	f->Show(true);
-	f->DoStartCreatePatchThread(updateURL, versionFile, targetDirectory);
+	f->DoStartCreatePatchThread(m_Config.UpdateURL, m_Config.VersionFile, m_Config.TargetDirectory);
+
+	return true;
+}
+
+bool VisualCreatePatch::ParseConfigFile(wxString ConfigFileName)
+{
+	ZPatcher::SetActiveLog("ZLauncher");
+	tinyxml2::XMLDocument document;
+
+	ZPatcher::Log(ZPatcher::LOG, "Opening %s config file.", ConfigFileName.ToStdString().c_str());
+
+	document.LoadFile(ConfigFileName.c_str());
+	ZPatcher::Log(ZPatcher::LOG, "Reading config file.");
+
+	if (document.Error())
+	{
+		ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to open the XML file for reading.");
+		return false;
+	}
+
+	tinyxml2::XMLHandle hDocument(&document);
+
+	// Get the ZLauncher opening tag
+	tinyxml2::XMLHandle hZLauncher = hDocument.FirstChildElement("ZLauncher");
+	if (hZLauncher.ToElement() == NULL)
+	{
+		ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid ZLauncher tag.");
+		return false;
+	}
+
+	// Get the Config tag, child of ZLauncher
+	tinyxml2::XMLHandle hConfig = hZLauncher.FirstChildElement("Config");
+	if (hConfig.ToElement() == NULL)
+	{
+		ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid Config tag.");
+		return false;
+	}
+	
+	// Get all configuration data here
+	tinyxml2::XMLHandle hUpdateURL			= hConfig.FirstChildElement("UpdateURL");
+	tinyxml2::XMLHandle hVersionFile		= hConfig.FirstChildElement("VersionFile");
+	tinyxml2::XMLHandle hTargetDirectory	= hConfig.FirstChildElement("TargetDirectory");
+	tinyxml2::XMLHandle hLaunchExecutable	= hConfig.FirstChildElement("LaunchExecutable");
+
+	// Slightly slower, WAY easier to read and maintain
+	bool bAllConfigsPresent = true;
+	if (hUpdateURL.ToElement() == NULL)			{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid UpdateURL tag.");		bAllConfigsPresent = false; }
+	if (hVersionFile.ToElement() == NULL)		{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid VersionFile tag.");		bAllConfigsPresent = false; }
+	if (hTargetDirectory.ToElement() == NULL)	{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid TargetDirectory tag.");	bAllConfigsPresent = false; }
+	if (hLaunchExecutable.ToElement() == NULL)	{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid LaunchExecutable tag.");	bAllConfigsPresent = false; }
+
+	if (!bAllConfigsPresent)
+		return false;
+
+	// Fetch all the data and store it in the member struct variable 
+	m_Config.UpdateURL			= hUpdateURL.ToElement()->GetText();
+	m_Config.VersionFile		= hVersionFile.ToElement()->GetText();
+	m_Config.TargetDirectory	= hTargetDirectory.ToElement()->GetText();
+	m_Config.LaunchExecutable	= hLaunchExecutable.ToElement()->GetText();
 
 	return true;
 }
