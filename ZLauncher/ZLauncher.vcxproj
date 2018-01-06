@@ -108,6 +108,15 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Message>Copying required files</Message>
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase310ud_vc140.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310ud_core_vc140.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310ud_webview_vc140.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)ZLauncher\ZLauncher.xml" "$(OutDir)" 1&gt;NUL
+mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL 
+copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -128,6 +137,15 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Message>Copying required files</Message>
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase310ud_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310ud_core_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310ud_webview_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)ZLauncher\ZLauncher.xml" "$(OutDir)" 1&gt;NUL
+mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL 
+copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -151,6 +169,15 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Message>Copying required files</Message>
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase310u_vc140.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310u_core_vc140.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310u_webview_vc140.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)ZLauncher\ZLauncher.xml" "$(OutDir)" 1&gt;NUL
+mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL 
+copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -174,6 +201,15 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Message>Copying required files</Message>
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase310u_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310u_core_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310u_webview_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)ZLauncher\ZLauncher.xml" "$(OutDir)" 1&gt;NUL
+mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL 
+copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DownloadFileWriter.h" />
@@ -204,6 +240,9 @@
   <ItemGroup>
     <Image Include="small.ico" />
     <Image Include="ZLauncher.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="ZLauncher.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

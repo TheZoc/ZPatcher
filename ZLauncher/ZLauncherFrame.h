@@ -1,9 +1,14 @@
-///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 17 2015)
-// http://www.wxformbuilder.org/
+//////////////////////////////////////////////////////////////////////////
 //
-// PLEASE DO "NOT" EDIT THIS FILE!
-///////////////////////////////////////////////////////////////////////////
+// VisualCreatePatch - Patcher system - Part of the ZUpdater suite
+// Felipe "Zoc" Silveira - (c) 2016-2018
+//
+//////////////////////////////////////////////////////////////////////////
+//
+// ZLauncherFrame.h
+// Header file for the main frame of the launcher
+//
+//////////////////////////////////////////////////////////////////////////
 
 #ifndef __ZLAUNCHERFRAME_H__
 #define __ZLAUNCHERFRAME_H__
@@ -25,8 +30,29 @@
 
 class ZLauncherThread;
 
-///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// Theme Files
 
+#define RESOURCES_DIRECTORY						"./ZLauncherRes/"					// This is the directory that will hold all the assets used by the patcher
+#define BACKGROUND_IMAGE						"bg-dark.png"
+#define PATCH_HEADER_HTML_FILE					"PatchNotesHeader.html"
+#define PATCH_HEADER_COMPATIBILITY_HTML_FILE	"PatchNotesHeaderCompat.html"		// Used in Windows only, for systems that doesn't have Microsoft Edge installed
+
+#define CLOSE_BUTTON_NORMAL						"CloseButton_Normal.png"
+#define CLOSE_BUTTON_DISABLED					"CloseButton_Disabled.png"
+#define CLOSE_BUTTON_PRESSED					"CloseButton_Pressed.png"
+#define CLOSE_BUTTON_FOCUS						"CloseButton_Focus.png"
+#define CLOSE_BUTTON_HOVER						"CloseButton_Hover.png"
+
+#define LAUNCH_BUTTON_NORMAL					"LaunchButton_Normal.png"
+#define LAUNCH_BUTTON_DISABLED					"LaunchButton_Disabled.png"
+#define LAUNCH_BUTTON_PRESSED					"LaunchButton_Pressed.png"
+#define LAUNCH_BUTTON_FOCUS						"LaunchButton_Focus.png"
+#define LAUNCH_BUTTON_HOVER						"LaunchButton_Hover.png"
+
+//////////////////////////////////////////////////////////////////////////
+// Header related files
+extern wxString g_PatchHTMLHeaderFileName;
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class ZLauncherFrame
@@ -56,13 +82,17 @@ class ZLauncherFrame : public wxFrame
 		wxBitmap m_CloseButtonImg_Hover;
 
 	public:
-		ZLauncherFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("ZLauncher : ZUpdater"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 800,600 ), long style = 0L /* wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU */ );
+		ZLauncherFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("ZLauncher : ZPatcher v2.0 beta"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 800,600 ), long style = 0L /* wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU */ );
 		~ZLauncherFrame();
 	
 protected:
 	wxString m_LaunchExecutableName;
 
 public:
+	//////////////////////////////////////////////////////////////////////////
+	// This is the directory that will hold all the assets related to the patcher
+	static const wxString GetResourcesDirectory() { return wxString(RESOURCES_DIRECTORY); }
+
 	//////////////////////////////////////////////////////////////////////////
 	// Set Launch Executable Name
 	void SetLaunchExecutableName(wxString exe);

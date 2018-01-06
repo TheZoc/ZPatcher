@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // ZPatcher - Patcher system - Part of the ZUpdater suite
-// Felipe "Zoc" Silveira - (c) 2016
+// Felipe "Zoc" Silveira - (c) 2016-2018
 //
 //////////////////////////////////////////////////////////////////////////
 //
@@ -65,7 +65,8 @@ bool ZPatcher::DoApplyPatchFile(FILE* patchFile, const std::string& targetPath, 
 	}
 
 	Byte props;
-	if (!ReadPatchFileHeader(patchFile, props))
+	Byte version = ReadPatchFileHeader(patchFile, props);
+	if (version == 0)
 	{
 		Log(LOG_FATAL, "Failed to read patch data.");
 		return false;
@@ -109,11 +110,11 @@ bool ZPatcher::DoApplyPatchFile(FILE* patchFile, const std::string& targetPath, 
 				break;
 			backupFileList.push_back(outputFile);
 			success = success && RemoveFile(normalizedTargetPath + outputFile);
-			success = success && FileDecompress(decoder, patchFile, normalizedTargetPath + outputFile);
+			success = success && FileDecompress(decoder, patchFile, normalizedTargetPath + outputFile, version);
 			break;
 		case Patch_File_Add:
 			CreateDirectoryTree(normalizedTargetPath + outputFile);
-			success = success && FileDecompress(decoder, patchFile, normalizedTargetPath + outputFile);
+			success = success && FileDecompress(decoder, patchFile, normalizedTargetPath + outputFile, version);
 			if (success)
 				addedFileList.push_back(outputFile);
 			break;

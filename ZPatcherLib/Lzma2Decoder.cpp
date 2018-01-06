@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // ZPatcher - Patcher system - Part of the ZUpdater suite
-// Felipe "Zoc" Silveira - (c) 2016
+// Felipe "Zoc" Silveira - (c) 2016-2018
 //
 //////////////////////////////////////////////////////////////////////////
 //
@@ -27,7 +27,7 @@
 	#define fseek64 fseek
 #endif
 
-CLzma2Dec* ZPatcher::InitLzma2Decoder(const Byte &props)
+CLzma2Dec* ZPatcher::InitLzma2Decoder(const Byte& props)
 {
 	CLzma2Dec* dec = static_cast<CLzma2Dec*>(malloc(sizeof(CLzma2Dec)));
 	Lzma2Dec_Construct(dec);
@@ -43,12 +43,10 @@ void ZPatcher::DestroyLzma2Decoder(CLzma2Dec* decoder)
 	Lzma2Dec_Free(decoder, &LzmaSzAlloc);
 }
 
-bool ZPatcher::ReadPatchFileHeader(FILE* source, Byte &Lzma2Properties)
+Byte ZPatcher::ReadPatchFileHeader(FILE* source, Byte& Lzma2Properties)
 {
 	Byte header[9];
 	fread(header, 1, 9, source);
-
-	const Byte version = ZPatcher_Version;
 
 	if (header[0] != 'Z' ||
 		header[1] != 'P' ||
@@ -61,13 +59,15 @@ bool ZPatcher::ReadPatchFileHeader(FILE* source, Byte &Lzma2Properties)
 		return false;
 	}
 
-	// It's possible to support multiple versions in future.
-	if (header[7] != version)
-		return false;
+	const Byte version = header[7];
+
+	// This is a hackish way to allow easy switch from zpatch file version 1 to version 2. TODO: Make this more flexible. Consider restructuring this into fully featured C++ class
+	if (version < 1 || version > ZPatcher_Version)
+		return 0;
 
 	Lzma2Properties = header[8];
 
-	return true;
+	return version;
 }
 
 void ZPatcher::GetFileinfo(FILE* patchFile, std::string& fileName, Byte& operation)
@@ -83,6 +83,52 @@ void ZPatcher::GetFileinfo(FILE* patchFile, std::string& fileName, Byte& operati
 }
 
 bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, FILE* destFile)
+{
+	ELzmaStatus status;
+
+	const SizeT buffer_size = 1 << 16;
+
+	Byte sourceBuffer[buffer_size];
+	Byte destBuffer[buffer_size];
+	SizeT sourceLen = 0;
+	SizeT destLen = buffer_size;
+
+	// We must reinitialize every time we want a decode a new file.
+	Lzma2Dec_Init(decoder);
+
+	// Get the compressed size of the file
+	uint64_t CompressedSize;
+	fread(&CompressedSize, 1, sizeof(uint64_t), sourceFile);
+	uint64_t RemainingCompressedData = CompressedSize;
+
+	int64_t sourceFilePos = ftell64(sourceFile);
+
+	while (true)
+	{
+		SRes res;
+
+		sourceLen = fread(sourceBuffer, 1, buffer_size, sourceFile);
+		res = Lzma2Dec_DecodeToBuf(decoder, destBuffer, &destLen, sourceBuffer, &sourceLen, LZMA_FINISH_ANY, &status);	
+
+		assert(res == SZ_OK);
+
+		fwrite(destBuffer, 1, destLen, destFile);
+
+		RemainingCompressedData -= sourceLen;
+		sourceFilePos  += sourceLen;
+
+		res = fseek64(sourceFile, sourceFilePos, SEEK_SET);
+		assert(res == 0);
+
+		if (res == SZ_OK && status == LZMA_STATUS_FINISHED_WITH_MARK && RemainingCompressedData == 0)
+			break;
+	}
+
+	return true;
+}
+
+// TODO: Remove this ASAP. Rewrite the decompression routines to allow easy decompression of multiple patch file versions. To future me: Consider using a C++ class for decompression.
+bool ZPatcher::FileDecompress_Version_1(CLzma2Dec* decoder, FILE* sourceFile, FILE* destFile)
 {
 	ELzmaStatus status;
 
@@ -117,7 +163,7 @@ bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, FILE* destFi
 	return true;
 }
 
-bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, const std::string& destFileName)
+bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, const std::string& destFileName, const Byte& version)
 {
 	FILE* destFile;
 
@@ -131,7 +177,16 @@ bool ZPatcher::FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, const std::s
 
 	Log(LOG, "Writing File: %s", destFileName.c_str());
 
-	bool success = FileDecompress(decoder, sourceFile, destFile);
+	bool success = false;
+
+	if (version == ZPatch_Version_1)
+	{
+		success = FileDecompress_Version_1(decoder, sourceFile, destFile);
+	}
+	else
+	{
+		success = FileDecompress(decoder, sourceFile, destFile);
+	}
 
 	fclose(destFile);
 

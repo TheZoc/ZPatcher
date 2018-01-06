@@ -29,8 +29,10 @@ temp/
 # Roslyn cache directories
 *.ide/
 
-# Visual Studio cache directories
+# Visual Studio cache directories and user cache files
 *.vs/
+*.VC.db
+*.VC.opendb
 
 # MSTest test Results
 [Tt]est[Rr]esult*/

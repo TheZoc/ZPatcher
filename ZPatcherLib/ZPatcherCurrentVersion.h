@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // ZPatcher - Patcher system - Part of the ZUpdater suite
-// Felipe "Zoc" Silveira - (c) 2016
+// Felipe "Zoc" Silveira - (c) 2016-2018
 //
 //////////////////////////////////////////////////////////////////////////
 //
@@ -16,7 +16,14 @@
 
 namespace ZPatcher
 {
-	static const unsigned char ZPatcher_Version = 1;
+	enum EZPatcher_Versions
+	{
+		ZPatch_Version_1	= 1,
+		ZPatch_Version_2	= 2,
+		ZPatch_MAX			= ZPatch_Version_2,
+	};
+
+	static const unsigned char ZPatcher_Version = ZPatch_MAX;
 
 	enum PatchOperation
 	{

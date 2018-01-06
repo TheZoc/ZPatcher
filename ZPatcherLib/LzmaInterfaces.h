@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // ZPatcher - Patcher system - Part of the ZUpdater suite
-// Felipe "Zoc" Silveira - (c) 2016
+// Felipe "Zoc" Silveira - (c) 2016-2018
 //
 //////////////////////////////////////////////////////////////////////////
 //
@@ -53,7 +53,7 @@ namespace ZPatcher
 	{
 		ISeqOutStream SeqOutStream;
 		FILE* file;
-
+		uint64_t BytesWritten;
 	} ISeqOutStreamPlus;
 
 	size_t SeqOutStreamPlus_Write(void* p, const void* buf, size_t originalSize);

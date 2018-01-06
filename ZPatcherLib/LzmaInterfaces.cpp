@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // ZPatcher - Patcher system - Part of the ZUpdater suite
-// Felipe "Zoc" Silveira - (c) 2016
+// Felipe "Zoc" Silveira - (c) 2016-2018
 //
 //////////////////////////////////////////////////////////////////////////
 //
@@ -37,8 +37,9 @@ size_t ZPatcher::SeqOutStreamPlus_Write(void* p, const void* buf, size_t origina
 	size_t bytesWritten = 0;
 
 	bytesWritten = fwrite(buf, 1, originalSize, pp->file);
+	pp->BytesWritten += bytesWritten;
 
-	//		assert(bytesWritten == originalSize);
+//	assert(bytesWritten == originalSize);
 
 	return bytesWritten;
 
