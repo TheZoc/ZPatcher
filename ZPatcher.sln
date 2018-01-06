@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LzmaLib", "libs\LzmaLib\LzmaLib.vcxproj", "{C72F7F04-8109-485F-88D4-CB5653CB7DDD}"
 EndProject
@@ -39,7 +39,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VisualCreatePatch", "VisualCreatePatch\VisualCreatePatch.vcxproj", "{33851E19-677D-4BCC-85ED-CBAFC6974B23}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C72F7F04-8109-485F-88D4-CB5653CB7DDD} = {C72F7F04-8109-485F-88D4-CB5653CB7DDD}
-		{2F868D36-FD16-4C3A-B444-8C2CCA1A6A0D} = {2F868D36-FD16-4C3A-B444-8C2CCA1A6A0D}
 		{A6C9C679-5FC1-4238-8FEB-1C3394B1DE69} = {A6C9C679-5FC1-4238-8FEB-1C3394B1DE69}
 	EndProjectSection
 EndProject

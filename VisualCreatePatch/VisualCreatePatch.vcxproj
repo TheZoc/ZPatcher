@@ -107,6 +107,13 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Message>Copying required files</Message>
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase310ud_vc140.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310ud_core_vc140.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310ud_webview_vc140.dll" "$(OutDir)" 1&gt;NUL
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -126,6 +133,13 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Message>Copying required files</Message>
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase310ud_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310ud_core_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310ud_webview_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -149,6 +163,12 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Message>Copying required files</Message>
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase310u_vc140.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310u_core_vc140.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310u_webview_vc140.dll" "$(OutDir)" 1&gt;NUL</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -172,6 +192,13 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Message>Copying required files</Message>
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase310u_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310u_core_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310u_webview_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CreatePatchFrame.h" />
