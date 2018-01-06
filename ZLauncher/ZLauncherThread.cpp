@@ -332,7 +332,7 @@ bool ZLauncherThread::CheckForUpdates(const std::string& updateURL, const uint64
 		return false;
 	}
 
-	for (tinyxml2::XMLHandle hBuild = hBuilds.FirstChildElement("build"); true; hBuild = hBuild.NextSibling())
+	for (tinyxml2::XMLHandle hBuild = hBuilds.FirstChildElement("build"); true; hBuild = hBuild.NextSiblingElement())
 	{
 		// Check if we're done here.
 		if (hBuild.ToElement() == NULL)
@@ -378,7 +378,7 @@ bool ZLauncherThread::CheckForUpdates(const std::string& updateURL, const uint64
 
 	tinyxml2::XMLHandle hPatches = hZUpdater.FirstChildElement("patches");
 
-	for (tinyxml2::XMLHandle hPatch = hPatches.FirstChildElement("patch"); true; hPatch = hPatch.NextSibling())
+	for (tinyxml2::XMLHandle hPatch = hPatches.FirstChildElement("patch"); true; hPatch = hPatch.NextSiblingElement())
 	{
 		if (hPatch.ToElement() == NULL)
 		{
@@ -441,7 +441,7 @@ bool ZLauncherThread::CheckForUpdates(const std::string& updateURL, const uint64
 
 		// If the file name is not absolute, make it so.
 
-		if (strncmp(patch.fileURL.c_str(), "http://", 7) != 0)
+		if (strncmp(patch.fileURL.c_str(), "http://", 7) != 0 || strncmp(patch.fileURL.c_str(), "https://", 8) != 0)
 		{
 			patch.fileURL = urlBase + patch.fileURL;
 		}
