@@ -181,6 +181,8 @@ ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString&
 
 	Bind(wxEVT_CLOSE_WINDOW, &ZLauncherFrame::OnClose, this);
 
+	Bind(wxEVT_WEBVIEW_NAVIGATING, &ZLauncherFrame::OnClickLink, this);
+
 	// Bind Button Events
 	m_btnClose->Bind(wxEVT_BUTTON, &ZLauncherFrame::OnCloseButtonClicked, this);
 	m_btnLaunch->Bind(wxEVT_BUTTON, &ZLauncherFrame::OnLaunchButtonClicked, this);
@@ -220,6 +222,15 @@ void ZLauncherFrame::OnLaunchButtonClicked(wxCommandEvent& WXUNUSED(evt))
 
 	// Exit after launching the game/application
 	wxQueueEvent(wxTheApp->GetTopWindow()->GetEventHandler(), new wxCloseEvent(wxEVT_CLOSE_WINDOW));
+}
+
+void ZLauncherFrame::OnClickLink(wxWebViewEvent& evt)
+{
+	// Open the link on the default browser
+	wxLaunchDefaultBrowser(evt.GetURL());
+
+	// Stop navigation
+	evt.Veto();
 }
 
 void ZLauncherFrame::PaintEvent(wxPaintEvent & evt)
