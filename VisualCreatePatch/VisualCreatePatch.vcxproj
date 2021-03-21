@@ -109,9 +109,9 @@
     </ResourceCompile>
     <PostBuildEvent>
       <Message>Copying required files</Message>
-      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase310ud_vc140.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310ud_core_vc140.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310ud_webview_vc140.dll" "$(OutDir)" 1&gt;NUL
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase314ud_vc14x.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw314ud_core_vc14x.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw314ud_webview_vc14x.dll" "$(OutDir)" 1&gt;NUL
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -135,9 +135,9 @@ copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310ud_webview_vc140.dll" "
     </ResourceCompile>
     <PostBuildEvent>
       <Message>Copying required files</Message>
-      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase310ud_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310ud_core_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310ud_webview_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase314ud_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw314ud_core_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw314ud_webview_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -165,9 +165,9 @@ copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310ud_webview_vc140_x6
     </ResourceCompile>
     <PostBuildEvent>
       <Message>Copying required files</Message>
-      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase310u_vc140.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310u_core_vc140.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310u_webview_vc140.dll" "$(OutDir)" 1&gt;NUL</Command>
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase314u_vc14x.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw314u_core_vc14x.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw314u_webview_vc14x.dll" "$(OutDir)" 1&gt;NUL</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -194,9 +194,9 @@ copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310u_webview_vc140.dll" "$
     </ResourceCompile>
     <PostBuildEvent>
       <Message>Copying required files</Message>
-      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase310u_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310u_core_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310u_webview_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase314u_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw314u_core_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw314u_webview_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
