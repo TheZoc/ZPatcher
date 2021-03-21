@@ -1,10 +1,6 @@
 # Ignore wxWidgets binaries
 wxWidgets/
 
-# Ignore TinyXML2 32-bits output directories
-Debug-Dll/
-Release-Dll/
-
 # Program-generated files to be ignored
 
 # User-specific files
@@ -139,7 +135,7 @@ publish/
 # Publish Web Output
 *.[Pp]ublish.xml
 *.azurePubxml
-# TODO: Comment the next line if you want to checkin your web deploy settings 
+# TODO: Comment the next line if you want to checkin your web deploy settings
 # but database connection strings (with potential passwords) will be unencrypted
 *.pubxml
 

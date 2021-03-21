@@ -1,16 +1,14 @@
 CXX=g++
 AR=ar
 CXXFLAGS=-c -Wall -Wextra -std=c++14 -Wno-unused-parameter -Wno-unused-variable -D_FILE_OFFSET_BITS=64
-CPPFLAGS=-I$(ZPATCHERLIBDIR) -Ilibs/LzmaLib/source -Ilibs/tinyxml2
-LDFLAGS=-L$(LZMADIR)/out -L$(TINYXML2DIR)
+CPPFLAGS=-I$(ZPATCHERLIBDIR) -Ilibs/LzmaLib/source
+LDFLAGS=-L$(LZMADIR)/out
 ARFLAGS=-rvs
 
 LZMADIR=./libs/LzmaLib/source
 LZMALIB=$(LZMADIR)/out/liblzma.a
 
-TINYXML2DIR=./libs/tinyxml2
-
-LIBS=-llzma -lpthread -lcurl -ltinyxml2
+LIBS=-llzma -lpthread -lcurl
 
 # wxWidgets extra parameters
 WXCONFIG_EXISTS:=$(shell command -v wx-config 2> /dev/null)
@@ -53,23 +51,20 @@ ZUPDATEROBJECTS=$(addprefix obj/$(ZUPDATERDIR)/, $(notdir $(ZUPDATERSOURCES:.cpp
 # A directory creation utility
 create_output_dir=@mkdir -p $(@D)
 
-.PHONY: all lzma tinyxml2 clean
+.PHONY: all lzma clean
 
 # If there is no wx-config file, assume wxWidgets is missing and only build the command-line utilities
 ifndef WXCONFIG_EXISTS
-all: lzma tinyxml2 out/ZPatcherLib.a CreatePatch ApplyPatch ZUpdater
+all: lzma out/ZPatcherLib.a CreatePatch ApplyPatch ZUpdater
 else
-all: lzma tinyxml2 out/ZPatcherLib.a CreatePatch ApplyPatch ZUpdater VisualCreatePatch ZLauncher
+all: lzma out/ZPatcherLib.a CreatePatch ApplyPatch ZUpdater VisualCreatePatch ZLauncher
 endif
 	@echo all done.
 
-libs: lzma tinyxml2 out/ZPatcherLib.a
+libs: lzma out/ZPatcherLib.a
 
 lzma:
 	@ $(MAKE) -C $(LZMADIR)
-
-tinyxml2:
-	@ $(MAKE) -C $(TINYXML2DIR)
 
 CreatePatch: libs out/CreatePatch
 
@@ -86,7 +81,6 @@ clean:
 	@ rm -rf obj/
 	@ rm -rf out/
 	@ $(MAKE) -C $(LZMADIR) clean
-	@ $(MAKE) -C $(TINYXML2DIR) clean
 
 # CreatePatch executable
 out/CreatePatch: $(CREATEPATCHOBJECTS) out/ZPatcherLib.a
