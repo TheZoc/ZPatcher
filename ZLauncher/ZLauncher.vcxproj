@@ -98,6 +98,8 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\libs\curl\include\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -127,6 +129,8 @@ copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\libs\curl\include\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -157,6 +161,7 @@ copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL
       <PreprocessorDefinitions>WXUSINGDLL;CURL_STATICLIB;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\libs\curl\include\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -189,6 +194,7 @@ copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL
       <PreprocessorDefinitions>WXUSINGDLL;CURL_STATICLIB;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\libs\curl\include\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

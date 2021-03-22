@@ -97,6 +97,8 @@
       <PreprocessorDefinitions>WXUSINGDLL;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,6 +125,8 @@ copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw314ud_webview_vc14x.dll" "
       <PreprocessorDefinitions>WXUSINGDLL;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -151,6 +155,7 @@ copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw314ud_webview_vc14x_x6
       <PreprocessorDefinitions>WXUSINGDLL;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -180,6 +185,7 @@ copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw314u_webview_vc14x.dll" "$
       <PreprocessorDefinitions>WXUSINGDLL;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
