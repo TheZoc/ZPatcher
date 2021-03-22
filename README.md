@@ -23,7 +23,7 @@ Features:
 
 There are two ways to setup the project dependencies on Windows, using a script to setup them automatically and manually.
 
-#### Automatic dependencies setup 
+#### Automatic dependencies setup
 
 Run the `setup-external-dependencies.ps1` PowerShell script.
 Keep in mind this script only works for Visual Studio 2015 right now.
@@ -64,7 +64,7 @@ Also, the `Makefile` uses the `wx-config` utility to build the visual applicatio
 ### Patch creation utilites
 
 Both `CreatePatch` and `VisualCreatePatch` can be used to create the patch files.
-* `CreatePatch` is better suited to create patches on batch files and scripts, being a command-line application. 
+* `CreatePatch` is better suited to create patches on batch files and scripts, being a command-line application.
 * `VisualCreatePatch` is better suited to create a patch manually, since it displays a window with the patch creation process in a user friendly interface. It is also faster than the command-line counterpart.
 
 To create a patch with `CreatePatch`, the usage is:
@@ -140,17 +140,17 @@ ZPatcher uses a few external libraries to aid in it's functions:
 - [libcurl][4]
 - [Dirent interface for Windows][3] for directory navigation under Windows
 - [LZMA SDK 16.02][1] provides the LZMA2 compression algorithm.
-- [TinyXML2][2] for XML parsing
+- [RapidXML][2] for XML parsing
 - [MD5][5] implementation by L. Peter Deutsch
 
 CreatePatch and ApplyPatch uses ZPatcherLib, which uses [Dirent][3] and [LZMA SDK][1].
 
-ZUpdater also uses [libcurl][4] and [TinyXML2][2].
+ZUpdater also uses [libcurl][4] and [RapidXML][2].
 
 ## Final Considerations
 
 It is my intent to make this project as platform independent as possible. As of this writing, both offline utilities are platform independent, and the online utility should follow soon.
-I'd love to have a visual patcher for this project, but my current available time doesn't allow 
+I'd love to have a visual patcher for this project, but my current available time doesn't allow
 
 Contributions to the project are welcome! Get in touch if you want to contribute and be sure to send pull requests!
 
@@ -158,7 +158,7 @@ Last but not least, I'm not sure how to properly give credit to libraries used i
 If it's done in a wrong way, I'd certainly appreciate some help on how to format and give credit in an appropriate way. :)
 
 [1]: http://www.7-zip.org/sdk.html
-[2]: https://github.com/leethomason/tinyxml2
+[2]: http://rapidxml.sourceforge.net/
 [3]: https://github.com/tronkko/dirent
 [4]: https://curl.haxx.se/libcurl/
 [5]: https://sourceforge.net/projects/libmd5-rfc/files/
