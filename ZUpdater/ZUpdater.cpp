@@ -31,7 +31,9 @@
 #include "DownloadFileWriter.h"
 #include "LogSystem.h"
 
-#include "tinyxml2.h"
+#include "../libs/rapidxml-1.13/rapidxml.hpp"
+#include "../libs/rapidxml-1.13/rapidxml_utils.hpp"
+
 #include "curl/curl.h"
 #include "md5.h"
 #include "FileUtils.h"
@@ -72,38 +74,37 @@ namespace ZUpdater
 		int numUpdates = 0;
 		std::string description;
 
-		tinyxml2::XMLDocument document;
-		document.LoadFile(fileName.c_str());
+		rapidxml::file<> xmlFile(fileName.c_str());
+		rapidxml::xml_document<> document;
+		document.parse<0>(xmlFile.data());
 
-		tinyxml2::XMLHandle hDocument(&document);
-
-		tinyxml2::XMLHandle hZUpdater					= hDocument.FirstChildElement("zupdater");
-		tinyxml2::XMLHandle hBuilds						= hZUpdater.FirstChildElement("builds");
-
-		if (hBuilds.ToElement() == NULL)
+		rapidxml::xml_node<>* zupdaterNode = document.first_node("zupdater");
+		if (!zupdaterNode)
 		{
-			fprintf(stderr, "An error occured while attempting to parse the XML file\n");
+			fprintf(stderr, "An error occured while attempting to parse the XML file: Missing `zupdater` node.\n");
 			return false;
 		}
 
-		for (tinyxml2::XMLHandle hBuild = hBuilds.FirstChildElement("build"); true; hBuild = hBuild.NextSibling())
+		rapidxml::xml_node<>* buildsNode   = zupdaterNode->first_node("builds");
+
+		if (!buildsNode)
 		{
-			// Check if we're done here.
-			if (hBuild.ToElement() == NULL)
-			{
-				break;
-			}
+			fprintf(stderr, "An error occured while attempting to parse the XML file: Missing `builds` node.\n");
+			return false;
+		}
 
-			tinyxml2::XMLElement* versionElement		= hBuild.FirstChildElement("version").ToElement();
-			tinyxml2::XMLElement* descriptionElement	= hBuild.FirstChildElement("desc").ToElement();
+		for (rapidxml::xml_node<>* buildNode = buildsNode->first_node("build"); buildNode; buildNode = buildNode->next_sibling())
+		{
+			rapidxml::xml_node<>* versionNode     = buildNode->first_node("version");
+			rapidxml::xml_node<>* descriptionNode = buildNode->first_node("desc");
 
-			if (versionElement == NULL || descriptionElement == NULL)
+			if (!versionNode || !descriptionNode)
 			{
 				// If this information/tags aren't present, we assume it's a malformed document.
 				return false;
 			}
 
-			uint64_t buildNumber = strtoull(versionElement->GetText(), nullptr, 10);
+			const uint64_t buildNumber = strtoull(versionNode->value(), nullptr, 10);
 
 			if (buildNumber > g_LatestVersion)
 			{
@@ -119,40 +120,50 @@ namespace ZUpdater
 			++numUpdates;
 
 			// While we don't currently show the description (TODO!), add it for displaying. This will need a BIG overhaul to work correctly.
-			if (!description.empty())
+			if (rapidxml::xml_node<>* cdataNode = descriptionNode->first_node())
 			{
-				description += "<br/>";
+				if (cdataNode->type() == rapidxml::node_cdata)
+				{
+					if (!description.empty())
+					{
+						description += "<br/>";
+					}
+					description += cdataNode->value();
+				}
 			}
-			description += descriptionElement->GetText();
-
 		}
 
 		// Get the patches.
+		rapidxml::xml_node<>* patchesNode = zupdaterNode->first_node("patches");
 
-		tinyxml2::XMLHandle hPatches = hZUpdater.FirstChildElement("patches");
-
-		for (tinyxml2::XMLHandle hPatch = hPatches.FirstChildElement("patch"); true; hPatch = hPatch.NextSibling())
+		if (!patchesNode)
 		{
-			if (hPatch.ToElement() == NULL)
+			fprintf(stderr, "An error occured while attempting to parse the XML file: Missing `patches` node.\n");
+			return false;
+		}
+
+		for (rapidxml::xml_node<>* patchNode = patchesNode->first_node("patch"); true; patchNode = patchNode->next_sibling())
+		{
+			if (!patchNode)
 			{
 				break;
 			}
 
-			tinyxml2::XMLElement* srcVersionElement	= hPatch.FirstChildElement("source_version").ToElement();
-			tinyxml2::XMLElement* dstVersionElement	= hPatch.FirstChildElement("destination_version").ToElement();
+			rapidxml::xml_node<>* sourceVersionNode      = patchNode->first_node("source_version");
+			rapidxml::xml_node<>* destinationVersionNode = patchNode->first_node("destination_version");
 
-			if (dstVersionElement == NULL)
+			if (!destinationVersionNode)
 			{
 				// If this information/tags aren't present, we assume it's a malformed document.
 				return false;
 			}
 
-			tinyxml2::XMLElement* fileURLElement	= hPatch.FirstChildElement("file").ToElement();
-			tinyxml2::XMLElement* fileSizeElement	= hPatch.FirstChildElement("size").ToElement();
-			tinyxml2::XMLElement* md5Element		= hPatch.FirstChildElement("md5").ToElement();
+			rapidxml::xml_node<>* fileURLNode  = patchNode->first_node("file");
+			rapidxml::xml_node<>* fileSizeNode = patchNode->first_node("size");
+			rapidxml::xml_node<>* md5Node      = patchNode->first_node("md5");
 
 
-			if (fileSizeElement == NULL || fileURLElement == NULL || md5Element == NULL)
+			if (!fileSizeNode || !fileURLNode || !md5Node)
 			{
 				// If this information/tags aren't present, we assume it's a malformed document.
 				return false;
@@ -160,9 +171,9 @@ namespace ZUpdater
 
 			Patch patch;
 
-			if (srcVersionElement != NULL)
+			if (sourceVersionNode)
 			{
-				patch.sourceBuildNumber = atoi(srcVersionElement->GetText());
+				patch.sourceBuildNumber = atoi(sourceVersionNode->value());
 			}
 			else
 			{
@@ -170,7 +181,7 @@ namespace ZUpdater
 				patch.sourceBuildNumber = 0;
 			}
 
-			patch.targetBuildNumber = atoi(dstVersionElement->GetText());
+			patch.targetBuildNumber = atoi(destinationVersionNode->value());
 
 			if (patch.sourceBuildNumber >= patch.targetBuildNumber)
 			{
@@ -178,8 +189,8 @@ namespace ZUpdater
 				continue;
 			}
 
-			const char* fileSizeText = fileSizeElement->GetText();
-			if (fileSizeText != NULL)
+			const char* fileSizeText = fileSizeNode->value();
+			if (fileSizeText)
 			{
 				patch.fileLength = atoi(fileSizeText);
 			}
@@ -189,8 +200,8 @@ namespace ZUpdater
 			}
 
 
-			patch.fileMD5 = md5Element->GetText();
-			patch.fileURL = fileURLElement->GetText();
+			patch.fileMD5 = md5Node->value();
+			patch.fileURL = fileURLNode->value();
 
 			// If the file name is not absolute, make it so.
 
@@ -200,7 +211,6 @@ namespace ZUpdater
 			}
 
 			g_Patches.push_back(patch);
-
 		}
 
 		//////////////////////////////////////////////////////////////////////////
