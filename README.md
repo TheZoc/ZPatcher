@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/TheZoc/ZPatcher.svg?branch=master)](https://travis-ci.org/TheZoc/ZPatcher)
+[![Build Status](https://www.travis-ci.com/TheZoc/ZPatcher.svg?branch=master)](https://www.travis-ci.com/TheZoc/ZPatcher)
 [![Build status](https://ci.appveyor.com/api/projects/status/i6kr70f4x40bero5/branch/master?svg=true)](https://ci.appveyor.com/project/TheZoc/zpatcher/branch/master)
 
 # ZPatcher
