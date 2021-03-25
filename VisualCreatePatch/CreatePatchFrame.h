@@ -80,7 +80,7 @@ public:
 	static void UpdatePatchProcessedDisplay(const float& Percentage, const uint64_t& leftAmount, const uint64_t& rightAmount);
 	static void UpdateFileProcessedDisplay(const float& Percentage, std::string fileName);
 
-	static SRes OnLZMAProgress(void *p, UInt64 inSize, UInt64 outSize);
+	static SRes OnLZMAProgress(const ICompressProgress* p, UInt64 inSize, UInt64 outSize);
 
 protected:
 	friend class VisualCreatePatch;		// Allows to check if m_pThread is set to null, to end the program

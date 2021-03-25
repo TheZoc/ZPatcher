@@ -30,8 +30,8 @@ namespace ZPatcher
 	//////////////////////////////////////////////////////////////////////////
 	// Allocators
 
-	static void* LzmaAlloc(void *p, size_t size) { return malloc(size); }
-	static void LzmaFree(void *p, void *address) { free(address); }
+	static void* LzmaAlloc(ISzAllocPtr p, size_t size) { return malloc(size); }
+	static void LzmaFree(ISzAllocPtr p, void *address) { free(address); }
 	static ISzAlloc LzmaSzAlloc = { &LzmaAlloc, &LzmaFree };
 
 	//////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ namespace ZPatcher
 
 	} ISeqInStreamPlus;
 
-	SRes SeqInStreamPlus_Read(void* p, void* buf, size_t* size);
+	SRes SeqInStreamPlus_Read(const ISeqInStream* p, void* buf, size_t* size);
 
 	//////////////////////////////////////////////////////////////////////////
 	// File Write Struct
@@ -56,7 +56,7 @@ namespace ZPatcher
 		uint64_t BytesWritten;
 	} ISeqOutStreamPlus;
 
-	size_t SeqOutStreamPlus_Write(void* p, const void* buf, size_t originalSize);
+	size_t SeqOutStreamPlus_Write(const ISeqOutStream* p, const void* buf, size_t originalSize);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Progress Struct
@@ -68,7 +68,7 @@ namespace ZPatcher
 		std::string FileName;
 	} ICompressProgressPlus;
 
-	SRes OnProgress(void *p, UInt64 inSize, UInt64 outSize);
+	SRes OnProgress(ICompressProgress* p, UInt64 inSize, UInt64 outSize);
 
 	void PrintProgressBar(const float Percentage, UInt64 CurrentDownload);
 

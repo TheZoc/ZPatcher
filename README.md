@@ -139,7 +139,7 @@ ZPatcher uses a few external libraries to aid in it's functions:
 
 - [libcurl][4]
 - [Dirent interface for Windows][3] for directory navigation under Windows
-- [LZMA SDK 16.02][1] provides the LZMA2 compression algorithm.
+- [LZMA SDK 19.00][1] provides the LZMA2 compression algorithm.
 - [RapidXML][2] for XML parsing
 - [MD5][5] implementation by L. Peter Deutsch
 

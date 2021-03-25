@@ -287,6 +287,7 @@
     <ClCompile Include="source\LzmaEnc.c" />
     <ClCompile Include="source\LzmaLib.c" />
     <ClCompile Include="source\MtCoder.c" />
+    <ClCompile Include="source\MtDec.c" />
     <ClCompile Include="source\Threads.c" />
     <ClCompile Include="source\LzmaLibExports.c" />
   </ItemGroup>
@@ -303,6 +304,7 @@
     <ClInclude Include="source\LzmaEnc.h" />
     <ClInclude Include="source\LzmaLib.h" />
     <ClInclude Include="source\MtCoder.h" />
+    <ClInclude Include="source\MtDec.h" />
     <ClInclude Include="source\Threads.h" />
   </ItemGroup>
   <ItemGroup>

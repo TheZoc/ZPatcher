@@ -76,7 +76,7 @@ wxThread::ExitCode CreatePatchThread::Entry()
 
 	// Then, create the patch file.
 	// This is ugly, since there is no way to check inside CreatePatch() if the thread was destroyed. Since this is a proof of concept, it will do for now :)
-	CreatePatchFile(outputFilename, newDirectory, m_pPatchFileList, &CreatePatchFrame::UpdatePatchProcessedDisplay, { &CreatePatchFrame::OnLZMAProgress } );
+	CreatePatchFile(outputFilename, newDirectory, m_pPatchFileList, &CreatePatchFrame::UpdatePatchProcessedDisplay, { &CreatePatchFrame::OnLZMAProgress });
 
 	ZPatcher::DestroyLogSystem();
 	return (wxThread::ExitCode)0;     // success
