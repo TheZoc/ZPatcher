@@ -58,8 +58,7 @@ bool ZLancher::OnInit()
 
 	//////////////////////////////////////////////////////////////////////////
 	// Run the launcher!
-	ZLauncherFrame* f = new ZLauncherFrame(nullptr);
-	f->SetLaunchExecutableName(m_Config.LaunchExecutable);
+	ZLauncherFrame* f = new ZLauncherFrame(m_Config, nullptr);
 
 #ifdef _WIN32
 	f->SetIcon(wxICON(frame_icon));
@@ -71,7 +70,7 @@ bool ZLancher::OnInit()
 #endif
 
 	f->Show(true);
-	f->DoStartCreatePatchThread(m_Config.UpdateURL, m_Config.VersionFile, m_Config.TargetDirectory);
+	f->DoStartCreatePatchThread();
 
 	return true;
 }
@@ -117,13 +116,13 @@ bool ZLancher::ParseConfigFile(wxString ConfigFileName)
 	rapidxml::xml_node<>* launchExecutableNode	= configNode->first_node("LaunchExecutable");
 
 	// Slightly slower, WAY easier to read and maintain
-	bool bAllConfigsPresent = true;
-	if (!updateURLNode)			{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid UpdateURL tag.");		bAllConfigsPresent = false; }
-	if (!versionFileNode)		{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid VersionFile tag.");		bAllConfigsPresent = false; }
-	if (!targetDirectoryNode)	{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid TargetDirectory tag.");	bAllConfigsPresent = false; }
-	if (!launchExecutableNode)	{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid LaunchExecutable tag.");	bAllConfigsPresent = false; }
+	bool bCoreConfigsPresent = true;
+	if (!updateURLNode)			{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid UpdateURL tag.");		bCoreConfigsPresent = false; }
+	if (!versionFileNode)		{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid VersionFile tag.");		bCoreConfigsPresent = false; }
+	if (!targetDirectoryNode)	{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid TargetDirectory tag.");	bCoreConfigsPresent = false; }
+	if (!launchExecutableNode)	{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid LaunchExecutable tag.");	bCoreConfigsPresent = false; }
 
-	if (!bAllConfigsPresent)
+	if (!bCoreConfigsPresent)
 		return false;
 
 	// Fetch all the data and store it in the member struct variable 
@@ -131,6 +130,40 @@ bool ZLancher::ParseConfigFile(wxString ConfigFileName)
 	m_Config.VersionFile		= versionFileNode->value();
 	m_Config.TargetDirectory	= targetDirectoryNode->value();
 	m_Config.LaunchExecutable	= launchExecutableNode->value();
+
+	// Optional config
+	rapidxml::xml_node<>* BackgroundImageNode			= configNode->first_node("BackgroundImage");
+	rapidxml::xml_node<>* appBackgroundNode				= configNode->first_node("AppBackground");
+	rapidxml::xml_node<>* progressBarTextBackgroundNode	= configNode->first_node("ProgressBarTextBackground");
+	rapidxml::xml_node<>* progressBarTextForegroundNode	= configNode->first_node("ProgressBarTextForeground");
+
+	auto ExtractSingleColorFunc = [](const rapidxml::xml_node<>* colorNode) -> uint8_t
+	{
+		if (colorNode)
+		{
+			const int32_t color = strtol(colorNode->value(), nullptr, 10);
+			if (errno == 0)
+				return color;
+		}
+		return 0;
+	};
+
+	auto ExtractColorFunc = [&ExtractSingleColorFunc](const rapidxml::xml_node<>* targetNode) -> wxColour
+	{
+		if (targetNode)
+		{
+			const uint8_t r = ExtractSingleColorFunc(targetNode->first_node("r"));
+			const uint8_t g = ExtractSingleColorFunc(targetNode->first_node("g"));
+			const uint8_t b = ExtractSingleColorFunc(targetNode->first_node("b"));
+			return wxColour(r, g, b);
+		}
+		return wxColour(0, 0, 0);
+	};
+
+	if (BackgroundImageNode)			m_Config.BackgroundImage			= BackgroundImageNode->value();
+	if (appBackgroundNode)				m_Config.ApplicationBackground		= ExtractColorFunc(appBackgroundNode);
+	if (progressBarTextBackgroundNode)	m_Config.ProgressBarTextBackground	= ExtractColorFunc(progressBarTextBackgroundNode);
+	if (progressBarTextForegroundNode)	m_Config.ProgressBarTextForeground	= ExtractColorFunc(progressBarTextForegroundNode);
 
 	return true;
 }

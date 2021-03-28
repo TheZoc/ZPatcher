@@ -5,5 +5,23 @@
     <VersionFile>zpatcher_test.zversion</VersionFile> <!-- Name of the local file that will store the current version of the patched product -->
     <TargetDirectory>./</TargetDirectory> <!-- Target directory to be patched, relative to the executable -->
     <LaunchExecutable>Example.exe</LaunchExecutable> <!-- Executable filename to be called when the launch button is clicked -->
+    <!-- The entries below are optional and are used to customize the appearance of the launcher -->
+    <!-- If removed, they will use the system default colors -->
+    <BackgroundImage>bg-dark.png</BackgroundImage>
+    <AppBackground>
+        <r>40</r>
+        <g>40</g>
+        <b>40</b>
+    </AppBackground>
+    <ProgressBarTextBackground>
+        <r>40</r>
+        <g>40</g>
+        <b>40</b>
+    </ProgressBarTextBackground>
+    <ProgressBarTextForeground>
+        <r>195</r>
+        <g>195</g>
+        <b>195</b>
+    </ProgressBarTextForeground>
   </Config>
 </ZLauncher>
