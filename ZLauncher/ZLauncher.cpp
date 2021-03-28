@@ -25,9 +25,9 @@
 #include <wx/msw/registry.h>
 #endif
 
-wxIMPLEMENT_APP(VisualCreatePatch);
+wxIMPLEMENT_APP(ZLancher);
 
-bool VisualCreatePatch::OnInit()
+bool ZLancher::OnInit()
 {
 	if (!wxApp::OnInit())
 		return false;
@@ -76,7 +76,7 @@ bool VisualCreatePatch::OnInit()
 	return true;
 }
 
-bool VisualCreatePatch::ParseConfigFile(wxString ConfigFileName)
+bool ZLancher::ParseConfigFile(wxString ConfigFileName)
 {
 	ZPatcher::SetActiveLog("ZLauncher");
 
@@ -136,7 +136,7 @@ bool VisualCreatePatch::ParseConfigFile(wxString ConfigFileName)
 }
 
 #ifdef _WIN32
-void VisualCreatePatch::UseLatestIEVersion()
+void ZLancher::UseLatestIEVersion()
 {
 	enum E_InternetExplorer_RegKey
 	{

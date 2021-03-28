@@ -24,7 +24,7 @@ struct ZLauncherConfig
 	std::string LaunchExecutable;
 };
 
-class VisualCreatePatch : public wxApp
+class ZLancher : public wxApp
 {
 protected:
 	ZLauncherConfig m_Config;
