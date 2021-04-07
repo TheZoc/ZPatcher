@@ -7,7 +7,7 @@
     <LaunchExecutable>Example.exe</LaunchExecutable> <!-- Executable filename to be called when the launch button is clicked -->
     <!-- The entries below are optional and are used to customize the appearance of the launcher -->
     <!-- If removed, they will use the system default colors -->
-    <BackgroundImage>bg-dark.png</BackgroundImage>
+    <BackgroundImage>ZLauncherBG.png</BackgroundImage>
     <AppBackground>
         <r>40</r>
         <g>40</g>

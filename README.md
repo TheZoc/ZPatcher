@@ -6,7 +6,7 @@
 The ZPatcher suite is a set of applications developed to Create and Apply
 patches to both applicatoin and games.
 
-![ZLauncher Sample Screenshot](https://raw.githubusercontent.com/TheZoc/ZPatcher/master/images/ZLauncher.png)
+![ZLauncher Sample Screenshot](images/ZLauncher.png)
 
 Features:
 * Multiplatform, currently supporting Windows, OSX and Linux.
