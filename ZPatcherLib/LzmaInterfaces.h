@@ -72,6 +72,15 @@ namespace ZPatcher
 
 	void PrintProgressBar(const float Percentage, UInt64 CurrentDownload);
 
+	//////////////////////////////////////////////////////////////////////////
+	// Updated LZMA interfaces
+	//
+	// In the latest version of LZMA SDK, a set of parameters were converted
+	// from void pointers to named struct pointers.
+	// This typedef aids in keeping it human-readable when using the already
+	// existing structs to the new LZMA SDK.
+
+	typedef SRes(*CompressProgressCallback)(const ICompressProgress *p, UInt64 inSize, UInt64 outSize);
 }
 
 #endif // _LZMAALLOCATORS_H_

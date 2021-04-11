@@ -51,12 +51,12 @@ namespace ZPatcher
 	 * progressFunction is a pointer to a function to display the current progress. It defaults to our own PrintCreatePatchProgressBar(), but it can be changed.
 	 * LZMAProgressCallback is a pointer to a function to display the current progress of the file being compressed by the LZMA algorithm. It defaults to ZPatcher::OnProgress()
 	 */
-	bool DoCreatePatchFile(FILE* patchFile, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction = &PrintCreatePatchProgressBar, ICompressProgress LZMAProgressCallback = { reinterpret_cast<SRes(*)(const ICompressProgress *p, UInt64 inSize, UInt64 outSize)>(&OnProgress) });
+	bool DoCreatePatchFile(FILE* patchFile, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction = &PrintCreatePatchProgressBar, ICompressProgress LZMAProgressCallback = { reinterpret_cast<CompressProgressCallback>(&OnProgress) });
 
 	/**
 	 * This is a shortcut to CreatePatchFile() that receives the output patch file as a string
 	 */
-	bool CreatePatchFile(const std::string& patchFileName, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction = &PrintCreatePatchProgressBar, ICompressProgress LZMAProgressCallback = { (SRes(*)(const ICompressProgress *p, UInt64 inSize, UInt64 outSize))(&OnProgress) });
+	bool CreatePatchFile(const std::string& patchFileName, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction = &PrintCreatePatchProgressBar, ICompressProgress LZMAProgressCallback = { reinterpret_cast<CompressProgressCallback>(&OnProgress) });
 }
 
 #endif // _CREATEPATCH_H_
