@@ -130,12 +130,14 @@ CreatePatchFrame::~CreatePatchFrame()
 
 }
 
-void CreatePatchFrame::DoStartCreatePatchThread(wxString oldDirectory, wxString newDirectory, wxString outputFileName)
+void CreatePatchFrame::DoStartCreatePatchThread(wxString oldDirectory, wxString newDirectory, wxString outputFileName, bool exportXml, bool importXml)
 {
 	m_pThread = new CreatePatchThread(this);
 	m_pThread->m_oldDirectory	= oldDirectory;
 	m_pThread->m_newDirectory	= newDirectory;
 	m_pThread->m_outputFilename	= outputFileName;
+	m_pThread->m_exportXml = exportXml;
+	m_pThread->m_importXml = importXml;
 
 	if (m_pThread->Run() != wxTHREAD_NO_ERROR)
 	{

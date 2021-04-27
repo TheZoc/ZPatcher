@@ -85,7 +85,7 @@ class ZLauncherFrame : public wxFrame
 		ZLauncherConfig& m_Config;
 
 	public:
-		ZLauncherFrame(ZLauncherConfig& config, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("ZLauncher : ZPatcher v2.0 beta"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 800,600 ), long style = 0L /* wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU */ );
+		ZLauncherFrame(ZLauncherConfig& config, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("ZLauncher : ZPatcher v3.0"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 800,600 ), long style = 0L /* wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU */ );
 		~ZLauncherFrame();
 	
 protected:

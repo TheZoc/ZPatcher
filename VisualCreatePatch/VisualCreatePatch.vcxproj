@@ -212,6 +212,7 @@ copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw314u_webview_vc14x_x64
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="VisualCreatePatch.h" />
+    <ClInclude Include="XMLFileUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CreatePatchFrame.cpp" />
@@ -223,6 +224,7 @@ copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw314u_webview_vc14x_x64
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="VisualCreatePatch.cpp" />
+    <ClCompile Include="XMLFileUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VisualCreatePatch.rc" />

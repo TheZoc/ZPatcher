@@ -16,6 +16,8 @@
 #include "CreatePatchThread.h"
 #include "LogSystem.h"
 #include "FileUtils.h"
+#include "XMLFileUtils.h"
+
 
 //////////////////////////////////////////////////////////////////////////
 // Defube the events used to update the create patch frame
@@ -33,10 +35,11 @@ wxDEFINE_EVENT(wxEVT_COMMAND_UPDATE_FILE_PROCCESS_TEXT, wxThreadEvent);
 
 CreatePatchThread::CreatePatchThread(CreatePatchFrame *handler)
 	: wxThread(wxTHREAD_DETACHED)
-{
-	m_pHandler = handler;
-	m_pPatchFileList = nullptr;
-}
+	, m_exportXml(false)
+	, m_importXml(false)
+	, m_pHandler(handler)
+	, m_pPatchFileList(nullptr)
+{}
 
 CreatePatchThread::~CreatePatchThread()
 {
@@ -46,7 +49,7 @@ CreatePatchThread::~CreatePatchThread()
 		delete(m_pPatchFileList);
 
 	// the thread is being destroyed; make sure not to leave dangling pointers around
-	m_pHandler->m_pThread = NULL;
+	m_pHandler->m_pThread = nullptr;
 }
 
 wxThread::ExitCode CreatePatchThread::Entry()
@@ -69,14 +72,36 @@ wxThread::ExitCode CreatePatchThread::Entry()
 
 	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
 
-	// First, create the list of files to be added to the patch
-	m_pPatchFileList = GetDifferences(oldDirectory, newDirectory, &CreatePatchFrame::UpdateComparisonDisplay);
+	if (m_importXml)
+	{
+		// Read an XML file instead of calling GetDifferences()
+		m_pPatchFileList = new ZPatcher::PatchFileList_t();
+		if (!XMLFileUtils::LoadXMLPatchFile(outputFilename + ".xml", m_pPatchFileList))
+		{
+			wxMessageBox(wxT("Error attempting to load " + outputFilename + ".xml\nCheck the logs for more details."), wxT("Error"), wxICON_ERROR);
+			return (wxThread::ExitCode)0; // success
+		}
+	}
+	else
+	{
+		// First, create the list of files to be added to the patch
+		m_pPatchFileList = GetDifferences(oldDirectory, newDirectory, &CreatePatchFrame::UpdateComparisonDisplay);
+	}
 
 	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
 
-	// Then, create the patch file.
-	// This is ugly, since there is no way to check inside CreatePatch() if the thread was destroyed. Since this is a proof of concept, it will do for now :)
-	CreatePatchFile(outputFilename, newDirectory, m_pPatchFileList, &CreatePatchFrame::UpdatePatchProcessedDisplay, { &CreatePatchFrame::OnLZMAProgress });
+	if (m_exportXml)
+	{
+		// Export the XML with the diff data
+		XMLFileUtils::SaveXMLPatchFile(m_pPatchFileList, outputFilename + ".xml");
+		return (wxThread::ExitCode)0; // success
+	}
+	else
+	{
+		// Then, create the patch file.
+		// This is ugly, since there is no way to check inside CreatePatch() if the thread was destroyed. Check if there's a better way to do this.
+		CreatePatchFile(outputFilename, newDirectory, m_pPatchFileList, &CreatePatchFrame::UpdatePatchProcessedDisplay, { &CreatePatchFrame::OnLZMAProgress });
+	}
 
 	ZPatcher::DestroyLogSystem();
 	return (wxThread::ExitCode)0;     // success
