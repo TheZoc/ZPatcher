@@ -12,6 +12,7 @@
 
 #include "stdafx.h"
 #include "wx/thread.h"
+#include "wx/msgdlg.h"
 #include "CreatePatchFrame.h"
 #include "CreatePatchThread.h"
 #include "LogSystem.h"
