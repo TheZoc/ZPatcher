@@ -74,6 +74,7 @@ VisualCreatePatch: libs out/VisualCreatePatch
 
 ZLauncher: libs out/ZLauncher
 	@ cp -R ./ZLauncher/ZLauncherRes ./out/ZLauncherRes/
+	@ cp -n ./ZLauncher/ZLauncher.xml ./out/
 
 ZUpdater: libs out/ZUpdater
 
