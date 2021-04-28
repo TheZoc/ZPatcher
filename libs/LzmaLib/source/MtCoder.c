@@ -355,7 +355,12 @@ static THREAD_FUNC_RET_TYPE THREAD_FUNC_CALL_TYPE ThreadFunc(void *pp)
       
       #ifndef MTCODER__USE_WRITE_THREAD
       {
+// InterlockedIncrement is defined in winnt.h, not available on POSIX systems
+#ifdef _WIN32
         unsigned numFinished = (unsigned)InterlockedIncrement(&mtc->numFinishedThreads);
+#else
+        unsigned numFinished = (unsigned)__sync_fetch_and_add(&mtc->numFinishedThreads, 1);
+#endif
         if (numFinished == mtc->numStartedThreads)
           if (Event_Set(&mtc->finishedEvent) != 0)
             return SZ_ERROR_THREAD;

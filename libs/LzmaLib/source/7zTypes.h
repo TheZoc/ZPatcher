@@ -6,6 +6,20 @@
 
 #ifdef _WIN32
 /* #include <windows.h> */
+#else
+	// Undefined types/definitions that GCC needs to compile on modern 
+	// MacOS/linux, there is probably a better way of detecting this.
+	#ifndef LPVOID 
+		#define LPVOID void*
+		#define HRESULT long
+		#define BOOL _Bool
+		#define LONG unsigned long
+
+		#define S_OK 0
+		#define E_FAIL 1
+		#define TRUE True
+		#define FALSE False
+	#endif
 #endif
 
 #include <stddef.h>
