@@ -34,6 +34,11 @@ bool ZLancher::OnInit()
 
 	wxInitAllImageHandlers();
 
+	// Initialize Config colors now wx is set up
+	m_Config.ApplicationBackground = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+	m_Config.ProgressBarTextBackground = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+	m_Config.ProgressBarTextForeground = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+
 	// The configuration XML file is the same as the executable. On Windows, it replaces the .exe extension
 	wxString ConfigPath = wxStandardPaths::Get().GetExecutablePath();
 

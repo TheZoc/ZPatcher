@@ -23,9 +23,9 @@ struct ZLauncherConfig
 	std::string TargetDirectory;
 	std::string LaunchExecutable;
 	std::string BackgroundImage;
-	wxColour ApplicationBackground		{ wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW) };
-	wxColour ProgressBarTextBackground	{ wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW) };
-	wxColour ProgressBarTextForeground	{ wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT) };
+	wxColour ApplicationBackground;
+	wxColour ProgressBarTextBackground;
+	wxColour ProgressBarTextForeground;
 };
 
 class ZLancher : public wxApp
