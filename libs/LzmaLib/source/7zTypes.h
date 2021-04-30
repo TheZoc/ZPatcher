@@ -12,8 +12,6 @@
 	#include <stdbool.h>
 	#include <stdint.h>
 
-	typedef int32_t		LONG;
-	typedef uint32_t	ULONG;
 	typedef void*		LPVOID;
 	typedef int32_t		HRESULT;
 
