@@ -12,6 +12,7 @@
 	#include <stdbool.h>
 	#include <stdint.h>
 
+	typedef bool		BOOL;
 	typedef void*		LPVOID;
 	typedef int32_t		HRESULT;
 
@@ -21,6 +22,14 @@
 
 	#ifndef E_FAIL
 		#define E_FAIL	((HRESULT)0x80000008L)
+	#endif
+
+	#ifndef TRUE
+		#define TRUE	true
+	#endif
+
+	#ifndef FALSE
+		#define FALSE	false
 	#endif
 #endif
 
