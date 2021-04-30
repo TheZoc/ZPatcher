@@ -359,7 +359,7 @@ static THREAD_FUNC_RET_TYPE THREAD_FUNC_CALL_TYPE ThreadFunc(void *pp)
 #ifdef _WIN32
         unsigned numFinished = (unsigned)InterlockedIncrement(&mtc->numFinishedThreads);
 #else
-        unsigned numFinished = (unsigned)__sync_fetch_and_add(&mtc->numFinishedThreads, 1);
+        unsigned numFinished = (unsigned)__sync_add_and_fetch(&mtc->numFinishedThreads, 1);
 #endif
         if (numFinished == mtc->numStartedThreads)
           if (Event_Set(&mtc->finishedEvent) != 0)
