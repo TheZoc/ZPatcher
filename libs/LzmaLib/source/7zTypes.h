@@ -9,16 +9,20 @@
 #else
 	// Undefined types/definitions that GCC needs to compile on modern 
 	// MacOS/linux, there is probably a better way of detecting this.
-	#ifndef LPVOID 
-		#define LPVOID void*
-		#define HRESULT long
-		#define BOOL _Bool
-		#define LONG unsigned long
+	#include <stdbool.h>
+	#include <stdint.h>
 
-		#define S_OK 0
-		#define E_FAIL 1
-		#define TRUE True
-		#define FALSE False
+	typedef int32_t		LONG;
+	typedef uint32_t	ULONG;
+	typedef void*		LPVOID;
+	typedef int32_t		HRESULT;
+
+	#ifndef S_OK
+		#define S_OK	((HRESULT)0x00000000L)
+	#endif
+
+	#ifndef E_FAIL
+		#define E_FAIL	((HRESULT)0x80000008L)
 	#endif
 #endif
 
