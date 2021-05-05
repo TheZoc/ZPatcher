@@ -6,6 +6,31 @@
 
 #ifdef _WIN32
 /* #include <windows.h> */
+#else
+	// Undefined types/definitions that GCC needs to compile on modern 
+	// MacOS/linux, there is probably a better way of detecting this.
+	#include <stdbool.h>
+	#include <stdint.h>
+
+	typedef bool		BOOL;
+	typedef void*		LPVOID;
+	typedef int32_t		HRESULT;
+
+	#ifndef S_OK
+		#define S_OK	((HRESULT)0x00000000L)
+	#endif
+
+	#ifndef E_FAIL
+		#define E_FAIL	((HRESULT)0x80000008L)
+	#endif
+
+	#ifndef TRUE
+		#define TRUE	true
+	#endif
+
+	#ifndef FALSE
+		#define FALSE	false
+	#endif
 #endif
 
 #include <stddef.h>
