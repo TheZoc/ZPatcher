@@ -8,15 +8,9 @@ ARFLAGS=-rvs
 LZMADIR=./libs/LzmaLib/source
 LZMALIB=$(LZMADIR)/out/liblzma.a
 
-LIBS=-llzma -lpthread -lcurl
+WXWIDGETSDIR=./libs/wxWidgets
 
-# wxWidgets extra parameters
-WXCONFIG_EXISTS:=$(shell command -v wx-config 2> /dev/null)
-ifdef WXCONFIG_EXISTS
-	CXXFLAGS+=$(shell wx-config --cxxflags)
-	CPPFLAGS+=$(shell wx-config --cppflags)
-	LIBS+=$(shell wx-config --libs std,webview)
-endif
+LIBS=-llzma -lpthread -lcurl
 
 # ZPatcherLib files
 ZPATCHERLIBDIR=ZPatcherLib
@@ -53,18 +47,20 @@ create_output_dir=@mkdir -p $(@D)
 
 .PHONY: all lzma clean
 
-# If there is no wx-config file, assume wxWidgets is missing and only build the command-line utilities
-ifndef WXCONFIG_EXISTS
-all: lzma out/ZPatcherLib.a CreatePatch ApplyPatch ZUpdater
-else
-all: lzma out/ZPatcherLib.a CreatePatch ApplyPatch ZUpdater VisualCreatePatch ZLauncher
-endif
+all: lzma out/ZPatcherLib.a wxWidgets CreatePatch ApplyPatch ZUpdater VisualCreatePatch ZLauncher
 	@echo all done.
 
 libs: lzma out/ZPatcherLib.a
 
 lzma:
 	@ $(MAKE) -C $(LZMADIR)
+
+wxWidgets:
+	(cd $(WXWIDGETSDIR) && ./configure --disable-shared)
+	@ $(MAKE) -C $(WXWIDGETSDIR)
+	CXXFLAGS+=$(shell $(WXWIDGETSDIR)/wx-config --cxxflags)
+	CPPFLAGS+=$(shell $(WXWIDGETSDIR)/wx-config --cppflags)
+	LIBS+=$(shell $(WXWIDGETSDIR)/wx-config --libs std,webview)
 
 CreatePatch: libs out/CreatePatch
 
@@ -81,6 +77,7 @@ clean:
 	@ rm -rf obj/
 	@ rm -rf out/
 	@ $(MAKE) -C $(LZMADIR) clean
+	@ $(MAKE) -C $(WXWIDGETSDIR) clean
 
 # CreatePatch executable
 out/CreatePatch: $(CREATEPATCHOBJECTS) out/ZPatcherLib.a
