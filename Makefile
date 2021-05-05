@@ -58,6 +58,8 @@ lzma:
 wxWidgets:
 	(if test ! -f $(WXWIDGETSDIR)/Makefile ; then cd $(WXWIDGETSDIR) && ./configure --disable-shared ; fi)
 	@ $(MAKE) -C $(WXWIDGETSDIR)
+
+wxWidgetsVariables: wxWidgets
 	$(eval CXXFLAGS+=$(shell $(WXWIDGETSDIR)/wx-config --cxxflags))
 	$(eval CPPFLAGS+=$(shell $(WXWIDGETSDIR)/wx-config --cppflags))
 	$(eval LIBS+=$(shell $(WXWIDGETSDIR)/wx-config --libs std,webview))
@@ -66,9 +68,9 @@ CreatePatch: libs out/CreatePatch
 
 ApplyPatch: libs out/ApplyPatch
 
-VisualCreatePatch: libs out/VisualCreatePatch
+VisualCreatePatch: wxWidgets wxWidgetsVariables libs out/VisualCreatePatch
 
-ZLauncher: libs out/ZLauncher
+ZLauncher: wxWidgets wxWidgetsVariables libs out/ZLauncher
 	@ cp -R ./ZLauncher/ZLauncherRes ./out/ZLauncherRes/
 	@ cp -n ./ZLauncher/ZLauncher.xml ./out/ | true
 
