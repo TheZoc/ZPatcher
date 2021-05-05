@@ -4,3 +4,6 @@
 [submodule "libs/dirent"]
 	path = libs/dirent
 	url = https://github.com/tronkko/dirent.git
+[submodule "libs/wxWidgets"]
+	path = libs/wxWidgets
+	url = git@github.com:wxWidgets/wxWidgets.git
