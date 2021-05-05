@@ -6,4 +6,4 @@
 	url = https://github.com/tronkko/dirent.git
 [submodule "libs/wxWidgets"]
 	path = libs/wxWidgets
-	url = git@github.com:wxWidgets/wxWidgets.git
+	url = https://github.com/wxWidgets/wxWidgets.git
