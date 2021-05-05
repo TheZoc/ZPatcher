@@ -107,7 +107,7 @@ typedef struct _CMtCoder
     SRes writeRes;
     unsigned writeIndex;
     Byte ReadyBlocks[MTCODER__BLOCKS_MAX];
-    Int32 numFinishedThreads;
+    LONG numFinishedThreads;
   #endif
 
   unsigned numStartedThreadsLimit;

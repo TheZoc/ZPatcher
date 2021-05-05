@@ -56,11 +56,11 @@ lzma:
 	@ $(MAKE) -C $(LZMADIR)
 
 wxWidgets:
-	(cd $(WXWIDGETSDIR) && ./configure --disable-shared)
+	(if test ! -f $(WXWIDGETSDIR)/Makefile ; then cd $(WXWIDGETSDIR) && ./configure --disable-shared ; fi)
 	@ $(MAKE) -C $(WXWIDGETSDIR)
-	CXXFLAGS+=$(shell $(WXWIDGETSDIR)/wx-config --cxxflags)
-	CPPFLAGS+=$(shell $(WXWIDGETSDIR)/wx-config --cppflags)
-	LIBS+=$(shell $(WXWIDGETSDIR)/wx-config --libs std,webview)
+	$(eval CXXFLAGS+=$(shell $(WXWIDGETSDIR)/wx-config --cxxflags))
+	$(eval CPPFLAGS+=$(shell $(WXWIDGETSDIR)/wx-config --cppflags))
+	$(eval LIBS+=$(shell $(WXWIDGETSDIR)/wx-config --libs std,webview))
 
 CreatePatch: libs out/CreatePatch
 
@@ -70,7 +70,7 @@ VisualCreatePatch: libs out/VisualCreatePatch
 
 ZLauncher: libs out/ZLauncher
 	@ cp -R ./ZLauncher/ZLauncherRes ./out/ZLauncherRes/
-	@ cp -n ./ZLauncher/ZLauncher.xml ./out/
+	@ cp -n ./ZLauncher/ZLauncher.xml ./out/ | true
 
 ZUpdater: libs out/ZUpdater
 

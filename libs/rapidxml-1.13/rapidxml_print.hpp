@@ -102,9 +102,7 @@ namespace rapidxml
         ///////////////////////////////////////////////////////////////////////////
         // Internal printing operations
 
-#ifdef __GNUC__
-	#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 7)
-
+#if defined(__APPLE__) || (defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 7)))
 	// Doing template definitions first, due to GCC name lookup changes, see:
 	// https://stackoverflow.com/questions/14113923/rapidxml-print-header-has-undefined-methods
 	template<class OutIt, class Ch>
@@ -133,8 +131,6 @@ namespace rapidxml
 
 	template<class OutIt, class Ch>
 	inline OutIt print_pi_node(OutIt out, const xml_node<Ch> *node, int flags, int indent);
-
-	#endif
 #endif
 
     

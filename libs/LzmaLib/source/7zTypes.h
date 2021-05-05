@@ -11,10 +11,12 @@
 	// MacOS/linux, there is probably a better way of detecting this.
 	#include <stdbool.h>
 	#include <stdint.h>
+	#include <string.h>
 
 	typedef bool		BOOL;
 	typedef void*		LPVOID;
 	typedef int32_t		HRESULT;
+	typedef int32_t		LONG;
 
 	#ifndef S_OK
 		#define S_OK	((HRESULT)0x00000000L)
@@ -24,12 +26,14 @@
 		#define E_FAIL	((HRESULT)0x80000008L)
 	#endif
 
-	#ifndef TRUE
-		#define TRUE	true
-	#endif
+	#ifdef __GNUC__
+		#ifndef TRUE
+			#define TRUE	1
+		#endif
 
-	#ifndef FALSE
-		#define FALSE	false
+		#ifndef FALSE
+			#define FALSE	0
+		#endif
 	#endif
 #endif
 
