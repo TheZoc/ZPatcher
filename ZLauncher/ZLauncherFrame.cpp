@@ -199,11 +199,14 @@ void ZLauncherFrame::OnLaunchButtonClicked(wxCommandEvent& WXUNUSED(evt))
 
 void ZLauncherFrame::OnClickLink(wxWebViewEvent& evt)
 {
-	// Open the link on the default browser
-	wxLaunchDefaultBrowser(evt.GetURL());
+	// Prevent trying to open about:blank because the 'about' protocol isn't registered on Linux/MacOS
+	if(evt.GetURL() != wxWebViewDefaultURLStr) {
+		// Open the link on the default browser
+		wxLaunchDefaultBrowser(evt.GetURL());
 
-	// Stop navigation
-	evt.Veto();
+		// Stop navigation
+		evt.Veto();
+	}
 }
 
 void ZLauncherFrame::PaintEvent(wxPaintEvent & evt)
