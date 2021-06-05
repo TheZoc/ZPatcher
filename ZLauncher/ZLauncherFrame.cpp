@@ -191,6 +191,13 @@ void ZLauncherFrame::OnLaunchButtonClicked(wxCommandEvent& WXUNUSED(evt))
 	// System specific
 #ifdef _WIN32
 	ShellExecuteA(NULL, "open", m_LaunchExecutableName.mbc_str(), NULL, NULL, SW_SHOW);
+#elif (__APPLE__ || __linux__)
+	pid_t process = fork();
+	if (process == 0)
+	{
+		std::string exec_path = "./" + m_LaunchExecutableName.ToStdString();
+		execv(exec_path.c_str(), NULL);
+	}
 #endif
 
 	// Exit after launching the game/application
