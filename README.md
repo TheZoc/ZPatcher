@@ -1,11 +1,16 @@
 [![Build Status](https://www.travis-ci.com/TheZoc/ZPatcher.svg?branch=master)](https://www.travis-ci.com/TheZoc/ZPatcher)
 [![Build status](https://ci.appveyor.com/api/projects/status/i6kr70f4x40bero5/branch/master?svg=true)](https://ci.appveyor.com/project/TheZoc/zpatcher/branch/master)
 
-🩹 ZPatcher
-============
+🩹 ZPatcher Suite and Lib
+==========================
 
 The ZPatcher suite is a set of applications developed to Create and Apply
-patches to both applicatoin and games.
+patches to applications and games.
+
+The ZPatcherLib allows an experienced developer to add seamless patch applying
+utilities to their application and games. The interface is intuitive and easy
+to understand with the provided [Applications.md][8].
+
 
 ![ZLauncher Sample Screenshot](images/ZLauncher.png)
 
@@ -23,18 +28,33 @@ Features:
 🚀 Quick start guide
 ---------------------
 
-You will need access to a web server.
-For testing purposes, you can use WAMP, XAMPP or even Python's http.server.
+You will need access to a web server. For testing purposes, you can self-host
+the patch files using WAMP, XAMPP or even Python's http.server.
 
 1. Download and extract the latest release of ZPatcher.
 2. Copy the content of the `tests` folder to your webserver.
 3. Navigate to `ZLauncher` folder.
 4. Edit `ZLauncher.xml` and edit the `<UpdateURL>` tag to match your webserver address and save.
-5. Run `ZLauncher.exe` and it will download the sample patches and apply them.
+5. Run `ZLauncher` and it will download the sample patches and apply them.
 
 This will create and then update files as listed in `tests\patches\Logs`.
 
-You're ready to start creating patches!
+You're ready to start creating your own patches!
+
+
+🗞️ Creating a patch file
+-------------------------
+
+To create a patch file, you will need two directories, one with the "old"
+(or current) version of your application, and a second one with the "new"
+version to be updated to.
+
+Then you run one of the *Patch creation utilities*, as instructed in
+[Applications.md][8], and it will create a new patch file for you. For example:
+
+```
+CreatePatch ./old_version ./new_version example.zpatch
+```
 
 
 ⚙️ Compiling
