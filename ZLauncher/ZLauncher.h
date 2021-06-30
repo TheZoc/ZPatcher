@@ -22,9 +22,13 @@ struct ZLauncherConfig
 	std::string VersionFile;
 	std::string TargetDirectory;
 	std::string LaunchExecutable;
+	std::string BackgroundImage;
+	wxColour ApplicationBackground;
+	wxColour ProgressBarTextBackground;
+	wxColour ProgressBarTextForeground;
 };
 
-class VisualCreatePatch : public wxApp
+class ZLancher : public wxApp
 {
 protected:
 	ZLauncherConfig m_Config;

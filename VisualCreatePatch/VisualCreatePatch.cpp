@@ -43,7 +43,7 @@ bool VisualCreatePatch::OnInit()
 	m_pFrame->m_txtNewDirectory->SetLabelText(m_newDirectory);
 	m_pFrame->m_txtPatchFile->SetLabelText(m_outputFilename);
 
-	m_pFrame->DoStartCreatePatchThread(m_oldDirectory, m_newDirectory, m_outputFilename);
+	m_pFrame->DoStartCreatePatchThread(m_oldDirectory, m_newDirectory, m_outputFilename, m_exportXml, m_importXml);
 
 	return true;
 }
@@ -62,6 +62,16 @@ bool VisualCreatePatch::OnCmdLineParsed(wxCmdLineParser& parser)
 	if (!parser.Found(wxT("n"), &m_newDirectory)) return false;
 	if (!parser.Found(wxT("p"), &m_outputFilename)) return false;
 
+	if (parser.Found(wxT("x")))
+	{
+		m_exportXml = true;
+	}
+
+	if (parser.Found(wxT("i")))
+	{
+		m_importXml = true;
+	}
+
 	return true;
 }
 
@@ -69,7 +79,8 @@ void VisualCreatePatch::OnIdle(wxIdleEvent& event)
 {
 	// Check if our thread has ended - if so, automatically close the program
 	if (m_pFrame->m_pThread == nullptr)
-		wxQueueEvent(wxTheApp->GetTopWindow()->GetEventHandler(), new wxCloseEvent(wxEVT_CLOSE_WINDOW));
+		if (wxWindow* window = GetTopWindow())
+			window->Close();
 
 	// Ask for the next Idle event
 	event.RequestMore();

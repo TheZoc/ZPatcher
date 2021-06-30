@@ -59,11 +59,11 @@ class CreatePatchFrame : public wxFrame
 		wxGauge* m_progressFileProccess;
 	
 	public:
-		CreatePatchFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("CreatePatch : ZPatcher v2.0 beta"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 530,325 ), long style = wxCAPTION|wxCLOSE_BOX|wxRESIZE_BORDER|wxSYSTEM_MENU );
+		CreatePatchFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("CreatePatch : ZPatcher v3.0"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 530,325 ), long style = wxCAPTION|wxCLOSE_BOX|wxRESIZE_BORDER|wxSYSTEM_MENU );
 		~CreatePatchFrame();
 
 public:
-	void DoStartCreatePatchThread(wxString oldDirectory, wxString newDirectory, wxString outputFileName);
+	void DoStartCreatePatchThread(wxString oldDirectory, wxString newDirectory, wxString outputFileName, bool exportXml, bool importXml);
 
 	void OnComparisonProgressUpdate(wxThreadEvent& evt);
 	void OnComparisonTextUpdate(wxThreadEvent& evt);
@@ -80,7 +80,7 @@ public:
 	static void UpdatePatchProcessedDisplay(const float& Percentage, const uint64_t& leftAmount, const uint64_t& rightAmount);
 	static void UpdateFileProcessedDisplay(const float& Percentage, std::string fileName);
 
-	static SRes OnLZMAProgress(void *p, UInt64 inSize, UInt64 outSize);
+	static SRes OnLZMAProgress(const ICompressProgress* p, UInt64 inSize, UInt64 outSize);
 
 protected:
 	friend class VisualCreatePatch;		// Allows to check if m_pThread is set to null, to end the program

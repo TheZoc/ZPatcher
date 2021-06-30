@@ -19,6 +19,7 @@
     <ClCompile Include="source\Lzma2Dec.c" />
     <ClCompile Include="source\Lzma2Enc.c" />
     <ClCompile Include="source\MtCoder.c" />
+    <ClCompile Include="source\MtDec.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\7zTypes.h" />
@@ -34,6 +35,7 @@
     <ClInclude Include="source\Lzma2Dec.h" />
     <ClInclude Include="source\Lzma2Enc.h" />
     <ClInclude Include="source\MtCoder.h" />
+    <ClInclude Include="source\MtDec.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="source\resource.rc" />

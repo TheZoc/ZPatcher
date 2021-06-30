@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "LzmaInterfaces.h"
 
-SRes ZPatcher::SeqInStreamPlus_Read(void* p, void* buf, size_t* size)
+SRes ZPatcher::SeqInStreamPlus_Read(const ISeqInStream* p, void* buf, size_t* size)
 {
 	size_t originalSize = *size;
 	if (originalSize == 0)
@@ -28,7 +28,7 @@ SRes ZPatcher::SeqInStreamPlus_Read(void* p, void* buf, size_t* size)
 	return ferror(pp->file);
 }
 
-size_t ZPatcher::SeqOutStreamPlus_Write(void* p, const void* buf, size_t originalSize)
+size_t ZPatcher::SeqOutStreamPlus_Write(const ISeqOutStream* p, const void* buf, size_t originalSize)
 {
 	if (originalSize == 0)
 		return SZ_OK;
@@ -47,7 +47,7 @@ size_t ZPatcher::SeqOutStreamPlus_Write(void* p, const void* buf, size_t origina
 	//	return ferror(pp->file);
 }
 
-SRes ZPatcher::OnProgress(void *p, UInt64 inSize, UInt64 outSize)
+SRes ZPatcher::OnProgress(ICompressProgress* p, UInt64 inSize, UInt64 outSize)
 {
 	ICompressProgressPlus* progress = reinterpret_cast<ICompressProgressPlus*>(p);
 

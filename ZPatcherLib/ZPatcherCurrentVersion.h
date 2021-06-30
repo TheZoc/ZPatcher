@@ -18,9 +18,10 @@ namespace ZPatcher
 {
 	enum EZPatcher_Versions
 	{
-		ZPatch_Version_1	= 1,
-		ZPatch_Version_2	= 2,
-		ZPatch_MAX			= ZPatch_Version_2,
+		ZPatch_Version_1	= 1,		// Initial version
+		ZPatch_Version_2	= 2,		// Added file structure and size to the patch file
+		ZPatch_Version_3	= 3,		// Upgraded LZMA SDK
+		ZPatch_MAX			= ZPatch_Version_3,
 	};
 
 	static const unsigned char ZPatcher_Version = ZPatch_MAX;

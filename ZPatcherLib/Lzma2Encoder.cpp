@@ -71,7 +71,7 @@ uint64_t ZPatcher::WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, 
 	ISeqInStreamPlus inputHandler = { { &SeqInStreamPlus_Read }, source };
 	ISeqOutStreamPlus outputHandler = { { &SeqOutStreamPlus_Write }, dest, 0 };
 
-	SRes res = Lzma2Enc_Encode(hLzma2Enc, (ISeqOutStream*)&outputHandler, (ISeqInStream*)&inputHandler, (ICompressProgress*)&LZMAProgressCallbackPlus);
+	SRes res = Lzma2Enc_Encode2(hLzma2Enc, (ISeqOutStream*)&outputHandler, nullptr, nullptr, (ISeqInStream*)&inputHandler, nullptr, 0, (ICompressProgress*)&LZMAProgressCallbackPlus);
 
 	if (res != SZ_OK)
 	{

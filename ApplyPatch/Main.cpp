@@ -29,8 +29,8 @@ int main(int argc, char* argv[])
 {
 	using namespace ZPatcher;
 
-	fprintf(stderr, "\nApplyPatch : ZPatcher [%d] v2.0 beta : %s\n", ENVBITS, __DATE__);
-	fprintf(stderr, "Copyright (c) 2016-2017 Felipe \"Zoc\" Silveira : http://www.github.com/TheZoc/ZPatcher\n\n");
+	fprintf(stderr, "\nApplyPatch : ZPatcher [%d] v3.0 : %s\n", ENVBITS, __DATE__);
+	fprintf(stderr, "Copyright (c) 2016-2021 Felipe Guedes da Silveira : http://www.github.com/TheZoc/ZPatcher\n\n");
 
 	if (argc < 3)
 	{

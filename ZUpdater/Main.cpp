@@ -49,8 +49,8 @@ int main()
 {
 	using namespace ZUpdater;
 
-	fprintf(stdout, "\nZUpdater Command Line : ZPatcher [%d] v2.0 beta : %s\n", ENVBITS, __DATE__);
-	fprintf(stdout, "Copyright (c) 2016-2017 Felipe \"Zoc\" Silveira : http://www.github.com/TheZoc/ZPatcher\n\n");
+	fprintf(stdout, "\nZUpdater Command Line : ZPatcher [%d] v3.0 : %s\n", ENVBITS, __DATE__);
+	fprintf(stdout, "Copyright (c) 2016-2021 Felipe Guedes da Silveira : http://www.github.com/TheZoc/ZPatcher\n\n");
 
 #ifdef _WIN32
 	// Check if there was an update to the updater itself

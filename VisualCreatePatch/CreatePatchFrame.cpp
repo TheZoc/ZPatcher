@@ -130,12 +130,14 @@ CreatePatchFrame::~CreatePatchFrame()
 
 }
 
-void CreatePatchFrame::DoStartCreatePatchThread(wxString oldDirectory, wxString newDirectory, wxString outputFileName)
+void CreatePatchFrame::DoStartCreatePatchThread(wxString oldDirectory, wxString newDirectory, wxString outputFileName, bool exportXml, bool importXml)
 {
 	m_pThread = new CreatePatchThread(this);
 	m_pThread->m_oldDirectory	= oldDirectory;
 	m_pThread->m_newDirectory	= newDirectory;
 	m_pThread->m_outputFilename	= outputFileName;
+	m_pThread->m_exportXml = exportXml;
+	m_pThread->m_importXml = importXml;
 
 	if (m_pThread->Run() != wxTHREAD_NO_ERROR)
 	{
@@ -240,9 +242,9 @@ void CreatePatchFrame::UpdateFileProcessedDisplay(const float& Percentage, std::
 	wxQueueEvent(wxTheApp->GetTopWindow()->GetEventHandler(), updateFileProccesedTextEvent);
 }
 
-SRes CreatePatchFrame::OnLZMAProgress(void *p, UInt64 inSize, UInt64 outSize)
+SRes CreatePatchFrame::OnLZMAProgress(const ICompressProgress *p, UInt64 inSize, UInt64 outSize)
 {
-	ZPatcher::ICompressProgressPlus* progress = reinterpret_cast<ZPatcher::ICompressProgressPlus*>(p);
+	const ZPatcher::ICompressProgressPlus* progress = reinterpret_cast<const ZPatcher::ICompressProgressPlus*>(p);
 	UpdateFileProcessedDisplay((((float)inSize / (float)progress->TotalSize)*100.0f), progress->FileName);
 	return SZ_OK;
 }
