@@ -112,9 +112,9 @@
     </ResourceCompile>
     <PostBuildEvent>
       <Message>Copying required files</Message>
-      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase314ud_vc14x.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw314ud_core_vc14x.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw314ud_webview_vc14x.dll" "$(OutDir)" 1&gt;NUL
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase316ud_vc14x.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw316ud_core_vc14x.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw316ud_webview_vc14x.dll" "$(OutDir)" 1&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncher.xml" "$(OutDir)" 1&gt;NUL
 mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL</Command>
@@ -143,9 +143,9 @@ copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL
     </ResourceCompile>
     <PostBuildEvent>
       <Message>Copying required files</Message>
-      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase314ud_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw314ud_core_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw314ud_webview_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase316ud_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw316ud_core_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw316ud_webview_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncher.xml" "$(OutDir)" 1&gt;NUL
 mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL</Command>
@@ -176,9 +176,9 @@ copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL
     </ResourceCompile>
     <PostBuildEvent>
       <Message>Copying required files</Message>
-      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase314u_vc14x.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw314u_core_vc14x.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw314u_webview_vc14x.dll" "$(OutDir)" 1&gt;NUL
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase316u_vc14x.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw316u_core_vc14x.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw316u_webview_vc14x.dll" "$(OutDir)" 1&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncher.xml" "$(OutDir)" 1&gt;NUL
 mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL</Command>
@@ -209,9 +209,9 @@ copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL
     </ResourceCompile>
     <PostBuildEvent>
       <Message>Copying required files</Message>
-      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase314u_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw314u_core_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw314u_webview_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase316u_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw316u_core_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw316u_webview_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncher.xml" "$(OutDir)" 1&gt;NUL
 mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL</Command>
