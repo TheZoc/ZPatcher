@@ -1,24 +1,16 @@
 CXX=g++
 AR=ar
 CXXFLAGS=-c -Wall -Wextra -std=c++14 -Wno-unused-parameter -Wno-unused-variable -D_FILE_OFFSET_BITS=64
-CPPFLAGS=-I$(ZPATCHERLIBDIR) -Ilibs/LzmaLib/source -Ilibs/tinyxml2
-LDFLAGS=-L$(LZMADIR)/out -L$(TINYXML2DIR)
+CPPFLAGS=-I$(ZPATCHERLIBDIR) -Ilibs/LzmaLib/source
+LDFLAGS=-L$(LZMADIR)/out
 ARFLAGS=-rvs
 
 LZMADIR=./libs/LzmaLib/source
 LZMALIB=$(LZMADIR)/out/liblzma.a
 
-TINYXML2DIR=./libs/tinyxml2
+WXWIDGETSDIR=./libs/wxWidgets
 
-LIBS=-llzma -lpthread -lcurl -ltinyxml2
-
-# wxWidgets extra parameters
-WXCONFIG_EXISTS:=$(shell command -v wx-config 2> /dev/null)
-ifdef WXCONFIG_EXISTS
-	CXXFLAGS+=$(shell wx-config --cxxflags)
-	CPPFLAGS+=$(shell wx-config --cppflags)
-	LIBS+=$(shell wx-config --libs std,webview)
-endif
+LIBS=-llzma -lpthread -lcurl
 
 # ZPatcherLib files
 ZPATCHERLIBDIR=ZPatcherLib
@@ -53,32 +45,34 @@ ZUPDATEROBJECTS=$(addprefix obj/$(ZUPDATERDIR)/, $(notdir $(ZUPDATERSOURCES:.cpp
 # A directory creation utility
 create_output_dir=@mkdir -p $(@D)
 
-.PHONY: all lzma tinyxml2 clean
+.PHONY: all lzma clean
 
-# If there is no wx-config file, assume wxWidgets is missing and only build the command-line utilities
-ifndef WXCONFIG_EXISTS
-all: lzma tinyxml2 out/ZPatcherLib.a CreatePatch ApplyPatch ZUpdater
-else
-all: lzma tinyxml2 out/ZPatcherLib.a CreatePatch ApplyPatch ZUpdater VisualCreatePatch ZLauncher
-endif
+all: lzma out/ZPatcherLib.a wxWidgets CreatePatch ApplyPatch ZUpdater VisualCreatePatch ZLauncher
 	@echo all done.
 
-libs: lzma tinyxml2 out/ZPatcherLib.a
+libs: lzma out/ZPatcherLib.a
 
 lzma:
 	@ $(MAKE) -C $(LZMADIR)
 
-tinyxml2:
-	@ $(MAKE) -C $(TINYXML2DIR)
+wxWidgets:
+	(if test ! -f $(WXWIDGETSDIR)/Makefile ; then cd $(WXWIDGETSDIR) && ./configure --disable-shared ; fi)
+	@ $(MAKE) -C $(WXWIDGETSDIR)
+
+wxWidgetsVariables: wxWidgets
+	$(eval CXXFLAGS+=$(shell $(WXWIDGETSDIR)/wx-config --cxxflags))
+	$(eval CPPFLAGS+=$(shell $(WXWIDGETSDIR)/wx-config --cppflags))
+	$(eval LIBS+=$(shell $(WXWIDGETSDIR)/wx-config --libs std,webview))
 
 CreatePatch: libs out/CreatePatch
 
 ApplyPatch: libs out/ApplyPatch
 
-VisualCreatePatch: libs out/VisualCreatePatch
+VisualCreatePatch: wxWidgets wxWidgetsVariables libs out/VisualCreatePatch
 
-ZLauncher: libs out/ZLauncher
+ZLauncher: wxWidgets wxWidgetsVariables libs out/ZLauncher
 	@ cp -R ./ZLauncher/ZLauncherRes ./out/ZLauncherRes/
+	@ cp -n ./ZLauncher/ZLauncher.xml ./out/ | true
 
 ZUpdater: libs out/ZUpdater
 
@@ -86,7 +80,7 @@ clean:
 	@ rm -rf obj/
 	@ rm -rf out/
 	@ $(MAKE) -C $(LZMADIR) clean
-	@ $(MAKE) -C $(TINYXML2DIR) clean
+	@ $(MAKE) -C $(WXWIDGETSDIR) clean
 
 # CreatePatch executable
 out/CreatePatch: $(CREATEPATCHOBJECTS) out/ZPatcherLib.a

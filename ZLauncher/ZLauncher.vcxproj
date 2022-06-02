@@ -96,25 +96,27 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WXUSINGDLL;CURL_STATICLIB;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\libs\curl\include\;$(SolutionDir)\libs\tinyxml2\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\libs\curl\include\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\LzmaLib\;$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\ZPatcherLib\;$(SolutionDir)\$(Configuration)-Lib\;$(SolutionDir)\libs\wxWidgets\lib\vc_dll;$(SolutionDir)\libs\curl\build\Win32\VC14\LIB Debug - DLL Windows SSPI;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;tinyxml2.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;crypt32.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;crypt32.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
       <Message>Copying required files</Message>
-      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase310ud_vc140.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310ud_core_vc140.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310ud_webview_vc140.dll" "$(OutDir)" 1&gt;NUL
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase316ud_vc14x.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw316ud_core_vc14x.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw316ud_webview_vc14x.dll" "$(OutDir)" 1&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncher.xml" "$(OutDir)" 1&gt;NUL
-mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL 
+mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -125,25 +127,27 @@ copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WXUSINGDLL;CURL_STATICLIB;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\libs\curl\include\;$(SolutionDir)\libs\tinyxml2\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\libs\curl\include\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\LzmaLib\;$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\ZPatcherLib\;$(SolutionDir)\bin\$(Platform)-$(Configuration)-Lib\;$(SolutionDir)\libs\wxWidgets\lib\vc_x64_dll;$(SolutionDir)\libs\curl\build\Win64\VC14\LIB Debug - DLL Windows SSPI;$(SolutionDir)\bin\tinyxml2\x64-Debug-Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;tinyxml2.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;crypt32.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\LzmaLib\;$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\ZPatcherLib\;$(SolutionDir)\bin\$(Platform)-$(Configuration)-Lib\;$(SolutionDir)\libs\wxWidgets\lib\vc_x64_dll;$(SolutionDir)\libs\curl\build\Win64\VC14\LIB Debug - DLL Windows SSPI;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;crypt32.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
       <Message>Copying required files</Message>
-      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase310ud_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310ud_core_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310ud_webview_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase316ud_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw316ud_core_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw316ud_webview_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncher.xml" "$(OutDir)" 1&gt;NUL
-mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL 
+mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -156,7 +160,8 @@ copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WXUSINGDLL;CURL_STATICLIB;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\libs\curl\include\;$(SolutionDir)\libs\tinyxml2\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\libs\curl\include\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -164,18 +169,18 @@ copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\LzmaLib\;$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\ZPatcherLib\;$(SolutionDir)\$(Configuration)-Lib\;$(SolutionDir)\libs\wxWidgets\lib\vc_dll;$(SolutionDir)\libs\curl\build\Win32\VC14\LIB Release - DLL Windows SSPI;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;tinyxml2.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;crypt32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;crypt32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
       <Message>Copying required files</Message>
-      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase310u_vc140.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310u_core_vc140.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw310u_webview_vc140.dll" "$(OutDir)" 1&gt;NUL
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxbase316u_vc14x.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw316u_core_vc14x.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_dll\wxmsw316u_webview_vc14x.dll" "$(OutDir)" 1&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncher.xml" "$(OutDir)" 1&gt;NUL
-mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL 
+mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -188,26 +193,27 @@ copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WXUSINGDLL;CURL_STATICLIB;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\libs\curl\include\;$(SolutionDir)\libs\tinyxml2\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include;$(SolutionDir)\libs\wxWidgets\include\msvc;$(SolutionDir)\libs\LzmaLib\Source\;$(SolutionDir)\libs\curl\include\;$(SolutionDir)\ZPatcherLib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\LzmaLib\;$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\ZPatcherLib\;$(SolutionDir)\bin\$(Platform)-$(Configuration)-Lib\;$(SolutionDir)\libs\wxWidgets\lib\vc_x64_dll;$(SolutionDir)\libs\curl\build\Win64\VC14\LIB Release - DLL Windows SSPI;$(SolutionDir)\bin\tinyxml2\x64-Release-Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;tinyxml2.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;crypt32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\LzmaLib\;$(SolutionDir)\_Output\$(PlatformTarget)\$(Configuration)\ZPatcherLib\;$(SolutionDir)\bin\$(Platform)-$(Configuration)-Lib\;$(SolutionDir)\libs\wxWidgets\lib\vc_x64_dll;$(SolutionDir)\libs\curl\build\Win64\VC14\LIB Release - DLL Windows SSPI;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>LzmaLib.lib;ZPatcherLib.lib;ws2_32.lib;wininet.lib;wldap32.lib;comctl32.lib;crypt32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs\wxWidgets\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
       <Message>Copying required files</Message>
-      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase310u_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310u_core_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
-copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw310u_webview_vc140_x64.dll" "$(OutDir)" 1&gt;NUL
+      <Command>copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxbase316u_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw316u_core_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
+copy /y "$(SolutionDir)libs\wxWidgets\lib\vc_x64_dll\wxmsw316u_webview_vc14x_x64.dll" "$(OutDir)" 1&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncher.xml" "$(OutDir)" 1&gt;NUL
-mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL 
+mkdir "$(OutDir)ZLauncherRes\" 2&gt;NUL
 copy /y "$(SolutionDir)ZLauncher\ZLauncherRes" "$(OutDir)ZLauncherRes\" 1&gt;NUL</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

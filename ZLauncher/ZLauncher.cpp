@@ -15,22 +15,29 @@
 #include "ZLauncher.h"
 #include "ZLauncherFrame.h"
 #include "LogSystem.h"
-#include "tinyxml2.h"
-#include <wx/stdpaths.h>
+
+#include "../libs/rapidxml-1.13/rapidxml.hpp"
+#include "../libs/rapidxml-1.13/rapidxml_utils.hpp"
+
 
 #ifdef _WIN32
 // Allows us to set the correct version of Internet Explorer for changelog display
 #include <wx/msw/registry.h>
 #endif
 
-wxIMPLEMENT_APP(VisualCreatePatch);
+wxIMPLEMENT_APP(ZLancher);
 
-bool VisualCreatePatch::OnInit()
+bool ZLancher::OnInit()
 {
 	if (!wxApp::OnInit())
 		return false;
 
 	wxInitAllImageHandlers();
+
+	// Initialize Config colors now wx is set up
+	m_Config.ApplicationBackground = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+	m_Config.ProgressBarTextBackground = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+	m_Config.ProgressBarTextForeground = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 
 	// The configuration XML file is the same as the executable. On Windows, it replaces the .exe extension
 	wxString ConfigPath = wxStandardPaths::Get().GetExecutablePath();
@@ -56,8 +63,7 @@ bool VisualCreatePatch::OnInit()
 
 	//////////////////////////////////////////////////////////////////////////
 	// Run the launcher!
-	ZLauncherFrame* f = new ZLauncherFrame(nullptr);
-	f->SetLaunchExecutableName(m_Config.LaunchExecutable);
+	ZLauncherFrame* f = new ZLauncherFrame(m_Config, nullptr);
 
 #ifdef _WIN32
 	f->SetIcon(wxICON(frame_icon));
@@ -69,72 +75,106 @@ bool VisualCreatePatch::OnInit()
 #endif
 
 	f->Show(true);
-	f->DoStartCreatePatchThread(m_Config.UpdateURL, m_Config.VersionFile, m_Config.TargetDirectory);
+	f->DoStartCreatePatchThread();
 
 	return true;
 }
 
-bool VisualCreatePatch::ParseConfigFile(wxString ConfigFileName)
+bool ZLancher::ParseConfigFile(wxString ConfigFileName)
 {
 	ZPatcher::SetActiveLog("ZLauncher");
-	tinyxml2::XMLDocument document;
 
 	ZPatcher::Log(ZPatcher::LOG, "Opening %s config file.", ConfigFileName.ToStdString().c_str());
 
-	document.LoadFile(ConfigFileName.c_str());
-	ZPatcher::Log(ZPatcher::LOG, "Reading config file.");
-
-	if (document.Error())
+	rapidxml::xml_document<> document;
+	rapidxml::file<> xmlFile(ConfigFileName.c_str());
+	try
 	{
-		ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to open the XML file for reading.");
+		document.parse<0>(xmlFile.data());
+	}
+	catch (const rapidxml::parse_error& e)
+	{
+		ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to open the XML config file for reading: %s", e.what());
 		return false;
 	}
 
-	tinyxml2::XMLHandle hDocument(&document);
-
 	// Get the ZLauncher opening tag
-	tinyxml2::XMLHandle hZLauncher = hDocument.FirstChildElement("ZLauncher");
-	if (hZLauncher.ToElement() == NULL)
+	rapidxml::xml_node<>* zlauncherNode = document.first_node("ZLauncher");
+	if (!zlauncherNode)
 	{
 		ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid ZLauncher tag.");
 		return false;
 	}
 
 	// Get the Config tag, child of ZLauncher
-	tinyxml2::XMLHandle hConfig = hZLauncher.FirstChildElement("Config");
-	if (hConfig.ToElement() == NULL)
+	rapidxml::xml_node<>* configNode = zlauncherNode->first_node("Config");
+	if (!configNode)
 	{
 		ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid Config tag.");
 		return false;
 	}
 	
 	// Get all configuration data here
-	tinyxml2::XMLHandle hUpdateURL			= hConfig.FirstChildElement("UpdateURL");
-	tinyxml2::XMLHandle hVersionFile		= hConfig.FirstChildElement("VersionFile");
-	tinyxml2::XMLHandle hTargetDirectory	= hConfig.FirstChildElement("TargetDirectory");
-	tinyxml2::XMLHandle hLaunchExecutable	= hConfig.FirstChildElement("LaunchExecutable");
+	rapidxml::xml_node<>* updateURLNode			= configNode->first_node("UpdateURL");
+	rapidxml::xml_node<>* versionFileNode		= configNode->first_node("VersionFile");
+	rapidxml::xml_node<>* targetDirectoryNode	= configNode->first_node("TargetDirectory");
+	rapidxml::xml_node<>* launchExecutableNode	= configNode->first_node("LaunchExecutable");
 
 	// Slightly slower, WAY easier to read and maintain
-	bool bAllConfigsPresent = true;
-	if (hUpdateURL.ToElement() == NULL)			{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid UpdateURL tag.");		bAllConfigsPresent = false; }
-	if (hVersionFile.ToElement() == NULL)		{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid VersionFile tag.");		bAllConfigsPresent = false; }
-	if (hTargetDirectory.ToElement() == NULL)	{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid TargetDirectory tag.");	bAllConfigsPresent = false; }
-	if (hLaunchExecutable.ToElement() == NULL)	{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid LaunchExecutable tag.");	bAllConfigsPresent = false; }
+	bool bCoreConfigsPresent = true;
+	if (!updateURLNode)			{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid UpdateURL tag.");		bCoreConfigsPresent = false; }
+	if (!versionFileNode)		{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid VersionFile tag.");		bCoreConfigsPresent = false; }
+	if (!targetDirectoryNode)	{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid TargetDirectory tag.");	bCoreConfigsPresent = false; }
+	if (!launchExecutableNode)	{ ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to parse the XML file: Missing or Invalid LaunchExecutable tag.");	bCoreConfigsPresent = false; }
 
-	if (!bAllConfigsPresent)
+	if (!bCoreConfigsPresent)
 		return false;
 
 	// Fetch all the data and store it in the member struct variable 
-	m_Config.UpdateURL			= hUpdateURL.ToElement()->GetText();
-	m_Config.VersionFile		= hVersionFile.ToElement()->GetText();
-	m_Config.TargetDirectory	= hTargetDirectory.ToElement()->GetText();
-	m_Config.LaunchExecutable	= hLaunchExecutable.ToElement()->GetText();
+	m_Config.UpdateURL			= updateURLNode->value();
+	m_Config.VersionFile		= versionFileNode->value();
+	m_Config.TargetDirectory	= targetDirectoryNode->value();
+	m_Config.LaunchExecutable	= launchExecutableNode->value();
+
+	// Optional config
+	rapidxml::xml_node<>* BackgroundImageNode			= configNode->first_node("BackgroundImage");
+	rapidxml::xml_node<>* appBackgroundNode				= configNode->first_node("AppBackground");
+	rapidxml::xml_node<>* progressBarTextBackgroundNode	= configNode->first_node("ProgressBarTextBackground");
+	rapidxml::xml_node<>* progressBarTextForegroundNode	= configNode->first_node("ProgressBarTextForeground");
+
+	auto ExtractSingleColorFunc = [](const rapidxml::xml_node<>* colorNode) -> uint8_t
+	{
+		if (colorNode)
+		{
+			const int32_t color = strtol(colorNode->value(), nullptr, 10);
+			if (errno == 0)
+				return color;
+		}
+		return 0;
+	};
+
+	auto ExtractColorFunc = [&ExtractSingleColorFunc](const rapidxml::xml_node<>* targetNode) -> wxColour
+	{
+		if (targetNode)
+		{
+			const uint8_t r = ExtractSingleColorFunc(targetNode->first_node("r"));
+			const uint8_t g = ExtractSingleColorFunc(targetNode->first_node("g"));
+			const uint8_t b = ExtractSingleColorFunc(targetNode->first_node("b"));
+			return wxColour(r, g, b);
+		}
+		return wxColour(0, 0, 0);
+	};
+
+	if (BackgroundImageNode)			m_Config.BackgroundImage			= BackgroundImageNode->value();
+	if (appBackgroundNode)				m_Config.ApplicationBackground		= ExtractColorFunc(appBackgroundNode);
+	if (progressBarTextBackgroundNode)	m_Config.ProgressBarTextBackground	= ExtractColorFunc(progressBarTextBackgroundNode);
+	if (progressBarTextForegroundNode)	m_Config.ProgressBarTextForeground	= ExtractColorFunc(progressBarTextForegroundNode);
 
 	return true;
 }
 
 #ifdef _WIN32
-void VisualCreatePatch::UseLatestIEVersion()
+void ZLancher::UseLatestIEVersion()
 {
 	enum E_InternetExplorer_RegKey
 	{

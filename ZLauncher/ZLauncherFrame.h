@@ -29,6 +29,7 @@
 #include "curl/curl.h"
 
 class ZLauncherThread;
+struct ZLauncherConfig;
 
 //////////////////////////////////////////////////////////////////////////
 // Theme Files
@@ -81,8 +82,10 @@ class ZLauncherFrame : public wxFrame
 		wxBitmap m_CloseButtonImg_Focus;
 		wxBitmap m_CloseButtonImg_Hover;
 
+		ZLauncherConfig& m_Config;
+
 	public:
-		ZLauncherFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("ZLauncher : ZPatcher v2.0 beta"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 800,600 ), long style = 0L /* wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU */ );
+		ZLauncherFrame(ZLauncherConfig& config, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("ZLauncher : ZPatcher v3.0"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 800,600 ), long style = 0L /* wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU */ );
 		~ZLauncherFrame();
 	
 protected:
@@ -116,7 +119,7 @@ public:
 
 	//////////////////////////////////////////////////////////////////////////
 	// Thread communication
-	void DoStartCreatePatchThread(const wxString& updateURL, const wxString& versionFile, const wxString& targetDirectory);
+	void DoStartCreatePatchThread();
 
 	void OnProgressBarUpdate(wxThreadEvent& evt);
 	void OnProgressTextUpdate(wxThreadEvent& evt);

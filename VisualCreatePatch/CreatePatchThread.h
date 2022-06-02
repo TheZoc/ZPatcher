@@ -42,6 +42,8 @@ public:
 	wxString m_oldDirectory;
 	wxString m_newDirectory;
 	wxString m_outputFilename;
+	bool     m_exportXml;
+	bool     m_importXml;
 
 protected:
 	virtual ExitCode Entry();

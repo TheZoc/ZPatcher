@@ -14,6 +14,7 @@
 #include <wx/dcbuffer.h>
 #include <sstream>
 #include <iomanip>
+#include "ZLauncher.h"
 #include "ZLauncherFrame.h"
 #include "ZLauncherThread.h"
 #include "DownloadFileWriter.h"
@@ -26,41 +27,16 @@ wxString g_PatchHTMLHeaderFileName = PATCH_HEADER_HTML_FILE;
 // This will hold the HTML header data for the patch notes window. Please note, it must include an open <body> tag as the last tag!
 static wxString PatchHTMLHeader = "";
 
-
-//////////////////////////////////////////////////////////////////////////
-// Comment this out to use system colors!
-#define DARK_COLORS
-
-//////////////////////////////////////////////////////////////////////////
-#ifdef DARK_COLORS
-
-static const wxString g_BackgroundImage = (ZLauncherFrame::GetResourcesDirectory() + BACKGROUND_IMAGE);
-
-#define APPLICATION_BACKGROUND	wxColour( 40, 40, 40 )
-#define COMPONENT_BACKGROUND	wxColour( 30, 30, 30 )
-#define COMPONENT_TEXT_COLOR	wxColour( 195, 195, 195 )
-
-#else
-
-static const wxString g_BackgroundImage = wxEmptyString;
-
-#define APPLICATION_BACKGROUND	wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW )
-#define COMPONENT_BACKGROUND	wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW )
-#define COMPONENT_TEXT_COLOR	wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT )
-
-// PatchHTMLHeader = "<!DOCTYPE html><html><head><style type=\"text/css\">body {color: #000000; background-color: #FFFFFF; }</style></head><body>";
-
-#endif
-
-
 ///////////////////////////////////////////////////////////////////////////
 
-ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+ZLauncherFrame::ZLauncherFrame(ZLauncherConfig& config, wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+	: wxFrame( parent, id, title, pos, size, style )
+	, m_Config(config)
 {
 	wxImage::SetDefaultLoadFlags(wxImage::GetDefaultLoadFlags() & ~wxImage::Load_Verbose);
 
 	this->SetSizeHints( wxSize( 500,300 ), wxDefaultSize );
-	this->SetBackgroundColour( APPLICATION_BACKGROUND );
+	this->SetBackgroundColour( m_Config.ApplicationBackground );
 	
 	// GridBagSizer for the whole frame
 	wxGridBagSizer* gridBagSizerFrame;
@@ -101,7 +77,7 @@ ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString&
 	m_btnClose->SetBitmapPressed(m_CloseButtonImg_Pressed);
 	m_btnClose->SetBitmapFocus(m_CloseButtonImg_Focus);
 	m_btnClose->SetBitmapCurrent(m_CloseButtonImg_Hover);
-	m_btnClose->SetBackgroundColour(APPLICATION_BACKGROUND);
+	m_btnClose->SetBackgroundColour(m_Config.ApplicationBackground);
 	m_btnClose->Enable(true);
 
 	gridBagSizerRight->Add( m_btnClose, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
@@ -122,8 +98,8 @@ ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString&
 	
 	// Text for the Progress Bar
 	m_txtProgress = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxNO_BORDER );
-	m_txtProgress->SetForegroundColour( COMPONENT_TEXT_COLOR );
-	m_txtProgress->SetBackgroundColour( APPLICATION_BACKGROUND );
+	m_txtProgress->SetForegroundColour(m_Config.ProgressBarTextForeground);
+	m_txtProgress->SetBackgroundColour(m_Config.ProgressBarTextBackground);
 	
 	gridBagSizerFooter->Add( m_txtProgress, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALIGN_BOTTOM|wxEXPAND, 5 );
 
@@ -150,7 +126,7 @@ ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString&
 	m_btnLaunch->SetBitmapPressed(m_LaunchButtonImg_Pressed);
 	m_btnLaunch->SetBitmapFocus(m_LaunchButtonImg_Focus);
 	m_btnLaunch->SetBitmapCurrent(m_LaunchButtonImg_Hover);
-	m_btnLaunch->SetBackgroundColour(APPLICATION_BACKGROUND);
+	m_btnLaunch->SetBackgroundColour(m_Config.ApplicationBackground);
 	m_btnLaunch->Enable( false );
 
 	gridBagSizerFrame->Add( m_btnLaunch, wxGBPosition( 1, 1 ), wxGBSpan( 1, 1 ), wxALIGN_BOTTOM|wxALL, 5 );
@@ -164,9 +140,8 @@ ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString&
 
 	// Set background image, if any.
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
-	if (g_BackgroundImage != wxEmptyString)
-		m_backgroundImg.LoadFile(g_BackgroundImage, wxBITMAP_TYPE_PNG);
-
+	if (!m_Config.BackgroundImage.empty())
+		m_backgroundImg.LoadFile((ZLauncherFrame::GetResourcesDirectory() + m_Config.BackgroundImage), wxBITMAP_TYPE_ANY);
 
 	// Bind Message Events
 	Bind(wxEVT_PAINT, &ZLauncherFrame::PaintEvent, this);
@@ -197,15 +172,13 @@ ZLauncherFrame::ZLauncherFrame( wxWindow* parent, wxWindowID id, const wxString&
 	{
 		wxMessageBox(wxString::Format("HTML Header file missing. Make sure it can be found in the following directory:\n %s", GetResourcesDirectory() + g_PatchHTMLHeaderFileName), "Missing file", wxOK| wxICON_EXCLAMATION);
 	}
+
+	// Set executable name
+	m_LaunchExecutableName = m_Config.LaunchExecutable;
 }
 
 ZLauncherFrame::~ZLauncherFrame()
 {
-}
-
-void ZLauncherFrame::SetLaunchExecutableName(wxString exe)
-{
-	m_LaunchExecutableName = exe;
 }
 
 void ZLauncherFrame::OnCloseButtonClicked(wxCommandEvent& WXUNUSED(evt))
@@ -218,6 +191,13 @@ void ZLauncherFrame::OnLaunchButtonClicked(wxCommandEvent& WXUNUSED(evt))
 	// System specific
 #ifdef _WIN32
 	ShellExecuteA(NULL, "open", m_LaunchExecutableName.mbc_str(), NULL, NULL, SW_SHOW);
+#elif (__APPLE__ || __linux__)
+	pid_t process = fork();
+	if (process == 0)
+	{
+		std::string exec_path = "./" + m_LaunchExecutableName.ToStdString();
+		execv(exec_path.c_str(), NULL);
+	}
 #endif
 
 	// Exit after launching the game/application
@@ -226,11 +206,14 @@ void ZLauncherFrame::OnLaunchButtonClicked(wxCommandEvent& WXUNUSED(evt))
 
 void ZLauncherFrame::OnClickLink(wxWebViewEvent& evt)
 {
-	// Open the link on the default browser
-	wxLaunchDefaultBrowser(evt.GetURL());
+	// Prevent trying to open about:blank because the 'about' protocol isn't registered on Linux/MacOS
+	if(evt.GetURL() != wxWebViewDefaultURLStr) {
+		// Open the link on the default browser
+		wxLaunchDefaultBrowser(evt.GetURL());
 
-	// Stop navigation
-	evt.Veto();
+		// Stop navigation
+		evt.Veto();
+	}
 }
 
 void ZLauncherFrame::PaintEvent(wxPaintEvent & evt)
@@ -247,14 +230,14 @@ void ZLauncherFrame::RenderFrame(wxDC& dc)
 	}
 	else
 	{
-		dc.SetBackground( APPLICATION_BACKGROUND );
+		dc.SetBackground(m_Config.ApplicationBackground);
 		dc.Clear();
 	}
 }
 
-void ZLauncherFrame::DoStartCreatePatchThread(const wxString& updateURL, const wxString& versionFile, const wxString& targetDirectory)
+void ZLauncherFrame::DoStartCreatePatchThread()
 {
-	m_pThread = new ZLauncherThread(this, updateURL, versionFile, targetDirectory);
+	m_pThread = new ZLauncherThread(this, m_Config.UpdateURL, m_Config.VersionFile, m_Config.TargetDirectory);
 
 	if (m_pThread->Run() != wxTHREAD_NO_ERROR)
 	{

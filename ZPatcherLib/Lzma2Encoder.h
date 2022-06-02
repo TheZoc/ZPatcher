@@ -38,7 +38,7 @@ namespace ZPatcher
 	uint64_t WriteCompressedFile(CLzma2EncHandle hLzma2Enc, FILE* source, FILE* dest, ICompressProgressPlus LZMAProgressCallbackPlus);
 
 	// Write the modified file data to the patch file, uses the source file name as param, instead of the file handle.
-	bool WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourceFileName, FILE* dest, ICompressProgress LZMAProgressCallback = { &OnProgress });
+	bool WriteCompressedFile(CLzma2EncHandle hLzma2Enc, std::string& sourceFileName, FILE* dest, ICompressProgress LZMAProgressCallback = { reinterpret_cast<CompressProgressCallback>(&OnProgress) });
 }
 
 #endif // _LZMA2ENCODER_H_
