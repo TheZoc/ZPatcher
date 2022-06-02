@@ -24,7 +24,8 @@ by adding the library to it.
 This repository also inclues a fully featured standalone implementation for the
 ZPatcher lib!
 
-Features:
+### Features:
+
 * Multiplatform, currently supporting Windows, OSX and Linux.
 * Open Source
 * Easy to Create patch files for your game/application
@@ -35,6 +36,7 @@ Features:
 * (Launcher Only) Display the Change Log for your patches
 
 🚀 ZLauncher quick start guide: [ZLauncherQuickStartGuide.md][9]
+
 📖 ZPatcher Suite user guide: [ZPatcherSuiteApplications.md][8]
 
 
