@@ -28,13 +28,6 @@
 namespace ZPatcher
 {
 	//////////////////////////////////////////////////////////////////////////
-	// Allocators
-
-	static void* LzmaAlloc(ISzAllocPtr p, size_t size) { return malloc(size); }
-	static void LzmaFree(ISzAllocPtr p, void *address) { free(address); }
-	static ISzAlloc LzmaSzAlloc = { &LzmaAlloc, &LzmaFree };
-
-	//////////////////////////////////////////////////////////////////////////
 	// File Read Struct
 
 	typedef struct

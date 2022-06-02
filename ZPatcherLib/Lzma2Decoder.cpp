@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <cassert>
 #include <cerrno>
+#include "Alloc.h"
 #include "Lzma2Dec.h"
 #include "Lzma2Decoder.h"
 #include "LzmaInterfaces.h"
@@ -32,7 +33,7 @@ CLzma2Dec* ZPatcher::InitLzma2Decoder(const Byte& props)
 	CLzma2Dec* dec = static_cast<CLzma2Dec*>(malloc(sizeof(CLzma2Dec)));
 	Lzma2Dec_Construct(dec);
 
-	SRes res = Lzma2Dec_Allocate(dec, props, &LzmaSzAlloc);
+	SRes res = Lzma2Dec_Allocate(dec, props, &g_Alloc);
 	assert(res == SZ_OK);
 
 	return dec;
@@ -40,7 +41,7 @@ CLzma2Dec* ZPatcher::InitLzma2Decoder(const Byte& props)
 
 void ZPatcher::DestroyLzma2Decoder(CLzma2Dec* decoder)
 {
-	Lzma2Dec_Free(decoder, &LzmaSzAlloc);
+	Lzma2Dec_Free(decoder, &g_Alloc);
 }
 
 Byte ZPatcher::ReadPatchFileHeader(FILE* source, Byte& Lzma2Properties)

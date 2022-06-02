@@ -11,13 +11,15 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include <cstdint>
+#include <cerrno>
+#include <cassert>
+#include "Alloc.h"
 #include "Lzma2Enc.h"
 #include "Lzma2Encoder.h"
 #include "LzmaInterfaces.h"
 #include "LogSystem.h"
-#include <cstdint>
-#include <cerrno>
-#include <cassert>
+
 
 #ifdef _WIN32
 	#define ftell64 _ftelli64
@@ -29,7 +31,7 @@
 
 CLzma2EncHandle ZPatcher::InitLzma2Encoder()
 {
-	CLzma2EncHandle enc = Lzma2Enc_Create(&LzmaSzAlloc, &LzmaSzAlloc);
+	CLzma2EncHandle enc = Lzma2Enc_Create(&g_Alloc, &g_BigAlloc);
 	assert(enc);
 
 	CLzma2EncProps props;
