@@ -37,7 +37,7 @@ Version History
 
 ### Version 2 and 3
 Version 2 and 3 are structurally identical, except that Version 3 uses LZMA SDK
-19.00, while Version 2 uses LZMA 16.02. The version bump was necessary to avoid
+21.07, while Version 2 uses LZMA 16.02. The version bump was necessary to avoid
 a potential data loss when trying to apply patches using old tools.
 
 
@@ -55,8 +55,8 @@ The initial version of the patch file was feature complete, relying on the LZMA
 auto detection to know where the data for a specific file ended.
 
 
-### 2021-03-25 - Version 3
-Upgraded LZMA SDK to version 19.00
+### 2022-05-02 - Version 3
+Upgraded LZMA SDK to version 21.07
 
 
 ### 2018-03-18 - Version 2
