@@ -61,6 +61,7 @@ SRes ZPatcher::OnProgress(ICompressProgress* p, UInt64 inSize, UInt64 outSize)
 
 void ZPatcher::PrintProgressBar(const float Percentage, UInt64 CurrentFileSize)
 {
+	(void)CurrentFileSize; // Suppress warning about unused parameter
 	const int progressMaxSize = 10;
 
 	int num = fprintf(stdout, " %0.2f %%", Percentage);
