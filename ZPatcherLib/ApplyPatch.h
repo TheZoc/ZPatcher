@@ -13,7 +13,6 @@
 #ifndef _APPLYPATCH_H_
 #define _APPLYPATCH_H_
 
-#include <cstring>
 #include <vector>
 
 namespace ZPatcher
@@ -24,23 +23,12 @@ namespace ZPatcher
 	/**
 	* Print the progress bar used applying a patch
 	*/
-	void PrintPatchApplyingProgressBar(const float& Percentage);
-
-	/**
-	* Apply the patch file to the target path
-	*/
-	bool DoApplyPatchFile(FILE* patchFile, const std::string& targetPath, uint64_t& previousVersionNumber, ProgressCallback progressCallback = &PrintPatchApplyingProgressBar);
+	void PrintPatchApplyingProgressBar(const float& percentage);
 
 	/**
 	* Apply the patch file to the target path, given the patch name
 	*/
-	bool ApplyPatchFile(const std::string& patchFileName, const std::string& targetPath, uint64_t& previousVersionNumber, ProgressCallback progressCallback = &PrintPatchApplyingProgressBar);
-
-	/**
-	* Restore the target backup list
-	*/
-	bool RestoreBackup(std::vector<std::string>& backupFileList, std::vector<std::string>& addedFileList, const std::string& baseDirectory, std::string previousVersionNumber);
-
+	bool ApplyPatchFile(const std::string& patchFileName, const std::string& targetPath, const uint64_t& previousVersionNumber, ProgressCallback progressCallback = &PrintPatchApplyingProgressBar);
 }
 
 
