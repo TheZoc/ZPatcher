@@ -403,17 +403,14 @@ namespace ZUpdater
 			{
 				if (!SaveTargetNewVersion(versionFile, patch.targetBuildNumber))
 				{
-					ZPatcher::DestroyLogSystem();
 					system("pause");
 					return false;
 				}
 
 				currentVersion = patch.targetBuildNumber;
-				ZPatcher::DestroyLogSystem();
 			}
 			else
 			{
-				ZPatcher::DestroyLogSystem();
 				system("pause");
 				return false;
 			}

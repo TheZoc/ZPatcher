@@ -58,7 +58,7 @@ wxThread::ExitCode CreatePatchThread::Entry()
 	using namespace ZPatcher;
 
 	// Check through execution if we should destroy the thread and exit
-	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
+	if (TestDestroy()) { return (wxThread::ExitCode)0; }
 
 	SetActiveLog("VisualCreatePatch");
 
@@ -71,7 +71,7 @@ wxThread::ExitCode CreatePatchThread::Entry()
 	std::string outputFilename = m_outputFilename.ToStdString();
 	NormalizeFileName(outputFilename);
 
-	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
+	if (TestDestroy()) { return (wxThread::ExitCode)0; }
 
 	if (m_importXml)
 	{
@@ -89,7 +89,7 @@ wxThread::ExitCode CreatePatchThread::Entry()
 		m_pPatchFileList = GetDifferences(oldDirectory, newDirectory, &CreatePatchFrame::UpdateComparisonDisplay);
 	}
 
-	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
+	if (TestDestroy()) { return (wxThread::ExitCode)0; }
 
 	if (m_exportXml)
 	{
@@ -104,6 +104,5 @@ wxThread::ExitCode CreatePatchThread::Entry()
 		CreatePatchFile(outputFilename, newDirectory, m_pPatchFileList, &CreatePatchFrame::UpdatePatchProcessedDisplay, { &CreatePatchFrame::OnLZMAProgress });
 	}
 
-	ZPatcher::DestroyLogSystem();
 	return (wxThread::ExitCode)0;     // success
 }

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // ZPatcher - Patcher system - Part of the ZUpdater suite
-// Felipe "Zoc" Silveira - (c) 2016-2018
+// Felipe "Zoc" Silveira - (c) 2016-2022
 //
 //////////////////////////////////////////////////////////////////////////
 //
@@ -11,36 +11,65 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include <cstring>
-#include <cassert>
 #include <cstdarg>
+#include <cstring>
 #include <cerrno>
-#include <ctime>
 #include <chrono>
+#include <ctime>
+#include <map>
+#include <memory>
 #include "LogSystem.h"
 #include "FileUtils.h"
 
-// Temporary new global variable, avoiding conflict with the old system for now.
-std::map<std::string, FILE*> ZPatcher::g_NewLogSystem;
 
-// For now, the log directory will be specified here. 
-std::string ZPatcher::g_LogDirectory = "./Logs/";
+// Map that holds all the open log files. CloseLog is a Deleter that will close the file handle when destroying the program.
+struct CloseLog { void operator()(FILE* f) { if (f) { fclose(f); } } };
+static std::map<std::string, std::unique_ptr<FILE, CloseLog>> g_NewLogSystem;
 
-static std::string ActiveLogName = "";
+// This specifies the directory that will receive the log files. TODO: Make this more flexible in the future.
+static std::string g_LogDirectory = "./Logs/";
 
-bool ZPatcher::SetActiveLog(const std::string& logName)
+// Current active log name
+static std::string ActiveLogName;
+
+/**
+ * Build a human-readable timestamp in the format yyyy-mm-dd-hh-mm-ss
+ */
+static std::string BuildHumanTimeStamp();
+
+/**
+ * This function will create the log directory, defined by g_LogDirectory
+ * and prepare the file handle to receive the log data.
+ */
+static bool InitNewLogFile(const std::string& logName);
+
+/**
+ * The function that actually does the logging.
+ * This should not be called directly.
+ */
+static void DoLog(const std::string& logName, ZPatcher::LogLevel level, const char* format, va_list args);
+
+static std::string BuildHumanTimeStamp()
 {
-	if (logName == "")
-	{
-		fprintf(stderr, "Error attempting to set the active log: The log name can't be empty!");
-		return false;
-	}
+	using std::chrono::system_clock;
+	time_t tt = system_clock::to_time_t(system_clock::now());
 
-	ActiveLogName = logName;
-	return true;
+	tm timeinfo;
+
+#ifdef _WIN32
+	localtime_s(&timeinfo, &tt);
+#else
+	localtime_r(&tt, &timeinfo);
+#endif
+
+	constexpr size_t BUFFER_SIZE = 20;
+	char humanTimestamp[BUFFER_SIZE];
+	snprintf(humanTimestamp, BUFFER_SIZE, "%02d-%02d-%02d-%02d-%02d-%02d", timeinfo.tm_year + 1900, timeinfo.tm_mon + 1, timeinfo.tm_mday, timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
+
+	return { humanTimestamp };
 }
 
-bool ZPatcher::InitNewLogFile(const std::string& logName)
+static bool InitNewLogFile(const std::string& logName)
 {
 	// Prepare the filename of the log and location that will receive it.
 	std::string logFile = g_LogDirectory;
@@ -48,22 +77,18 @@ bool ZPatcher::InitNewLogFile(const std::string& logName)
 	if (g_LogDirectory.back() != '/') // Check if it has a trailing slash. If it doesn't, add it.
 		logFile += "/";
 
-	logFile += "Logs/";
-	logFile += BuildHumanTimeStamp();
-	logFile += " - ";
-	logFile += logName;
-	logFile += ".log";
+	logFile += BuildHumanTimeStamp() + " - " + logName + ".log";
 
-	NormalizeFileName(logFile);
-	CreateDirectoryTree(logFile, false);
+	ZPatcher::NormalizeFileName(logFile);
+	ZPatcher::CreateDirectoryTree(logFile, false);
 
 	if (g_NewLogSystem[logName] == nullptr)
 	{
 		errno = 0;
-		g_NewLogSystem[logName] = fopen(logFile.c_str(), "wb");
+		g_NewLogSystem[logName] = std::unique_ptr<FILE, CloseLog>(fopen(logFile.c_str(), "wb"));
 		if (errno != 0)
 		{
-			int error = errno;
+			const int error = errno;
 			fprintf(stderr, "Unable to open log file \"%s\" for writing: %s", logFile.c_str(), strerror(error));
 			return false;
 		}
@@ -78,49 +103,11 @@ bool ZPatcher::InitNewLogFile(const std::string& logName)
 	return true;
 }
 
-std::string ZPatcher::BuildHumanTimeStamp()
-{
-	using std::chrono::system_clock;
-	time_t tt = system_clock::to_time_t(system_clock::now());
-
-	tm timeinfo;
-
-#ifdef _WIN32
-	localtime_s(&timeinfo, &tt);
-#else
-	localtime_r(&tt, &timeinfo);
-#endif
-
-	std::string humanTimestamp;
-
-	char buffer[16];
-	sprintf(buffer, "%02d", timeinfo.tm_year + 1900);
-	humanTimestamp += buffer;
-	humanTimestamp += "-";
-	sprintf(buffer, "%02d", timeinfo.tm_mon + 1);
-	humanTimestamp += buffer;
-	humanTimestamp += "-";
-	sprintf(buffer, "%02d", timeinfo.tm_mday);
-	humanTimestamp += buffer;
-	humanTimestamp += "-";
-	sprintf(buffer, "%02d", timeinfo.tm_hour);
-	humanTimestamp += buffer;
-	humanTimestamp += "-";
-	sprintf(buffer, "%02d", timeinfo.tm_min);
-	humanTimestamp += buffer;
-	humanTimestamp += "-";
-	sprintf(buffer, "%02d", timeinfo.tm_sec);
-	humanTimestamp += buffer;
-
-	return humanTimestamp;
-}
-
-// We don't want anyone calling this form somewhere else.
-static void DoLog(std::string logName, ZPatcher::LogLevel level, const char* format, va_list args)
+static void DoLog(const std::string& logName, ZPatcher::LogLevel level, const char* format, va_list args)
 {
 	using namespace ZPatcher;
 
-	if (logName == "")
+	if (logName.empty())
 	{
 		fprintf(stderr, "Error attempting to create log entry: The log name can't be empty!!!");
 		return;
@@ -130,7 +117,7 @@ static void DoLog(std::string logName, ZPatcher::LogLevel level, const char* for
 		if (!InitNewLogFile(logName))
 				return;
 
-	FILE* targetLog = g_NewLogSystem[logName];
+	FILE* targetLog = g_NewLogSystem[logName].get();
 
 	fprintf(targetLog, "[%s] ", BuildHumanTimeStamp().c_str());
 
@@ -158,23 +145,21 @@ static void DoLog(std::string logName, ZPatcher::LogLevel level, const char* for
 	fflush(targetLog);
 }
 
-void ZPatcher::Log(std::string logName, LogLevel level, const char* format, ...)
+bool ZPatcher::SetActiveLog(const std::string& logName)
 {
-	if (logName == "")
+	if (logName.empty())
 	{
-		fprintf(stderr, "Error attempting to log entry: The log name can't be empty!");
-		return;
+		fprintf(stderr, "Error attempting to set the active log: The log name can't be empty!");
+		return false;
 	}
 
-	va_list args;
-	va_start(args, format);
-	DoLog(logName, level, format, args);
-	va_end(args);
+	ActiveLogName = logName;
+	return true;
 }
 
 void ZPatcher::Log(LogLevel level, const char* format, ...)
 {
-	if (ActiveLogName == "")
+	if (ActiveLogName.empty())
 	{
 		fprintf(stderr, "Error attempting to log to active log: No active log set!");
 		return;
@@ -186,13 +171,16 @@ void ZPatcher::Log(LogLevel level, const char* format, ...)
 	va_end(args);
 }
 
-void ZPatcher::DestroyLogSystem()
+void ZPatcher::LogEx(std::string logName, LogLevel level, const char* format, ...)
 {
-	for(auto &logEntry : g_NewLogSystem)
-		if (logEntry.second)
-		{
-			fclose(logEntry.second);
-			logEntry.second = nullptr;
-		}
-}
+	if (logName.empty())
+	{
+		fprintf(stderr, "Error attempting to log entry: The log name can't be empty!");
+		return;
+	}
 
+	va_list args;
+	va_start(args, format);
+	DoLog(logName, level, format, args);
+	va_end(args);
+}

@@ -58,14 +58,12 @@ int main()
 	if (!SelfUpdate(shouldRestart))
 	{
 		WINDOWS_PAUSE();
-		ZPatcher::DestroyLogSystem();
 		exit(EXIT_FAILURE);
 	}
 	else
 	{
 		if (shouldRestart)
 		{
-			ZPatcher::DestroyLogSystem();
 			exit(EXIT_SUCCESS);
 		}
 	}
@@ -83,7 +81,6 @@ int main()
 	{
 		fprintf(stderr, "An error occurred while getting current application version.\n");
 		WINDOWS_PAUSE();
-		ZPatcher::DestroyLogSystem();
 		exit(EXIT_FAILURE);
 	}
 
@@ -94,7 +91,6 @@ int main()
 	{
 		fprintf(stderr, "An error occurred while checking for updates.\n");
 		WINDOWS_PAUSE();
-		ZPatcher::DestroyLogSystem();
 		exit(EXIT_FAILURE);
 	}
 
@@ -104,12 +100,10 @@ int main()
 	if (!DownloadAndApplyPatch(targetDirectory, versionFile, currentVersion))
 	{
 		WINDOWS_PAUSE();
-		ZPatcher::DestroyLogSystem();
 		exit(EXIT_FAILURE);
 	}
 
 	fprintf(stdout, "\n");
 	WINDOWS_PAUSE();
-	ZPatcher::DestroyLogSystem();
 	exit(EXIT_SUCCESS);
 }

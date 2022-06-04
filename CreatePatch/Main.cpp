@@ -63,8 +63,6 @@ int main(int argc, char* argv[])
 	if (patchFileList)
 		delete(patchFileList);
 
-	DestroyLogSystem();
-
 	exit(EXIT_SUCCESS);
 }
 
