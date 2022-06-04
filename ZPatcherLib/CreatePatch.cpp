@@ -18,16 +18,28 @@
 #include <algorithm>
 #include <cassert>
 #include <cerrno>
-#include <inttypes.h>
+#include <cinttypes>
 #include "LogSystem.h"
 
-void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const uint64_t& leftAmount, const uint64_t& rightAmount)
+
+/**
+ * Creates the patch file with all the changes listed in patchFileList.
+ */
+static bool DoCreatePatchFile(FILE* patchFile, const std::string& newVersionPath, ZPatcher::PatchFileList_t* patchFileList, ZPatcher::ProgressCallback progressFunction, ICompressProgress LZMAProgressCallback = { reinterpret_cast<ZPatcher::CompressProgressCallback>(&ZPatcher::OnProgress) });
+
+/**
+* Print the progress bar used when comparing directories
+*/
+static void PrintCreatePatchProgressBar(const float& percentage, const uint64_t& leftAmount, const uint64_t& rightAmount);
+
+
+static void PrintCreatePatchProgressBar(const float& percentage, const uint64_t& leftAmount, const uint64_t& rightAmount)
 {
 	int barWidth = 60;
 
 	fprintf(stdout, "\xd[");
 
-	int pos = (int)(barWidth * Percentage / 100.0f);
+	int pos = (int)(barWidth * percentage / 100.0f);
 	for (int i = 0; i < barWidth; ++i)
 	{
 		if (i < pos) fprintf(stdout, "=");
@@ -35,20 +47,31 @@ void ZPatcher::PrintCreatePatchProgressBar(const float& Percentage, const uint64
 		else fprintf(stdout, " ");
 	}
 
-	fprintf(stdout, "] %0.2f%% %" PRIu64 "/%" PRIu64, Percentage, leftAmount, rightAmount);
+	fprintf(stdout, "] %0.2f%% %" PRIu64 "/%" PRIu64, percentage, leftAmount, rightAmount);
 
 	fflush(stdout);
 }
 
-ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std::string& newVersion, ProgressCallback progressFunction)
+ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(const std::string& oldVersion, const std::string& newVersion)
+{
+	return GetDifferencesEx(oldVersion, newVersion, &PrintCreatePatchProgressBar);
+}
+
+ZPatcher::PatchFileList_t* ZPatcher::GetDifferencesEx(const std::string& oldVersion, const std::string& newVersion, ProgressCallback progressFunction)
 {
 	PatchFileList_t* patchFileList = new PatchFileList_t();
 
+	std::string normalizedOldVersion = oldVersion;
+	NormalizeFileName(normalizedOldVersion);
+
+	std::string normalizedNewVersion = newVersion;
+	NormalizeFileName(normalizedNewVersion);
+
 	std::vector<std::string> oldVersionFileList;
-	GetFilesInDirectory(oldVersionFileList, oldVersion);
+	GetFilesInDirectory(oldVersionFileList, normalizedOldVersion);
 
 	std::vector<std::string> newVersionFileList;
-	GetFilesInDirectory(newVersionFileList, newVersion);
+	GetFilesInDirectory(newVersionFileList, normalizedNewVersion);
 
 	// Sort them now to avoid worries later. (Easier to find added/deleted files)
 	std::sort(oldVersionFileList.begin(), oldVersionFileList.end());
@@ -70,12 +93,12 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std
 		if (oldFileName == newFileName)
 		{
 			// Check if we are dealing with directories.
-			size_t fileNameLength = oldFileName.length();
+			const size_t fileNameLength = oldFileName.length();
 			if (fileNameLength > 0 && oldFileName[fileNameLength - 1] != '/')
 			{
 				// Check if the files have the same contents
 				bool identical;
-				bool success = AreFilesIdentical(oldVersion + "/" + oldFileName, newVersion + "/" + newFileName, identical);
+				const bool success = AreFilesIdentical(normalizedOldVersion + "/" + oldFileName, normalizedNewVersion + "/" + newFileName, identical);
 
 				assert(success == true); // TODO: Handle this.
 
@@ -133,8 +156,13 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferences(std::string& oldVersion, std
 	return patchFileList;
 }
 
-bool ZPatcher::DoCreatePatchFile(FILE* patchFile, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction, ICompressProgress LZMAProgressCallback)
+static bool DoCreatePatchFile(FILE* patchFile, const std::string& newVersionPath, ZPatcher::PatchFileList_t* patchFileList, ZPatcher::ProgressCallback progressFunction, ICompressProgress LZMAProgressCallback)
 {
+	using namespace ZPatcher;
+
+	std::string normalizedNewVersionPath = newVersionPath;
+	NormalizeFileName(normalizedNewVersionPath);
+
 	// Initialize our custom LZMA2 Encoder
 	CLzma2EncHandle hLzma2Enc = InitLzma2Encoder();
 
@@ -156,9 +184,9 @@ bool ZPatcher::DoCreatePatchFile(FILE* patchFile, const std::string& newVersionP
 		float progress = ((float)++i / (float)totalFiles) * 100.0f;
 		progressFunction(progress, i, totalFiles);
 
-		Log(LOG, "[del] %s", ritr->c_str());
+		Log(LOG, "[del] %s", *ritr);
 
-		WriteFileInfo(patchFile, Patch_File_Delete, ritr->c_str());
+		WriteFileInfo(patchFile, Patch_File_Delete, *ritr);
 	}
 
 	for (std::vector<std::string>::iterator itr = patchFileList->AddedFileList.begin(); itr < patchFileList->AddedFileList.end(); ++itr)
@@ -169,11 +197,11 @@ bool ZPatcher::DoCreatePatchFile(FILE* patchFile, const std::string& newVersionP
 
 		Log(LOG, "[add] %s", itr->c_str());
 
-		size_t fileNameLength = itr->length();
+		const size_t fileNameLength = itr->length();
 		if (fileNameLength > 0 && (*itr)[fileNameLength - 1] != '/')
 		{
-			WriteFileInfo(patchFile, Patch_File_Add, itr->c_str());
-			std::string localPath = newVersionPath + "/" + *itr;
+			WriteFileInfo(patchFile, Patch_File_Add, *itr);
+			std::string localPath = normalizedNewVersionPath + "/" + *itr;
 
 			if (!WriteCompressedFile(hLzma2Enc, localPath, patchFile, LZMAProgressCallback))
 			{
@@ -182,7 +210,7 @@ bool ZPatcher::DoCreatePatchFile(FILE* patchFile, const std::string& newVersionP
 		}
 		else
 		{
-			WriteFileInfo(patchFile, Patch_Dir_Add, itr->c_str());
+			WriteFileInfo(patchFile, Patch_Dir_Add, *itr);
 		}
 	}
 
@@ -193,10 +221,10 @@ bool ZPatcher::DoCreatePatchFile(FILE* patchFile, const std::string& newVersionP
 		float progress = ((float)++i / (float)totalFiles) * 100.0f;
 		progressFunction(progress, i, totalFiles);
 
-		Log(LOG, "[mod] %s", itr->c_str());
+		Log(LOG, "[mod] %s", *itr);
 
-		WriteFileInfo(patchFile, Patch_File_Replace, itr->c_str());
-		std::string localPath = newVersionPath + "/" + *itr;
+		WriteFileInfo(patchFile, Patch_File_Replace, *itr);
+		std::string localPath = normalizedNewVersionPath + "/" + *itr;
 
 		if (!WriteCompressedFile(hLzma2Enc, localPath, patchFile, LZMAProgressCallback))
 		{
@@ -221,20 +249,28 @@ bool ZPatcher::DoCreatePatchFile(FILE* patchFile, const std::string& newVersionP
 	return true;
 }
 
+bool ZPatcher::CreatePatchFile(const std::string& patchFileName, const std::string& newVersionPath, PatchFileList_t* patchFileList)
+{
+	return CreatePatchFileEx(patchFileName, newVersionPath, patchFileList, &PrintCreatePatchProgressBar, { reinterpret_cast<CompressProgressCallback>(&OnProgress) });
+}
 
-bool ZPatcher::CreatePatchFile(const std::string& patchFileName, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction, ICompressProgress LZMAProgressCallback)
+
+bool ZPatcher::CreatePatchFileEx(const std::string& patchFileName, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction, ICompressProgress LZMAProgressCallback)
 {
 	FILE* patchFile;
 
+	std::string normalizedPatchFileName = patchFileName;
+	NormalizeFileName(normalizedPatchFileName);
+
 	errno = 0;
-	patchFile = fopen(patchFileName.c_str(), "wb");
+	patchFile = fopen(normalizedPatchFileName.c_str(), "wb");
 	if (errno != 0)
 	{
-		Log(LOG_FATAL, "Error opening file \"%s\" to write patch data: %s", patchFileName.c_str(), strerror(errno));
+		Log(LOG_FATAL, "Error opening file \"%s\" to write patch data: %s", normalizedPatchFileName.c_str(), strerror(errno));
 		return false;
 	}
 
-	bool result = DoCreatePatchFile(patchFile, newVersionPath, patchFileList, progressFunction, LZMAProgressCallback);
+	const bool result = DoCreatePatchFile(patchFile, newVersionPath, patchFileList, progressFunction, LZMAProgressCallback);
 
 	fclose(patchFile);
 

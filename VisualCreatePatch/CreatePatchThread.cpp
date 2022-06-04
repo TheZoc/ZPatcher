@@ -62,14 +62,9 @@ wxThread::ExitCode CreatePatchThread::Entry()
 
 	SetActiveLog("VisualCreatePatch");
 
-	std::string oldDirectory = m_oldDirectory.ToStdString();
-	NormalizeFileName(oldDirectory);
-
-	std::string newDirectory = m_newDirectory.ToStdString();
-	NormalizeFileName(newDirectory);
-
-	std::string outputFilename = m_outputFilename.ToStdString();
-	NormalizeFileName(outputFilename);
+	const std::string oldDirectory = m_oldDirectory.ToStdString();
+	const std::string newDirectory = m_newDirectory.ToStdString();
+	const std::string outputFilename = m_outputFilename.ToStdString();
 
 	if (TestDestroy()) { return (wxThread::ExitCode)0; }
 
@@ -86,7 +81,7 @@ wxThread::ExitCode CreatePatchThread::Entry()
 	else
 	{
 		// First, create the list of files to be added to the patch
-		m_pPatchFileList = GetDifferences(oldDirectory, newDirectory, &CreatePatchFrame::UpdateComparisonDisplay);
+		m_pPatchFileList = GetDifferencesEx(oldDirectory, newDirectory, &CreatePatchFrame::UpdateComparisonDisplay);
 	}
 
 	if (TestDestroy()) { return (wxThread::ExitCode)0; }
@@ -101,7 +96,7 @@ wxThread::ExitCode CreatePatchThread::Entry()
 	{
 		// Then, create the patch file.
 		// This is ugly, since there is no way to check inside CreatePatch() if the thread was destroyed. Check if there's a better way to do this.
-		CreatePatchFile(outputFilename, newDirectory, m_pPatchFileList, &CreatePatchFrame::UpdatePatchProcessedDisplay, { &CreatePatchFrame::OnLZMAProgress });
+		CreatePatchFileEx(outputFilename, newDirectory, m_pPatchFileList, &CreatePatchFrame::UpdatePatchProcessedDisplay, { &CreatePatchFrame::OnLZMAProgress });
 	}
 
 	return (wxThread::ExitCode)0;     // success
