@@ -13,13 +13,16 @@
 #ifndef _CREATEPATCH_H_
 #define _CREATEPATCH_H_
 
+#include <string>
 #include <vector>
-#include "LzmaInterfaces.h"
 
 namespace ZPatcher
 {
 	/// Our function pointer callback for progress display
 	typedef void(*ProgressCallback)(const float& percentage, const uint64_t& processedAmount, const uint64_t& totalToBeProcessed);
+
+	/// This is the same as `CompressProgressCallback`, defined in LzmaInterfaces.h, but without the LZMA sdk dependence - using a void* in place of ICompressProgress*
+	typedef int(*LZMA_ICompressProgress)(const void* p, uint64_t inSize, uint64_t outSize);
 
 	/**
 	* This structure holds the files that were Removed, Modified or Added in the patch to be created.
@@ -60,7 +63,7 @@ namespace ZPatcher
 	 * progressFunction is a pointer to a function to display the current progress of file processing.
 	 * LZMAProgressCallback is a pointer to a function to display the current progress of the file being compressed by the LZMA algorithm.
 	 */
-	bool CreatePatchFileEx(const std::string& patchFileName, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction, ICompressProgress LZMAProgressCallback);
+	bool CreatePatchFileEx(const std::string& patchFileName, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction, LZMA_ICompressProgress LZMAProgressCallback);
 }
 
 #endif // _CREATEPATCH_H_

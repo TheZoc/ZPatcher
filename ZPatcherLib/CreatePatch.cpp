@@ -12,14 +12,15 @@
 
 
 #include "stdafx.h"
-#include "CreatePatch.h"
-#include "FileUtils.h"
-#include "Lzma2Encoder.h"
 #include <algorithm>
 #include <cassert>
 #include <cerrno>
 #include <cinttypes>
+#include "CreatePatch.h"
+#include "FileUtils.h"
+#include "Lzma2Encoder.h"
 #include "LogSystem.h"
+#include "ZPatcherCurrentVersion.h"
 
 
 /**
@@ -251,11 +252,11 @@ static bool DoCreatePatchFile(FILE* patchFile, const std::string& newVersionPath
 
 bool ZPatcher::CreatePatchFile(const std::string& patchFileName, const std::string& newVersionPath, PatchFileList_t* patchFileList)
 {
-	return CreatePatchFileEx(patchFileName, newVersionPath, patchFileList, &PrintCreatePatchProgressBar, { reinterpret_cast<CompressProgressCallback>(&OnProgress) });
+	return CreatePatchFileEx(patchFileName, newVersionPath, patchFileList, &PrintCreatePatchProgressBar, reinterpret_cast<LZMA_ICompressProgress>(&OnProgress));
 }
 
 
-bool ZPatcher::CreatePatchFileEx(const std::string& patchFileName, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction, ICompressProgress LZMAProgressCallback)
+bool ZPatcher::CreatePatchFileEx(const std::string& patchFileName, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction, LZMA_ICompressProgress LZMAProgressCallback)
 {
 	FILE* patchFile;
 
@@ -270,7 +271,7 @@ bool ZPatcher::CreatePatchFileEx(const std::string& patchFileName, const std::st
 		return false;
 	}
 
-	const bool result = DoCreatePatchFile(patchFile, newVersionPath, patchFileList, progressFunction, LZMAProgressCallback);
+	const bool result = DoCreatePatchFile(patchFile, newVersionPath, patchFileList, progressFunction, { reinterpret_cast<CompressProgressCallback>(LZMAProgressCallback) });
 
 	fclose(patchFile);
 

@@ -96,7 +96,7 @@ wxThread::ExitCode CreatePatchThread::Entry()
 	{
 		// Then, create the patch file.
 		// This is ugly, since there is no way to check inside CreatePatch() if the thread was destroyed. Check if there's a better way to do this.
-		CreatePatchFileEx(outputFilename, newDirectory, m_pPatchFileList, &CreatePatchFrame::UpdatePatchProcessedDisplay, { &CreatePatchFrame::OnLZMAProgress });
+		CreatePatchFileEx(outputFilename, newDirectory, m_pPatchFileList, &CreatePatchFrame::UpdatePatchProcessedDisplay, reinterpret_cast<LZMA_ICompressProgress>(&CreatePatchFrame::OnLZMAProgress));
 	}
 
 	return (wxThread::ExitCode)0;     // success

@@ -15,14 +15,8 @@
 #define _LZMAALLOCATORS_H_
 
 #include <cstdint>
-#include <cstdlib>
 #include <cstdio>
 #include <string>
-
-#ifdef _WIN32
-	#include <malloc.h>
-#endif
-
 #include "7zFile.h"
 
 namespace ZPatcher

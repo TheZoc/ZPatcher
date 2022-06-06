@@ -19,6 +19,7 @@
 #include "Lzma2Encoder.h"
 #include "LzmaInterfaces.h"
 #include "LogSystem.h"
+#include "ZPatcherCurrentVersion.h"
 
 
 #ifdef _WIN32
