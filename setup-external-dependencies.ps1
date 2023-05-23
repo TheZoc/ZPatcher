@@ -1,6 +1,6 @@
 git submodule update -q --init --recursive
 
-.\libs\curl\projects\generate.bat vc14
+.\libs\curl\projects\generate.bat "vc14.30"
 
 Invoke-WebRequest "https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.6/wxWidgets-3.1.6-headers.7z" -outfile "wxWidgets-3.1.6-headers.7z"
 Invoke-WebRequest "https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.6/wxMSW-3.1.6_vc14x_x64_Dev.7z" -outfile "wxMSW-3.1.6_vc14x_x64_Dev.7z"

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LzmaLib", "libs\LzmaLib\LzmaLib.vcxproj", "{C72F7F04-8109-485F-88D4-CB5653CB7DDD}"
 EndProject
@@ -24,7 +24,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZPatcherLib", "ZPatcherLib\
 		{C72F7F04-8109-485F-88D4-CB5653CB7DDD} = {C72F7F04-8109-485F-88D4-CB5653CB7DDD}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcurl", "libs\curl\projects\Windows\VC14\lib\libcurl.vcxproj", "{DA6F56B4-06A4-441D-AD70-AC5A7D51FADB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcurl", "libs\curl\projects\Windows\VC14.30\lib\libcurl.vcxproj", "{DA6F56B4-06A4-441D-AD70-AC5A7D51FADB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZUpdater", "ZUpdater\ZUpdater.vcxproj", "{2F868D36-FD16-4C3A-B444-8C2CCA1A6A0D}"
 	ProjectSection(ProjectDependencies) = postProject
