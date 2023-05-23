@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // ZPatcher - Patcher system - Part of the ZUpdater suite
-// Felipe "Zoc" Silveira - (c) 2016-2018
+// Felipe "Zoc" Silveira - (c) 2016-2023
 //
 //////////////////////////////////////////////////////////////////////////
 //
@@ -78,8 +78,8 @@ ZPatcher::PatchFileList_t* ZPatcher::GetDifferencesEx(const std::string& oldVers
 	std::sort(oldVersionFileList.begin(), oldVersionFileList.end());
 	std::sort(newVersionFileList.begin(), newVersionFileList.end());
 
-	unsigned int oldFileIndex = 0;
-	unsigned int newFileIndex = 0;
+	uint64_t oldFileIndex = 0;
+	uint64_t newFileIndex = 0;
 
 	fprintf(stdout, "Detecting file differences between folders...\n");
 
@@ -185,9 +185,9 @@ static bool DoCreatePatchFile(FILE* patchFile, const std::string& newVersionPath
 		float progress = ((float)++i / (float)totalFiles) * 100.0f;
 		progressFunction(progress, i, totalFiles);
 
-		Log(LOG, "[del] %s", *ritr);
+		Log(LOG, "[del] %s", ritr->c_str());
 
-		WriteFileInfo(patchFile, Patch_File_Delete, *ritr);
+		WriteFileInfo(patchFile, Patch_File_Delete, ritr->c_str());
 	}
 
 	for (std::vector<std::string>::iterator itr = patchFileList->AddedFileList.begin(); itr < patchFileList->AddedFileList.end(); ++itr)
@@ -222,9 +222,9 @@ static bool DoCreatePatchFile(FILE* patchFile, const std::string& newVersionPath
 		float progress = ((float)++i / (float)totalFiles) * 100.0f;
 		progressFunction(progress, i, totalFiles);
 
-		Log(LOG, "[mod] %s", *itr);
+		Log(LOG, "[mod] %s", itr->c_str());
 
-		WriteFileInfo(patchFile, Patch_File_Replace, *itr);
+		WriteFileInfo(patchFile, Patch_File_Replace, itr->c_str());
 		std::string localPath = normalizedNewVersionPath + "/" + *itr;
 
 		if (!WriteCompressedFile(hLzma2Enc, localPath, patchFile, LZMAProgressCallback))
