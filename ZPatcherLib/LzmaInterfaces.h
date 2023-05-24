@@ -15,25 +15,12 @@
 #define _LZMAALLOCATORS_H_
 
 #include <cstdint>
-#include <cstdlib>
 #include <cstdio>
 #include <string>
-
-#ifdef _WIN32
-	#include <malloc.h>
-#endif
-
 #include "7zFile.h"
 
 namespace ZPatcher
 {
-	//////////////////////////////////////////////////////////////////////////
-	// Allocators
-
-	static void* LzmaAlloc(ISzAllocPtr p, size_t size) { return malloc(size); }
-	static void LzmaFree(ISzAllocPtr p, void *address) { free(address); }
-	static ISzAlloc LzmaSzAlloc = { &LzmaAlloc, &LzmaFree };
-
 	//////////////////////////////////////////////////////////////////////////
 	// File Read Struct
 

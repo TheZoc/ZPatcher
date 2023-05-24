@@ -13,50 +13,57 @@
 #ifndef _CREATEPATCH_H_
 #define _CREATEPATCH_H_
 
+#include <string>
 #include <vector>
-#include "LzmaInterfaces.h"
 
 namespace ZPatcher
 {
 	/// Our function pointer callback for progress display
 	typedef void(*ProgressCallback)(const float& percentage, const uint64_t& processedAmount, const uint64_t& totalToBeProcessed);
 
+	/// This is the same as `CompressProgressCallback`, defined in LzmaInterfaces.h, but without the LZMA sdk dependence - using a void* in place of ICompressProgress*
+	typedef int(*LZMA_ICompressProgress)(const void* p, uint64_t inSize, uint64_t outSize);
+
 	/**
 	* This structure holds the files that were Removed, Modified or Added in the patch to be created.
 	* Note: This is purposely declared as a class to simplify calling the constructor of each vector ;)
 	*/
-	class PatchFileList_t
+	struct PatchFileList_t
 	{
-	public:
 		std::vector<std::string> RemovedFileList;
 		std::vector<std::string> ModifiedFileList;
 		std::vector<std::string> AddedFileList;
 	};
 
 	/**
-	* Print the progress bar used when comparing directories
+	* Get the difference between two directories (oldVersion and newVersion) and build a PatchFileList_t containing all the changes
 	*/
-	void PrintCreatePatchProgressBar(const float& Percentage, const uint64_t& leftAmount, const uint64_t& rightAmount);
+	PatchFileList_t* GetDifferences(const std::string& oldVersion, const std::string& newVersion);
 
 	/**
 	* Get the difference between two directories (oldVersion and newVersion) and build a PatchFileList_t containing all the changes
+	* This version allows the customization of the Progress Callback
 	*/
-	PatchFileList_t* GetDifferences(std::string& oldVersion, std::string& newVersion, ProgressCallback progressFunction = &PrintCreatePatchProgressBar);
+	PatchFileList_t* GetDifferencesEx(const std::string& oldVersion, const std::string& newVersion, ProgressCallback progressFunction);
 
 	/**
 	 * Creates the patch file with all the changes listed in patchFileList.
-	 * patchfile is the file handle for the target patch file (output file)
+	 * patchFileName is the name of the output file
 	 * newVersionPath is the directory that contains the updated files
 	 * patchFileList is a PatchFileList_t filled by GetDifferences() with the changes between directories
-	 * progressFunction is a pointer to a function to display the current progress. It defaults to our own PrintCreatePatchProgressBar(), but it can be changed.
-	 * LZMAProgressCallback is a pointer to a function to display the current progress of the file being compressed by the LZMA algorithm. It defaults to ZPatcher::OnProgress()
+	 * This function will default to use PrintCreatePatchProgressBar() and OnProgress() (from LZMAInterfaces.h). To change those, use CreatePatchFileEx().
 	 */
-	bool DoCreatePatchFile(FILE* patchFile, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction = &PrintCreatePatchProgressBar, ICompressProgress LZMAProgressCallback = { reinterpret_cast<CompressProgressCallback>(&OnProgress) });
+	bool CreatePatchFile(const std::string& patchFileName, const std::string& newVersionPath, PatchFileList_t* patchFileList);
 
 	/**
-	 * This is a shortcut to CreatePatchFile() that receives the output patch file as a string
+	 * Creates the patch file with all the changes listed in patchFileList.
+	 * patchFileName is the name of the output file
+	 * newVersionPath is the directory that contains the updated files
+	 * patchFileList is a PatchFileList_t filled by GetDifferences() with the changes between directories
+	 * progressFunction is a pointer to a function to display the current progress of file processing.
+	 * LZMAProgressCallback is a pointer to a function to display the current progress of the file being compressed by the LZMA algorithm.
 	 */
-	bool CreatePatchFile(const std::string& patchFileName, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction = &PrintCreatePatchProgressBar, ICompressProgress LZMAProgressCallback = { reinterpret_cast<CompressProgressCallback>(&OnProgress) });
+	bool CreatePatchFileEx(const std::string& patchFileName, const std::string& newVersionPath, PatchFileList_t* patchFileList, ProgressCallback progressFunction, LZMA_ICompressProgress LZMAProgressCallback);
 }
 
 #endif // _CREATEPATCH_H_

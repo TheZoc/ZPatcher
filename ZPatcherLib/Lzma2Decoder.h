@@ -14,11 +14,10 @@
 #ifndef _LZMA2DECODER_H_
 #define _LZMA2DECODER_H_
 
-#include "ZPatcherCurrentVersion.h"
-#include "Lzma2Dec.h"
 #include <cstdio>
 #include <string>
-#include <cstring>
+#include "ZPatcherCurrentVersion.h"
+#include "Lzma2Dec.h"
 
 namespace ZPatcher
 {
@@ -42,8 +41,6 @@ namespace ZPatcher
 
 	// Decompress the file data stored in the patch file (only call this in the correct operations!). This operation creates the target file. NOTE: version field is a hack to allow easy migration from patch version 1 to 2. TODO: Rewrite this in a flexible way.
 	bool FileDecompress(CLzma2Dec* decoder, FILE* sourceFile, const std::string& destFileName, const Byte& version = ZPatcher_Version);
-
-
 }
 
 #endif // _LZMA2DECODER_H_

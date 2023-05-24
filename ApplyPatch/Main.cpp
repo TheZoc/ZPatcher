@@ -51,8 +51,6 @@ int main(int argc, char* argv[])
 	uint64_t version = 1;
 	bool success = ApplyPatchFile(patchFileName, targetDirectory, version); // TODO: Add a version file
 
-	DestroyLogSystem();
-
 	if (success)
 		exit(EXIT_SUCCESS);
 	else

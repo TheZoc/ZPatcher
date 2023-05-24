@@ -55,9 +55,6 @@ ZLauncherThread::~ZLauncherThread()
 {
 	wxCriticalSectionLocker enter(m_pHandler->m_pThreadCS);
 
-	// No harm in being overzealous here
-	ZPatcher::DestroyLogSystem();
-
 	// the thread is being destroyed; make sure not to leave dangling pointers around
 	m_pHandler->m_pThread = NULL;
 }
@@ -65,18 +62,17 @@ ZLauncherThread::~ZLauncherThread()
 wxThread::ExitCode ZLauncherThread::Entry()
 {
 	// TestDestroy() checks if the thread should be cancelled/destroyed
-	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
+	if (TestDestroy()) { return (wxThread::ExitCode)0; }
 
 	ZPatcher::SetActiveLog("ZLauncher");
 	std::ostringstream tmphtml;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Get the current version
-	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
+	if (TestDestroy()) { return (wxThread::ExitCode)0; }
 	if (!GetTargetCurrentVersion(m_versionFile, m_LocalCurrentVersion))
 	{
 		ZLauncherFrame::UpdateProgress(0, "An error occurred while getting current application version. See the log for details.");
-		ZPatcher::DestroyLogSystem();
 		return (wxThread::ExitCode)0;
 	}
 
@@ -85,11 +81,10 @@ wxThread::ExitCode ZLauncherThread::Entry()
 
 	//////////////////////////////////////////////////////////////////////////
 	// Check the Updates URL for the XML file with updates and process it.
-	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
+	if (TestDestroy()) { return (wxThread::ExitCode)0; }
 	if (!CheckForUpdates(m_updateURL, m_LocalCurrentVersion))
 	{
 		ZLauncherFrame::UpdateProgress(0, "An error occurred while checking for updates. See the log for details.");
-		ZPatcher::DestroyLogSystem();
 		return (wxThread::ExitCode)0;
 	}
 
@@ -109,7 +104,7 @@ wxThread::ExitCode ZLauncherThread::Entry()
 
 	//////////////////////////////////////////////////////////////////////////
 	// Create the directory where the updates will be downloaded.
-	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
+	if (TestDestroy()) { return (wxThread::ExitCode)0; }
 	std::string updatesDirectory = "updates/";
 	errno = 0;
 	ZPatcher::CreateDirectoryTree(updatesDirectory);
@@ -117,7 +112,6 @@ wxThread::ExitCode ZLauncherThread::Entry()
 	{
 		ZPatcher::Log(ZPatcher::LOG_FATAL, "An error occurred while attempting to create the directory structure: %s", updatesDirectory.c_str(), strerror(errno));
 		ZLauncherFrame::UpdateProgress(0, "An error occurred while attempting to create the directory structure. See the log for details.");
-		ZPatcher::DestroyLogSystem();
 		return (wxThread::ExitCode)0;
 	}
 
@@ -131,12 +125,10 @@ wxThread::ExitCode ZLauncherThread::Entry()
 	if (!SelfUpdate(shouldRestart))
 	{
 		ZPatcher::Log(ZPatcher::LOG_FATAL, "Error trying to perform a self update.");
-		ZPatcher::DestroyLogSystem();
 		return (wxThread::ExitCode)0;;
 	}
 	else if (shouldRestart)
 	{
-		ZPatcher::DestroyLogSystem();
 		wxQueueEvent(wxTheApp->GetTopWindow()->GetEventHandler(), new wxCloseEvent(wxEVT_CLOSE_WINDOW));
 		return (wxThread::ExitCode)0;
 	}
@@ -157,7 +149,7 @@ wxThread::ExitCode ZLauncherThread::Entry()
 		ZLauncherFrame::HTMLSetContent(tmphtml.str());
 
 		// Check if we should stop before each file download
-		if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
+		if (TestDestroy()) { return (wxThread::ExitCode)0; }
 
 		const Patch& patch = m_Patches[m_BestPatchPath[patchIndex]];
 
@@ -167,7 +159,6 @@ wxThread::ExitCode ZLauncherThread::Entry()
 		{
 			// This is bad! Our URL is malformed (no slashes in it!)
 			ZPatcher::Log(ZPatcher::LOG_FATAL, "Invalid Update URL: %s", patch.fileURL.c_str());
-			ZPatcher::DestroyLogSystem();
 			return (wxThread::ExitCode)0;
 		}
 
@@ -216,14 +207,13 @@ wxThread::ExitCode ZLauncherThread::Entry()
 				{
 					// User attempted to close the window, abort operation!
 					ZPatcher::Log(ZPatcher::LOG_WARNING, "Download aborted by user.");
-					ZPatcher::DestroyLogSystem();
 					return (wxThread::ExitCode)0;
 				}
 			}
 		}
 
 		// This is a great place to check for a stopping condition.
-		if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
+		if (TestDestroy()) { return (wxThread::ExitCode)0; }
 
 		m_pHandler->m_pThreadCS.Enter();
 
@@ -233,7 +223,6 @@ wxThread::ExitCode ZLauncherThread::Entry()
 			if (!SaveTargetNewVersion(m_versionFile, patch.targetBuildNumber))
 			{
 				ZPatcher::Log(ZPatcher::LOG_FATAL, "The patch was applied, but couldn't write the updated version info to %s", m_versionFile.c_str());
-				ZPatcher::DestroyLogSystem();
 				m_pHandler->m_pThreadCS.Leave();
 				return (wxThread::ExitCode)0;
 			}
@@ -243,7 +232,6 @@ wxThread::ExitCode ZLauncherThread::Entry()
 		else
 		{
 			ZPatcher::Log(ZPatcher::LOG_FATAL, "Unable to apply the patch %s", localFullPath.c_str());
-			ZPatcher::DestroyLogSystem();
 			m_pHandler->m_pThreadCS.Leave();
 			return (wxThread::ExitCode)0;
 		}
@@ -259,19 +247,16 @@ wxThread::ExitCode ZLauncherThread::Entry()
 		if (!SelfUpdate(shouldRestart))
 		{
 			ZPatcher::Log(ZPatcher::LOG_FATAL, "Error trying to perform a self update.");
-			ZPatcher::DestroyLogSystem();
 			return (wxThread::ExitCode)0;;
 		}
 		else
 			if (shouldRestart)
 			{
-				ZPatcher::DestroyLogSystem();
 				wxQueueEvent(wxTheApp->GetTopWindow()->GetEventHandler(), new wxCloseEvent(wxEVT_CLOSE_WINDOW));
 				return (wxThread::ExitCode)0;
 			}
 #endif
 	}
-	ZPatcher::DestroyLogSystem();
 
 	// Update progress bar and enable launch button
 	ZLauncherFrame::UpdateProgress(100, "Up-to-date!");

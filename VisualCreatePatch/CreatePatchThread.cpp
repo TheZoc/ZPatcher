@@ -58,20 +58,15 @@ wxThread::ExitCode CreatePatchThread::Entry()
 	using namespace ZPatcher;
 
 	// Check through execution if we should destroy the thread and exit
-	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
+	if (TestDestroy()) { return (wxThread::ExitCode)0; }
 
 	SetActiveLog("VisualCreatePatch");
 
-	std::string oldDirectory = m_oldDirectory.ToStdString();
-	NormalizeFileName(oldDirectory);
+	const std::string oldDirectory = m_oldDirectory.ToStdString();
+	const std::string newDirectory = m_newDirectory.ToStdString();
+	const std::string outputFilename = m_outputFilename.ToStdString();
 
-	std::string newDirectory = m_newDirectory.ToStdString();
-	NormalizeFileName(newDirectory);
-
-	std::string outputFilename = m_outputFilename.ToStdString();
-	NormalizeFileName(outputFilename);
-
-	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
+	if (TestDestroy()) { return (wxThread::ExitCode)0; }
 
 	if (m_importXml)
 	{
@@ -86,10 +81,10 @@ wxThread::ExitCode CreatePatchThread::Entry()
 	else
 	{
 		// First, create the list of files to be added to the patch
-		m_pPatchFileList = GetDifferences(oldDirectory, newDirectory, &CreatePatchFrame::UpdateComparisonDisplay);
+		m_pPatchFileList = GetDifferencesEx(oldDirectory, newDirectory, &CreatePatchFrame::UpdateComparisonDisplay);
 	}
 
-	if (TestDestroy()) { ZPatcher::DestroyLogSystem(); return (wxThread::ExitCode)0; }
+	if (TestDestroy()) { return (wxThread::ExitCode)0; }
 
 	if (m_exportXml)
 	{
@@ -101,9 +96,8 @@ wxThread::ExitCode CreatePatchThread::Entry()
 	{
 		// Then, create the patch file.
 		// This is ugly, since there is no way to check inside CreatePatch() if the thread was destroyed. Check if there's a better way to do this.
-		CreatePatchFile(outputFilename, newDirectory, m_pPatchFileList, &CreatePatchFrame::UpdatePatchProcessedDisplay, { &CreatePatchFrame::OnLZMAProgress });
+		CreatePatchFileEx(outputFilename, newDirectory, m_pPatchFileList, &CreatePatchFrame::UpdatePatchProcessedDisplay, reinterpret_cast<LZMA_ICompressProgress>(&CreatePatchFrame::OnLZMAProgress));
 	}
 
-	ZPatcher::DestroyLogSystem();
 	return (wxThread::ExitCode)0;     // success
 }

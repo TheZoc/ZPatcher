@@ -47,11 +47,6 @@ int main(int argc, char* argv[])
 	std::string newDirectory = argv[2];
 	std::string outputFilename = argv[3];
 
-	// Make sure all directories are represented in the same format
-	NormalizeFileName(oldDirectory);
-	NormalizeFileName(newDirectory);
-	NormalizeFileName(outputFilename);
-
 	Log(LOG, "Output patch file: %s", outputFilename.c_str());
 	Log(LOG, "Old version directory: %s", oldDirectory.c_str());
 	Log(LOG, "New version directory: %s", newDirectory.c_str());
@@ -62,8 +57,6 @@ int main(int argc, char* argv[])
 
 	if (patchFileList)
 		delete(patchFileList);
-
-	DestroyLogSystem();
 
 	exit(EXIT_SUCCESS);
 }
